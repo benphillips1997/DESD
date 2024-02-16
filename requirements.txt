@@ -2,3 +2,4 @@ Django==5.0.2
 djangorestframework
 mysqlclient
 django-environ
+# docker run --name smartcare -e MYSQL_ROOT_PASSWORD=mypassword -d mysql
