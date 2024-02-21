@@ -11,9 +11,11 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
+
   django_app:
+    image: django-app
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    restart: unless-stopped
     volumes:
       - .:/code
     ports:
@@ -26,5 +28,7 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_PORT=${DB_PORT}
+    entrypoint: ["./django-web-app-entrypoint.sh"]
+    
 volumes:
   mysql_data:
