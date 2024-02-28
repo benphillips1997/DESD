@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>{% block title %}{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/styles.css' %}" />
+</head>
+
+<body>
+<nav class="sidebar">
+    <ul>
+        
+        <li><img class="sidebar-logo" src="{% static 'patients/smartcare_logo.png' %}" alt="Smartcare logo"></li>
+        <li class="active">
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+        </li>
+        <li><a href="{% url 'weekly_schedule' %}">Weekly schedule</a></li>
+        <li><a href="{% url 'prescriptions' %}">Prescriptions</a></li>
+        <li><a href="{% url 'recent_patients' %}">Recent patients</a></li>
+        <li><a href="{% url 'patient_records' %}">Patient records</a></li>
+        <li><a href="{% url 'invoices' %}">Invoices</a></li>
+        <li><a href="{% url 'settings' %}">Settings</a></li>
+        <li><a href="">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="main">
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

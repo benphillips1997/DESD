@@ -32,6 +32,11 @@ DEBUG = True
 ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1"]
 
 
+
+AUTH_USER_MODEL = "patients.User"
+
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -125,6 +130,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATIC_ROOT = BASE_DIR / 'static_collected'
+
+
+# Login required url definitions
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

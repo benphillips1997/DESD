@@ -7,6 +7,7 @@ echo "Waiting for mysql Database Service to start..."
 #...https://github.com/vishnubob/wait-for-it/blob/master/wait-for-it.sh
 ./wait-for db:3306
 
+python manage.py collectstatic --noinput
 python manage.py makemigrations
 python manage.py migrate --fake-initial
 

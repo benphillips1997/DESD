@@ -11,15 +11,17 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
+    restart: unless-stopped
 
   django_app:
     image: django-app
     build: .
-    restart: unless-stopped
+    entrypoint: ["./django-web-app-entrypoint.sh"]
     volumes:
       - .:/code
     ports:
       - "8000:8000"
+    restart: unless-stopped
     depends_on:
       - db
     environment:
@@ -28,7 +30,6 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_PORT=${DB_PORT}
-    entrypoint: ["./django-web-app-entrypoint.sh"]
-    
+
 volumes:
   mysql_data:
