@@ -1,18 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Login</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'patients/styles.css' %}" />
-</head>
+{% extends "patients/dashboard_layout.html" %}
 
-<body>
-    <form method="POST">
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <form method="POST" class="login-form">
         {% csrf_token %}
-        <h2>Sign up</h2>
+        <h2>Login</h2>
         {{ form.as_p }}
         <input type="submit" value="Login" />
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
     </form>
-</body>
-</html>
+</div>
+{% endblock %}

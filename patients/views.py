@@ -32,16 +32,20 @@ def sign_up(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
+            # Extract form data
             username = form.cleaned_data["username"]
             email = form.cleaned_data["email"]
             first_name = form.cleaned_data["first_name"]
             surname = form.cleaned_data["surname"]
             password = form.cleaned_data["password"]
-            # create the user account
-            user = User(username=username, first_name=first_name, last_name=surname, email=email, password=password)
-            user.save()
+            location = form.cleaned_data["location"]  # Make sure your form has a 'location' field
 
-            print(username, email, first_name, surname, password)
+            # Create the user account
+            user = User.objects.create_user(username=username, email=email, password=password)
+            user.first_name = first_name
+            user.last_name = surname
+            # Here, handle the location data as needed, e.g., saving to user profile
+            user.save()
 
             if 'next' in request.POST:
                 return redirect(request.POST.get('next'))
