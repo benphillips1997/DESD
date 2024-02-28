@@ -38,7 +38,7 @@ def sign_up(request):
             first_name = form.cleaned_data["first_name"]
             surname = form.cleaned_data["surname"]
             password = form.cleaned_data["password"]
-            location = form.cleaned_data["location"]  # Make sure your form has a 'location' field
+            location = form.cleaned_data.get('location') # Make sure your form has a 'location' field
 
             # Create the user account
             user = User.objects.create_user(username=username, email=email, password=password)

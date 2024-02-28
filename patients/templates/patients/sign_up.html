@@ -9,17 +9,20 @@ Sign Up
     {% csrf_token %}
     {{ form.as_p }}
     <input id="autocomplete" placeholder="Enter your location" type="text" onFocus="geolocate()">
+    <input type="hidden" id="id_location" name="location">
     <input type="submit" value="Sign Up">
 </form>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClf_ZYavP9QOh6mb2vnlUUfjzwr1InXQ4&libraries=places&callback=initAutocomplete" async defer></script>
 <script>
-function initAutocomplete() {
-    var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), {types: ['geocode']});
-    autocomplete.addListener('place_changed', function() {
-        var place = autocomplete.getPlace();
-        document.getElementById('id_location').value = place.formatted_address; // Update hidden field
-    });
-}
-</script>
+    function initAutocomplete() {
+        var autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById('autocomplete'), {types: ['geocode']});
+        autocomplete.addListener('place_changed', function() {
+            var place = autocomplete.getPlace();
+            // Ensure the hidden field has the correct ID
+            document.getElementById('id_location').value = place.formatted_address;
+        });
+    }
+    </script>
 {% endblock %}

@@ -6,7 +6,7 @@ class SignUpForm(forms.Form):
     first_name = forms.CharField()
     surname = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
-    location = forms.CharField()  # Hidden input to store location data
+    location = forms.CharField(widget=forms.HiddenInput(), required=False)   # Hidden input to store location data
 
 class LoginForm(forms.Form):
     email = forms.EmailField()
