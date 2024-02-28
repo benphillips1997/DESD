@@ -2,8 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from .forms import SignUpForm
 from .forms import LoginForm 
+
+User = get_user_model()
 
 # Create your views here.
 def home(request):
@@ -41,7 +44,7 @@ def sign_up(request):
             location = form.cleaned_data.get('location') # Make sure your form has a 'location' field
 
             # Create the user account
-            user = User.objects.create_user(username=username, email=email, password=password)
+            user = User.objects.create_user(userID=username, email=email, password=password)
             user.first_name = first_name
             user.last_name = surname
             # Here, handle the location data as needed, e.g., saving to user profile
@@ -58,7 +61,13 @@ def sign_up(request):
 
 # @login_required
 def dashboard(request):
-    return render(request, "patients/dashboard.html")
+    user = request.user
+    print(user)
+    if user.is_authenticated:
+        return render(request, "patients/dashboard.html")
+    else:
+        return redirect("user_login")
+    
 
 def weekly_schedule(request):
     return render(request, "patients/weekly_schedule.html")
