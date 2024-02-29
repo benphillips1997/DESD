@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout as auth_logout
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from .forms import SignUpForm
@@ -21,6 +21,7 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
+                    # if user.role
                     return redirect('dashboard')
                 else:
                     return render(request, 'patients/login.html', {'form': form, 'error': 'Account is disabled.'})
@@ -44,7 +45,7 @@ def sign_up(request):
             location = form.cleaned_data.get('location') # Make sure your form has a 'location' field
 
             # Create the user account
-            user = User.objects.create_user(userID=username, email=email, password=password)
+            user = User.objects.create_user(userID=username, email=email, password=password, role="Admin")
             user.first_name = first_name
             user.last_name = surname
             # Here, handle the location data as needed, e.g., saving to user profile
@@ -62,9 +63,8 @@ def sign_up(request):
 # @login_required
 def dashboard(request):
     user = request.user
-    print(user)
     if user.is_authenticated:
-        return render(request, "patients/dashboard.html")
+        return render(request, "patients/doctor_dashboard.html", {"name": user.role})
     else:
         return redirect("user_login")
     
@@ -86,3 +86,7 @@ def invoices(request):
 
 def settings(request):
     return render(request, "patients/settings.html")
+
+def logout(request):
+    auth_logout(request)
+    return redirect("user_login")

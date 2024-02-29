@@ -13,4 +13,5 @@ urlpatterns = [
     path("patient_records/", views.patient_records, name="patient_records"),
     path("invoices/", views.invoices, name="invoices"),
     path("settings/", views.settings, name="settings"),
+    path("logout/", views.logout, name="logout")
 ]
