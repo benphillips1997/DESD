@@ -45,7 +45,7 @@ def sign_up(request):
             location = form.cleaned_data.get('location') # Make sure your form has a 'location' field
 
             # Create the user account
-            user = User.objects.create_user(userID=username, email=email, password=password, role="Admin")
+            user = User.objects.create_user(username, email=email, password=password)
             user.first_name = first_name
             user.last_name = surname
             # Here, handle the location data as needed, e.g., saving to user profile
