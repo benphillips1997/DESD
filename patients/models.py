@@ -33,3 +33,25 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+
+class Appointment(models.Model):
+    appointmentID = models.AutoField(primary_key=True)
+    patient = models.ForeignKey(User, on_delete=models.RESTRICT)
+    doctor = models.ForeignKey(User, on_delete=models.RESTRICT)
+    appointment_time = models.DateTimeField()
+    appointment_status = models.CharField(max_length=20, choices=[("Scheduled", "Scheduled"), ("Completed", "Completed"), ("Cancelled", "Cancelled")])
+
+
+class Prescription(models.Model):
+    prescriptionID = models.AutoField(primary_key=True)
+    patient = models.ForeignKey(User, on_delete=models.RESTRICT)
+    appointment = models.ForeignKey(Appointment, on_delete=models.RESTRICT)
+    description = models.CharField(max_length=255)
+
+
+class Invoice(models.Model):
+    invoiceID = models.AutoField(primary_key=True)
+    appointment = models.ForeignKey(Appointment, on_delete=models.DO_NOTHING)
+    cost = models.FloatField()
+    status = models.CharField(max_length=10, choices=[("Unpaid", "Unpaid"), ("Paid", "Paid")])
