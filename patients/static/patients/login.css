@@ -75,6 +75,21 @@ input[type="password"] {
     box-shadow: none;
 }
 
+input{
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #19314E;
+    color: #D9D9D9;
+    font-size: 20px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
 ::placeholder {
     color: #D9D9D9;
     opacity: 1;

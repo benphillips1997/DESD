@@ -1,0 +1,27 @@
+{% extends "patients/dashboard_layout.html" %}
+{% block title %}
+Dashboard
+{% endblock %}
+{% block content %}
+<div class="appointment-summary">
+    <div class="appointment-summary-block">
+        <h3>Your GP</h3>
+        <h2>Some GP here</h2>
+    </div>
+    <div class="appointment-summary-block">
+        <h3>Date and time</h3>
+        <h2>{% now "jS F Y" %}</h2>
+        <h2>{% now "H:i" %}</h2>
+    </div>
+    <!-- <div class="appointment-summary-block">
+        <h3>Next appointment</h3>
+        <h2>John Doe</h2>
+        <h2>10 minutes</h2>
+    </div> -->
+</div>
+<div class="appointment-summary">
+    <div class="appointment-summary-block">
+        <h2><a href="{% url 'book_appointment' %}">Book an appointment</a></h2>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout as auth_logout
-from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from .forms import SignUpForm
 from .forms import LoginForm 
@@ -21,7 +20,6 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    # if user.role
                     return redirect('dashboard')
                 else:
                     return render(request, 'patients/login.html', {'form': form, 'error': 'Account is disabled.'})
@@ -42,12 +40,11 @@ def sign_up(request):
             first_name = form.cleaned_data["first_name"]
             surname = form.cleaned_data["surname"]
             password = form.cleaned_data["password"]
+            role = form.cleaned_data["role"]
             location = form.cleaned_data.get('location') # Make sure your form has a 'location' field
 
             # Create the user account
-            user = User.objects.create_user(username, email=email, password=password)
-            user.first_name = first_name
-            user.last_name = surname
+            user = User.objects.create_user(userID=username, email=email, password=password, role=role, name=f"{first_name} {surname}")
             # Here, handle the location data as needed, e.g., saving to user profile
             user.save()
 
@@ -64,7 +61,7 @@ def sign_up(request):
 def dashboard(request):
     user = request.user
     if user.is_authenticated:
-        return render(request, "patients/doctor_dashboard.html", {"name": user.role})
+        return render(request, f"patients/{user.role}_dashboard.html", {"user": user})
     else:
         return redirect("user_login")
     
@@ -84,8 +81,29 @@ def patient_records(request):
 def invoices(request):
     return render(request, "patients/invoices.html")
 
+def history(request):
+    return render(request, "patients/history.html")
+
+def payments(request):
+    return render(request, "patients/payments.html")
+
+def registrations(request):
+    return render(request, "patients/registrations.hmtl")
+
+def records(request):
+    return render(request, "patients/records.hmtl")
+
+def reports(request):
+    return render(request, "patients/reports.hmtl")
+
+def operations(request):
+    return render(request, "patients/operations.hmtl")
+
 def settings(request):
     return render(request, "patients/settings.html")
+
+def book_appointment(request):
+    return render(request, "patients/book_appointment.html")
 
 def logout(request):
     auth_logout(request)

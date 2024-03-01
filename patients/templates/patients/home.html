@@ -14,7 +14,7 @@
         </div>
         <div class="home-form">
             <h2 class="home-title">Are you a...</h2>
-            <form method="POST" action="{% url 'login' %}">
+            <form method="POST" action="{% url 'user_login' %}">
                 {% csrf_token %}
                 <div class="buttons-container">
                     <a href="{% url 'user_login' %}" class="home-button">Doctor</a>

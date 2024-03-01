@@ -1,0 +1,18 @@
+{% extends "patients/dashboard_layout.html" %}
+{% block title %}
+Dashboard
+{% endblock %}
+{% block content %}
+<div class="appointment-summary">
+    <div class="appointment-summary-block">
+        <h3>Appointments today</h3>
+        <h2>1 Completed</h2>
+        <h2>22 Remaining</h2>
+    </div>
+    <div class="appointment-summary-block">
+        <h3>Date and time</h3>
+        <h2>{% now "jS F Y" %}</h2>
+        <h2>{% now "H:i" %}</h2>
+    </div>
+</div>
+{% endblock %}
