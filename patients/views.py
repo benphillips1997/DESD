@@ -7,7 +7,6 @@ from .forms import LoginForm
 
 User = get_user_model()
 
-# Create your views here.
 def home(request):
     return render(request, "patients/home.html")
 
@@ -34,18 +33,16 @@ def sign_up(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            # Extract form data
             username = form.cleaned_data["username"]
             email = form.cleaned_data["email"]
             first_name = form.cleaned_data["first_name"]
             surname = form.cleaned_data["surname"]
             password = form.cleaned_data["password"]
-            role = form.cleaned_data["role"]
-            location = form.cleaned_data.get('location') # Make sure your form has a 'location' field
+            role = form.cleaned_data['role']
+            location = form.cleaned_data.get('location')
 
-            # Create the user account
             user = User.objects.create_user(userID=username, email=email, password=password, role=role, name=f"{first_name} {surname}")
-            # Here, handle the location data as needed, e.g., saving to user profile
+            user.role = role
             user.save()
 
             if 'next' in request.POST:
@@ -55,9 +52,7 @@ def sign_up(request):
     else:
         form = SignUpForm()
     return render(request, "patients/sign_up.html", {'form': form})
-    
 
-# @login_required
 def dashboard(request):
     user = request.user
     if user.is_authenticated:
@@ -88,7 +83,7 @@ def payments(request):
     return render(request, "patients/payments.html")
 
 def registrations(request):
-    return render(request, "patients/registrations.hmtl")
+    return render(request, "patients/registrations.html")
 
 def records(request):
     return render(request, "patients/records.hmtl")
