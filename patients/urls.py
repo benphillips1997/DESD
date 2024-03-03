@@ -19,7 +19,8 @@ urlpatterns = [
     path("registrations/", views.registrations, name="registrations"),
     path("records/", views.records, name="records"),
     path("reports/", views.reports, name="reports"),
-    path("operaitons/", views.operations, name="operations"),
+    path("operations/", views.operations, name="operations"),
+    path("verify_user/", views.verify_user, name="verify_user"),
 
     path("book_appointment/", views.book_appointment, name="book_appointment"),
 

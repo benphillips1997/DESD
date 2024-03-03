@@ -70,14 +70,14 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     justify-content: space-between;
 }
 
-.appointment-summary{
+.dashboard-summary{
     margin-top: 20px;
     margin-bottom: 20px;
     display: flex;
     justify-content: space-evenly;
 }
 
-.appointment-summary-block{
+.dashboard-summary-block{
     text-align: center;
     background-color: #0E1B2B;
     margin: 0;
@@ -86,7 +86,6 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     vertical-align: middle;
     width: 20%;
 }
-
 
 .upcoming-appointments{
     padding: 20px;
@@ -101,7 +100,6 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .upcoming-appointments-body table{
     border: 2px solid #0E1B2B;
-    /* width: 80%; */
     overflow-y: scroll;
     height: 300px;
     display: block;
@@ -120,5 +118,39 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 }
 
 .upcoming-appointments-body tbody{
+    background-color: #19314E;
+}
+
+.registrations-main{
+    padding: 20px;
+    text-align: center;
+}
+
+.registrations-body{
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.registrations-body table{
+    border: 2px solid #0E1B2B;
+    overflow-y: scroll;
+    height: 300px;
+    display: block;
+}
+
+.registrations-body th, .registrations-body td{
+    /* border-left: 2px solid #0E1B2B; */
+    /* border-right: 2px solid #0E1B2B; */
+    padding: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.registrations-body thead{
+    background-color: #0E1B2B;
+}
+
+.registrations-body tbody{
     background-color: #19314E;
 }

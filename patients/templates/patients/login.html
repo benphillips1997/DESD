@@ -31,6 +31,7 @@
                     <label for="remember_me">Remember Me</label>
                 </div> -->
                 {{ form.as_p }}
+                <p>{{ error }}</p>
                 <div class="form-actions">
                     <button type="submit" class="login-button">
                         <img src="{% static 'patients/forward_arrow.svg' %}" alt="Login">
