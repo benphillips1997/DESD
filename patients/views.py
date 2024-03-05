@@ -131,8 +131,16 @@ def verify_user(request):
 def records(request):
     return render(request, "patients/records.html")
 
+def set_admin_roles():
+    admin_group = Group.objects.get(name='Admin')
+    all_users = User.objects.all()
+    for user in all_users:
+        if user.role == "admin":
+            admin_group.user_set.add(your_user)
+
 @login_required
 def reports(request):
+    set_admin_roles()
     if not request.user.groups.filter(name='Admin').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
     return render(request, "patients/reports.html")
