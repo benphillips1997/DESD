@@ -10,6 +10,11 @@ body, html {
     align-items: center;
 }
 
+.login-error-message{
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
 .left-side-button {
     position: fixed;
     top: 50%;

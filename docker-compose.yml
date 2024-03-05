@@ -30,6 +30,7 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_PORT=${DB_PORT}
+      - DB_TEST_NAME=${DB_TEST_NAME}
 
 volumes:
   mysql_data:

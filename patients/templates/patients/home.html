@@ -17,10 +17,10 @@
             <form method="POST">
                 {% csrf_token %}
                 <div class="buttons-container">
-                    <a href="{% url 'doctor_login' %}" class="home-button">Doctor</a>
-                    <a href="{% url 'nurse_login' %}" class="home-button">Nurse</a>
-                    <a href="{% url 'patient_login' %}" class="home-button">Patient</a>
-                    <a href="{% url 'admin_login' %}" class="home-button">Admin</a>
+                    <a href="{% url 'user_login' user_role='doctor' %}" class="home-button">Doctor</a>
+                    <a href="{% url 'user_login' user_role='nurse' %}" class="home-button">Nurse</a>
+                    <a href="{% url 'user_login' user_role='patient' %}" class="home-button">Patient</a>
+                    <a href="{% url 'user_login' user_role='admin' %}" class="home-button">Admin</a>
                 </div>
             </form>
         </div>

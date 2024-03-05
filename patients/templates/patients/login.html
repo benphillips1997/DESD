@@ -15,18 +15,18 @@
             <img src="{% static 'patients/smartcare_logo.png' %}" alt="SMARTCARE Logo">
         </div>
         <div class="login-form">
-            <h2 class="login-title">Patient Login</h2>
-            <form method="POST" action="{% url 'patient_login' %}">
+            <h2 class="login-title">{{ role|title }} Login</h2>
+            <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <p>{{ error }}</p>
+                <p style="color: #bb3030; text-align: center;">{{ error }}</p>
                 <div class="form-actions">
                     <button type="submit" class="login-button">
                         <img src="{% static 'patients/forward_arrow.svg' %}" alt="Login">
                     </button>
                 </div>
                 <div class="signup-text">
-                    <span style="color: #FEFEFD;">No account?</span> <a href="{% url 'patient_signup' %}">Sign Up</a>
+                    <span style="color: #FEFEFD;">No account?</span> <a href="{% url 'signup' user_role=role %}">Sign Up</a>
                 </div>
             </form>
         </div>

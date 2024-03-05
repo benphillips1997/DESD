@@ -2,18 +2,14 @@ from django.urls import path
 from patients import views
 
 urlpatterns = [
+    # direct to home if these are visited
     path("", views.home, name="home"),
     path("home/", views.home, name="home"),
+    path("user_login/", views.home, name="home"),
+    path("signup/", views.home, name="home"),
 
-    path("patient_login/", views.patient_login, name="patient_login"),
-    path("doctor_login/", views.doctor_login, name="doctor_login"),
-    path("nurse_login/", views.nurse_login, name="nurse_login"),
-    path("admin_login/", views.admin_login, name="admin_login"),
-
-    path("patient_signup/", views.patient_signup, name="patient_signup"),
-    path("doctor_signup/", views.doctor_signup, name="doctor_signup"),
-    path("nurse_signup/", views.nurse_signup, name="nurse_signup"),
-    path("admin_signup/", views.admin_signup, name="admin_signup"),
+    path("user_login/<user_role>", views.user_login, name="user_login"),
+    path("signup/<user_role>", views.signup, name="signup"),
 
     path("dashboard/", views.dashboard, name="dashboard"),
     path("weekly_schedule/", views.weekly_schedule, name="weekly_schedule"),

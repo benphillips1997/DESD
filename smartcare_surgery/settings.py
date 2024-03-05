@@ -91,6 +91,9 @@ DATABASES = {
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': env('DB_HOST'),
         'PORT': env('DB_PORT'),
+        'TEST': {
+            'NAME': env('DB_TEST_NAME'),
+        }
     }
 }
 
@@ -136,7 +139,7 @@ STATIC_ROOT = BASE_DIR / 'static_collected'
 
 # Login required url definitions
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/home/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
