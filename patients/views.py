@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout as auth_logout
 from django.contrib.auth import get_user_model
 from .forms import SignUpForm
@@ -132,6 +133,8 @@ def records(request):
 
 @login_required
 def reports(request):
+    if not request.user.groups.filter(name='Admin').exists():
+        return HttpResponseForbidden("You don't have permission to view this page.")
     return render(request, "patients/reports.html")
 
 @login_required
