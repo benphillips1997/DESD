@@ -6,10 +6,7 @@ class SignUpForm(forms.Form):
     first_name = forms.CharField(label='')
     surname = forms.CharField(label='')
     password = forms.CharField(widget=forms.PasswordInput, label='')
-    role = forms.ChoiceField(
-        choices=[('patient', 'Patient'), ('nurse', 'Nurse'), ('admin', 'Admin'), ('doctor', 'Doctor')], label='',
-        widget=forms.Select(attrs={'class': 'role-select'})
-    )
+
     location = forms.CharField(widget=forms.HiddenInput(), required=False)   # Hidden input to store location data
 
     def __init__(self, *args, **kwargs):

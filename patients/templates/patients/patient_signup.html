@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/signup.css' %}">
+</head>
+<body>
+    <a href="{% url 'home' %}" style="text-decoration: none;">
+        <button class="left-side-button">
+            <img src="{% static 'patients/back_arrow (2).svg' %}" alt="Home">
+        </button>
+    </a>
+    <div class="signup-page">
+        <div class="signup-logo">
+            <img src="{% static 'patients/smartcare_logo.png' %}" alt="SMARTCARE Logo">
+        </div>
+        <div class="signup-form">
+            <h2 class="signup-title">Patient Sign Up</h2>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input id="autocomplete" placeholder="Enter your location" type="text">
+                <div class="form-actions">
+                    <button type="submit" class="signup-button">
+                        <img src="{% static 'patients/forward_arrow.svg' %}" alt="Sign-up">
+                    </button>
+                </div>
+                <div class="login-text">
+                    <span style="color: #FEFEFD;">Already have an account?</span> <a href="{% url 'patient_login' %}">Login</a>
+                </div>
+            </form>
+        </div>
+        <script>
+            function initAutocomplete() {
+                var autocomplete = new google.maps.places.Autocomplete(
+                    document.getElementById('autocomplete'), {types: ['geocode']});
+                autocomplete.addListener('place_changed', function() {
+                    var place = autocomplete.getPlace();
+                    document.getElementsByName('location')[0].value = place.formatted_address;
+                });
+            }
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClf_ZYavP9QOh6mb2vnlUUfjzwr1InXQ4&libraries=places&callback=initAutocomplete" async defer></script>
+    </div>
+</body>
+</html>

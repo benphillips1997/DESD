@@ -6,7 +6,7 @@
 </head>
 <body>
     <a href="{% url 'home' %}" style="text-decoration: none;">
-        <button class="left-side-button">
+        <button class="left-side-buttonn">
             <img src="{% static 'patients/back_arrow (2).svg' %}" alt="Back">
         </button>
     </a>
@@ -15,8 +15,8 @@
             <img src="{% static 'patients/smartcare_logo.png' %}" alt="SMARTCARE Logo">
         </div>
         <div class="login-form">
-            <h2 class="login-title">Login</h2>
-            <form method="POST" action="{% url 'user_login' %}">
+            <h2 class="login-title">Admin Login</h2>
+            <form method="POST">
                 {% csrf_token %}
                 <!-- <div class="form-group">
                     <input id="id_email" type="email" name="email" placeholder="Email" required>
@@ -38,7 +38,7 @@
                     </button>
                 </div>
                 <div class="signup-text">
-                    <span style="color: #FEFEFD;">No account?</span> <a href="{% url 'sign_up' %}">Sign Up</a>
+                    <span style="color: #FEFEFD;">No account?</span> <a href="{% url 'admin_signup' %}">Sign Up</a>
                 </div>
             </form>
         </div>

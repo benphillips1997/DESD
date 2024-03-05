@@ -27,15 +27,6 @@ body, html {
     height: auto;
 }
 
-.login-container {
-    width: 350px;
-    padding: 40px;
-    background: #19314E;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    text-align: center;
-}
-
 .login-logo {
     display: flex;
     justify-content: center;
