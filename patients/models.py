@@ -33,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-    
+
 
 class Appointment(models.Model):
     appointmentID = models.AutoField(primary_key=True)

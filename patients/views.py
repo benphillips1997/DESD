@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout as auth_logout
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from .forms import SignUpForm
 from .forms import LoginForm 
 from django.http import JsonResponse
@@ -51,6 +52,8 @@ def sign_up(request):
             user = User.objects.create_user(userID=username, email=email, password=password, role=role, name=f"{first_name} {surname}", is_active=active)
             # Here, handle the location data as needed, e.g., saving to user profile
             user.save()
+            group = Group.objects.get(name=role.title())
+            group.user_set.add(user)
 
             if user.is_active:
                 login(request, user)
@@ -131,16 +134,8 @@ def verify_user(request):
 def records(request):
     return render(request, "patients/records.html")
 
-def set_admin_roles():
-    admin_group = Group.objects.get(name='Admin')
-    all_users = User.objects.all()
-    for user in all_users:
-        if user.role == "admin":
-            admin_group.user_set.add(your_user)
-
 @login_required
 def reports(request):
-    set_admin_roles()
     if not request.user.groups.filter(name='Admin').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
     return render(request, "patients/reports.html")

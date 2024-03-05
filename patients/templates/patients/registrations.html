@@ -44,15 +44,15 @@ Registrations
                 // on success remove the row
                 var row = document.getElementById(userID);
                 row.parentNode.removeChild(row);
-                var verify_message = document.getElementById("verify-message")
-                verify_message.innerHTML = "Successfully verified user: " + json.userID
+                var verify_message = document.getElementById("verify-message");
+                verify_message.innerHTML = "Successfully verified user: " + json.userID;
                 verify_message.removeAttribute('hidden');
             },
             // handle error
             error: function(xhr, errmsg, err) {
                 // alert("error\nerrmsg: " + errmsg + "\nerr: " + err + "\nend\nStatus:" + xhr.status + ": " + xhr.responseText);
-                var verify_message = document.getElementById("verify-message")
-                verify_message.innerHTML = "Error: Could not verify"
+                var verify_message = document.getElementById("verify-message");
+                verify_message.innerHTML = "Error: Could not verify";
                 verify_message.removeAttribute('hidden');
             }
         });
