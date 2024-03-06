@@ -4,7 +4,7 @@ def create_groups(sender, **kwargs):
     all_groups = ["Admin", "Doctor", "Nurse", "Patient"]
     # create groups if they dont already exist
     for group in all_groups:
-        exists = False
+        exists = True
         try:
             Group.objects.get(name=group)
         except Group.DoesNotExist:
