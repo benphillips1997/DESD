@@ -25,3 +25,13 @@ class LoginForm(forms.Form):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields['email'].widget.attrs.update({'placeholder': 'Email'})
         self.fields['password'].widget.attrs.update({'placeholder': 'Password'})
+
+
+class CreatePrescriptionForm(forms.Form):
+    title = forms.CharField(label='')
+    description = forms.CharField(label='')
+
+    def __init__(self, *args, **kwargs):
+        super(CreatePrescriptionForm, self).__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'placeholder': 'Title'})
+        self.fields['description'].widget.attrs.update({'placeholder': 'Description'})

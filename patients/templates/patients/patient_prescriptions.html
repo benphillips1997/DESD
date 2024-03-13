@@ -1,0 +1,66 @@
+{% extends "patients/dashboard_layout.html" %}
+{% block title %}
+Prescriptions
+{% endblock %}
+{% block content %}
+<div class="prescriptions-main">
+    <h2>Your prescriptions</h2>
+    <div class="prescriptions-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>Presciption name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Request re-issue</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prescription in user_prescriptions %}
+                <tr>
+                    <td>{{ prescription.title }}</td>
+                    <td>{{ prescription.description }}</td>
+                    <td id="{{ prescription.prescriptionID }}-status">{{ prescription.status }}</td>
+                    {% if prescription.status == "Inactive" %}
+                    <td id="{{ prescription.prescriptionID }}-button"><button name="re-issue-button" onclick="request_reissue('{{ prescription.prescriptionID }}')">Request re-issue</button></td>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h3 hidden id="success-message"></h3>
+</div>
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function request_reissue(prescriptionID) 
+    {
+        $.ajax({
+            url: "{% url 'request_reissue' %}",
+            type: "POST",
+            data: { data: prescriptionID, 'csrfmiddlewaretoken': '{{ csrf_token }}' }, // data to pass
+            // handle success
+            success: function(json) {
+                // alert("success");
+                document.getElementById(prescriptionID + "-status").innerHTML = "Re-issue requested";
+                document.getElementById(prescriptionID + "-button").remove();
+                // display success message
+                var success_message = document.getElementById("success-message");
+                success_message.innerHTML = "Requested re-issue of: " + json.prescription_name;
+                success_message.removeAttribute('hidden');
+            },
+            // handle error
+            error: function(xhr, errmsg, err) {
+                // alert("error\nerrmsg: " + errmsg + "\nerr: " + err + "\nend\nStatus:" + xhr.status + ": " + xhr.responseText);
+                var success_message = document.getElementById("success-message");
+                success_message.innerHTML = "Error: Was not successful";
+                success_message.removeAttribute('hidden');
+            }
+        });
+    };
+</script>
+{% endblock javascript %}
+{% endblock %}

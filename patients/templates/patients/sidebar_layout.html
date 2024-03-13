@@ -12,9 +12,6 @@
     <ul>        
         <li><img class="sidebar-logo" src="{% static 'patients/smartcare_logo.png' %}" alt="Smartcare logo"></li>
         <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-        {% if user.role == "doctors" or user.role == "nurse" or user.role == "patient" %}
-        <li><a href="{% url 'prescriptions' %}">Prescriptions</a></li>
-        {% endif %}
         {% if user.role == "admin" %}
         <li><a href="{% url 'registrations' %}">Registrations</a></li>
         <li><a href="{% url 'records' %}">Records</a></li>
@@ -24,10 +21,12 @@
         {% if user.role == "doctor" or user.role == "nurse" %}
         <li><a href="{% url 'weekly_schedule' %}">Weekly schedule</a></li>
         <li><a href="{% url 'recent_patients' %}">Recent patients</a></li>
+        <li><a href="{% url 'doctor_prescriptions' %}">Prescription requests</a></li>
         <li><a href="{% url 'patient_records' %}">Patient records</a></li>
         <li><a href="{% url 'invoices' %}">Invoices</a></li>
         {% endif %}
         {% if user.role == "patient" %}
+        <li><a href="{% url 'patient_prescriptions' %}">Prescriptions</a></li>
         <li><a href="{% url 'history' %}">Visit history</a></li>
         <li><a href="{% url 'payments' %}">Payments</a></li>
         {% endif %}

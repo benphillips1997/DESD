@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import Group
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -9,6 +10,9 @@ class UserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        # set group
+        group = Group.objects.get(name=user.role.title())
+        group.user_set.add(user)
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
@@ -25,6 +29,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=10, choices=[('nurse', 'Nurse'), ('patient', 'Patient'), ('admin', 'Admin'), ('doctor', 'Doctor')])
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    location = models.CharField(max_length=255)
 
     objects = UserManager()
 
@@ -47,11 +52,13 @@ class Prescription(models.Model):
     prescriptionID = models.AutoField(primary_key=True)
     patient = models.ForeignKey(User, on_delete=models.RESTRICT)
     appointment = models.ForeignKey(Appointment, on_delete=models.RESTRICT)
+    title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, choices=[("Active", "Active"), ("Inactive", "Inactive"), ("Re-issue requested", "Re-issue requested")])
 
 
 class Invoice(models.Model):
     invoiceID = models.AutoField(primary_key=True)
-    appointment = models.ForeignKey(Appointment, on_delete=models.DO_NOTHING)
+    appointment = models.ForeignKey(Appointment, on_delete=models.RESTRICT)
     cost = models.FloatField()
     status = models.CharField(max_length=10, choices=[("Unpaid", "Unpaid"), ("Paid", "Paid")])

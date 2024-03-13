@@ -154,3 +154,37 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 .registrations-body tbody{
     background-color: #19314E;
 }
+
+.prescriptions-main{
+    padding: 20px;
+    text-align: center;
+}
+
+.prescriptions-body{
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.prescriptions-body table{
+    border: 2px solid #0E1B2B;
+    overflow-y: scroll;
+    height: 300px;
+    display: block;
+}
+
+.prescriptions-body th, .prescriptions-body td{
+    /* border-left: 2px solid #0E1B2B; */
+    /* border-right: 2px solid #0E1B2B; */
+    padding: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.prescriptions-body thead{
+    background-color: #0E1B2B;
+}
+
+.prescriptions-body tbody{
+    background-color: #19314E;
+}

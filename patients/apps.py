@@ -9,3 +9,6 @@ class PatientsConfig(AppConfig):
     def ready(self):
         from .signals import create_groups
         post_migrate.connect(create_groups, sender=self)
+
+        from .signals import create_users
+        post_migrate.connect(create_users, sender=self)

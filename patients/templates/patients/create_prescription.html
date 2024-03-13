@@ -1,0 +1,11 @@
+{% extends "patients/dashboard_layout.html" %}
+{% block title %}
+Create prescription
+{% endblock %}
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit"></button>
+</form>
+{% endblock %}
