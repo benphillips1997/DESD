@@ -1,5 +1,7 @@
 from django import forms
 
+from patients.models import Appointment
+
 class SignUpForm(forms.Form):
     username = forms.CharField(label='')
     email = forms.EmailField(label='')
@@ -35,3 +37,13 @@ class CreatePrescriptionForm(forms.Form):
         super(CreatePrescriptionForm, self).__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'placeholder': 'Title'})
         self.fields['description'].widget.attrs.update({'placeholder': 'Description'})
+
+class BookAppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['date', 'start_time', 'end_time']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+        }

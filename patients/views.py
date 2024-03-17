@@ -4,7 +4,9 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout as auth_logout
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from .forms import SignUpForm, LoginForm, CreatePrescriptionForm
+from django.db.models import Q
+from django.contrib import messages
+from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm
 from .models import Prescription, Invoice, Appointment
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
@@ -240,9 +242,29 @@ def settings(request):
 
 @login_required
 def book_appointment(request):
-    if not request.user.groups.filter(name='Patient').exists():
-        return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/book_appointment.html")
+    if request.method == 'POST':
+        form = BookAppointmentForm(request.POST)
+        if form.is_valid():
+            desired_start = form.cleaned_data['start_time']
+            desired_end = form.cleaned_data['end_time']
+            desired_date = form.cleaned_data['date']
+
+            # Check for overlapping appointments
+            overlapping_appointments = Appointment.objects.filter(
+                Q(appointment_time__date=desired_date),
+                (Q(start_time__lt=desired_end) & Q(end_time__gt=desired_start))
+            ).exists()
+
+            if overlapping_appointments:
+                messages.error(request, "This time slot is already booked. Please choose another.")
+                return render(request, 'patients/book_appointment.html', {'form': form})
+                
+            # No overlapping appointments, proceed to save
+            form.save()
+            return redirect('appointments_success')
+    else:
+        form = BookAppointmentForm()
+    return render(request, 'patients/book_appointment.html', {'form': form})
 
 
 @login_required

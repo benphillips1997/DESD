@@ -1,7 +1,33 @@
-{% extends "patients/sidebar_layout.html" %}
-{% block title %}
-Book appointment
-{% endblock %}
-{% block main %}
+{% extends "patients/dashboard_layout.html" %}
+{% block title %}Book Appointment{% endblock %}
+{% block content %}
+<div id="calendar"></div> <!-- Calendar container -->
 
+<form method="post" action="{% url 'book_appointment' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Book Appointment">
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            slotDuration: '00:30:00',
+            // Additional FullCalendar options
+            events: '/path-to-your-events-view/',
+            dateClick: function(info) {
+                // Handle date click
+            },
+            eventClick: function(info) {
+                // Handle event click
+            }
+        });
+        calendar.render();
+    });
+</script>
 {% endblock %}

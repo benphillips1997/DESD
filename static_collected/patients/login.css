@@ -10,6 +10,11 @@ body, html {
     align-items: center;
 }
 
+.login-error-message{
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
 .left-side-button {
     position: fixed;
     top: 50%;
@@ -25,15 +30,6 @@ body, html {
 .left-side-button img {
     width: 100%;
     height: auto;
-}
-
-.login-container {
-    width: 350px;
-    padding: 40px;
-    background: #19314E;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    text-align: center;
 }
 
 .login-logo {
