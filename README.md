@@ -3,39 +3,39 @@
 ## Users
 
 Superuser account:
-    -userID - super1
-    -email - superuser@smartcare.com
-    -password - pw1
+    -userID: super1
+    -email: superuser@smartcare.com
+    -password: pw1
 
 Admin account:
-    -userID - admin1
-    -email - admin@smartcare.com
-    -password - pw1
+    -userID: admin1
+    -email: admin@smartcare.com
+    -password: pw1
 
 Patient account:
-    -userID - patient1
-    -email - patient@smartcare.com
-    -password - pw1
+    -userID: patient1
+    -email: patient@smartcare.com
+    -password: pw1
 
 Doctor account - verified:
-    -userID - doctor1
-    -email - doctor@smartcare.com
-    -password - pw1
+    -userID: doctor1
+    -email: doctor@smartcare.com
+    -password: pw1
 
 Doctor account - unverified:
-    -userID - doctor2
-    -email - doctor2@smartcare.com
-    -password - pw1
+    -userID: doctor2
+    -email: doctor2@smartcare.com
+    -password: pw1
 
 Nurse account - verified:
-    -userID - nurse1
-    -email - nurse@smartcare.com
-    -password - pw1
+    -userID: nurse1
+    -email: nurse@smartcare.com
+    -password: pw1
 
 Nurse account - unverified:
-    -userID - nurse2
-    -email - nurse2@smartcare.com
-    -password - pw1
+    -userID: nurse2
+    -email: nurse2@smartcare.com
+    -password: pw1
 
 
 ## Unit testing

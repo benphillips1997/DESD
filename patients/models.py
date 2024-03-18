@@ -44,8 +44,9 @@ class Appointment(models.Model):
     appointmentID = models.AutoField(primary_key=True)
     patient = models.ForeignKey(User, on_delete=models.RESTRICT, related_name="patient")
     doctor = models.ForeignKey(User, on_delete=models.RESTRICT, related_name="doctor")
-    appointment_time = models.DateTimeField()
-    appointment_status = models.CharField(max_length=20, choices=[("Scheduled", "Scheduled"), ("Completed", "Completed"), ("Cancelled", "Cancelled")])
+    date = models.DateField()
+    time = models.TimeField()
+    status = models.CharField(max_length=20, choices=[("Scheduled", "Scheduled"), ("Completed", "Completed"), ("Cancelled", "Cancelled")])
 
 
 class Prescription(models.Model):

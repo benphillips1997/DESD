@@ -1,4 +1,11 @@
 from django import forms
+from smartcare_surgery import settings
+from django.contrib.admin import widgets 
+from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
+from django.db.models import Q
+
+User = get_user_model()
 
 from patients.models import Appointment
 
@@ -41,9 +48,14 @@ class CreatePrescriptionForm(forms.Form):
 class BookAppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ['date', 'start_time', 'end_time']
+        fields = ['date', 'time', 'doctor']
+
+
+
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
-            'start_time': forms.TimeInput(attrs={'type': 'time'}),
-            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+            'time': forms.TimeInput(attrs={'type': 'time'}),
+            # 'doctor': forms.ChoiceField(choices=[(User.objects.filter(role="doctor"), User.objects.filter(role="doctor"))]),
         }
+
+    

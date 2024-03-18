@@ -11,6 +11,7 @@ from .models import Prescription, Invoice, Appointment
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
 from django.utils import timezone
+import datetime
 
 User = get_user_model()
 
@@ -77,7 +78,11 @@ def signup(request, user_role):
 def dashboard(request):
     user = request.user
     if user.is_authenticated:
-        return render(request, f"patients/{user.role}_dashboard.html", {"user": user})
+        if user.role == "doctor" or user.role == "nurse":
+            appointments = Appointment.objects.filter(doctor=user.userID)
+            return render(request, f"patients/{user.role}_dashboard.html", {"user": user, "appointments": appointments})
+        else:
+            return render(request, f"patients/{user.role}_dashboard.html", {"user": user})
     else:
         return redirect("user_login", user_role=user.role)
     
@@ -145,7 +150,7 @@ def create_prescription(request):
             patient = User.objects.get(userID="patient1")
             doctor = User.objects.get(userID="doctor1")
 
-            appointment = Appointment.objects.create(patient=patient, doctor=doctor, appointment_time=timezone.now(), appointment_status="Completed")
+            appointment = Appointment.objects.create(patient=patient, doctor=doctor, appointment_time=timezone.now(), status="Completed")
             appointment.save()
             # appointment = Appointment.objects.filter(appointmentID=)
 
@@ -200,8 +205,6 @@ def registrations(request):
 
 @login_required
 def verify_user(request):
-    if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
-        return HttpResponseForbidden("You don't have permission to view this page.")
     if request.method == "POST":
         userID = request.POST.get("data")
 
@@ -245,23 +248,21 @@ def book_appointment(request):
     if request.method == 'POST':
         form = BookAppointmentForm(request.POST)
         if form.is_valid():
-            desired_start = form.cleaned_data['start_time']
-            desired_end = form.cleaned_data['end_time']
+            desired_time = form.cleaned_data['time']
             desired_date = form.cleaned_data['date']
+            doctor = form.cleaned_data['doctor']
 
             # Check for overlapping appointments
-            overlapping_appointments = Appointment.objects.filter(
-                Q(appointment_time__date=desired_date),
-                (Q(start_time__lt=desired_end) & Q(end_time__gt=desired_start))
-            ).exists()
-
-            if overlapping_appointments:
+            if Appointment.objects.filter(Q(date=desired_date) & Q(time=desired_time)).exists():
                 messages.error(request, "This time slot is already booked. Please choose another.")
-                return render(request, 'patients/book_appointment.html', {'form': form})
+                message = "This time slot is already booked. Please choose another."
+                return render(request, 'patients/book_appointment.html', {'form': form, 'message': message})
                 
-            # No overlapping appointments, proceed to save
-            form.save()
-            return redirect('appointments_success')
+            appointment = Appointment.objects.create(patient=request.user, doctor=doctor, date=desired_date, time=desired_time, status='Scheduled')
+            appointment.save()
+
+            message = f"Successfully booked appointment at {str(desired_date)} {str(desired_time)} with {doctor.name}"
+            return render(request, 'patients/book_appointment.html', {'form': form, 'message': message})
     else:
         form = BookAppointmentForm()
     return render(request, 'patients/book_appointment.html', {'form': form})
