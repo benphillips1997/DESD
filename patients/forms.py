@@ -46,16 +46,14 @@ class CreatePrescriptionForm(forms.Form):
         self.fields['description'].widget.attrs.update({'placeholder': 'Description'})
 
 class BookAppointmentForm(forms.ModelForm):
+    doctor = forms.ModelChoiceField(queryset=User.objects.filter(role="doctor").order_by('name'), empty_label=None)
+
     class Meta:
         model = Appointment
         fields = ['date', 'time', 'doctor']
-
-
-
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
             'time': forms.TimeInput(attrs={'type': 'time'}),
-            # 'doctor': forms.ChoiceField(choices=[(User.objects.filter(role="doctor"), User.objects.filter(role="doctor"))]),
         }
 
     
