@@ -65,9 +65,8 @@ class BookAppointmentForm(forms.ModelForm):
 
     def clean_appointment_time(self):
         desired_time = self.cleaned_data.get('appointment_time')
-        desired_date = self.cleaned_data.get('date')  # This assumes that clean_date has already been called
+        desired_date = self.cleaned_data.get('date')
         
-        # If the date is today, check that the time has not passed
         if desired_date == timezone.localdate() and desired_time < timezone.localtime().time():
             raise ValidationError("You cannot book this appointment. Please select another time.")
 
