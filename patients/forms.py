@@ -3,6 +3,8 @@ from smartcare_surgery import settings
 from django.contrib.admin import widgets 
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.db.models import Q
 
 User = get_user_model()
@@ -50,10 +52,26 @@ class BookAppointmentForm(forms.ModelForm):
 
     class Meta:
         model = Appointment
-        fields = ['date', 'time', 'doctor']
+        fields = ['date', 'appointment_time', 'doctor']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
-            'time': forms.TimeInput(attrs={'type': 'time'}),
+            'appointment_time': forms.DateTimeInput(attrs={'type': 'time'}),
         }
+    def clean_date(self):
+        desired_date = self.cleaned_data.get('date')
+        if desired_date < timezone.localdate():
+            raise ValidationError("You cannot book this appointment. Please select another date.")
+        return desired_date
+
+    def clean_appointment_time(self):
+        desired_time = self.cleaned_data.get('appointment_time')
+        desired_date = self.cleaned_data.get('date')  # This assumes that clean_date has already been called
+        
+        # If the date is today, check that the time has not passed
+        if desired_date == timezone.localdate() and desired_time < timezone.localtime().time():
+            raise ValidationError("You cannot book this appointment. Please select another time.")
+
+        return desired_time
+
 
     
