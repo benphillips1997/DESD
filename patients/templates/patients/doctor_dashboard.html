@@ -16,19 +16,17 @@ Dashboard
     </div>
     <div class="dashboard-summary-block">
         <h3>Next appointment</h3>
-        <h2>John Doe</h2>
-        <h2>10 minutes</h2>
+        <h2>{{ next_appointment.patient.name }}</h2>
+        <h2>{{ next_appointment.appointment_time }}</h2>
     </div>
 </div>
 <div class="upcoming-appointments">
-    <h2>Upcoming appointments</h2>
+    <h2>Todays appointments</h2>
     <div class="upcoming-appointments-body">
         <table>
             <thead>
                 <tr>
                     <th>Patient</th>
-                    <th>Doctor</th>
-                    <th>Date</th>
                     <th>Time</th>
                     <th>Status</th>
                 </tr>
@@ -37,8 +35,6 @@ Dashboard
                 {% for appointment in appointments %}
                 <tr>
                     <td>{{ appointment.patient.name }}</td>
-                    <td>{{ appointment.doctor.name }}</td>
-                    <td>{{ appointment.date }}</td>
                     <td>{{ appointment.appointment_time }}</td>
                     <td>{{ appointment.appointment_status }}</td>
                 </tr>

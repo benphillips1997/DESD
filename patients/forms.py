@@ -42,10 +42,17 @@ class CreatePrescriptionForm(forms.Form):
     title = forms.CharField(label='')
     description = forms.CharField(label='')
 
+    patientID = forms.CharField(widget=forms.HiddenInput())
+    appointmentID = forms.CharField(widget=forms.HiddenInput())
+
+    
+
     def __init__(self, *args, **kwargs):
         super(CreatePrescriptionForm, self).__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'placeholder': 'Title'})
         self.fields['description'].widget.attrs.update({'placeholder': 'Description'})
+
+
 
 class BookAppointmentForm(forms.ModelForm):
     doctor = forms.ModelChoiceField(queryset=User.objects.filter(role="doctor").order_by('name'), empty_label=None)

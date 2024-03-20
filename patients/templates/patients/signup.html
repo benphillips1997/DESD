@@ -16,6 +16,7 @@
         </div>
         <div class="signup-form">
             <h2 class="signup-title">{{ role|title }} Sign Up</h2>
+            <p>{{message}}</p>
             <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}

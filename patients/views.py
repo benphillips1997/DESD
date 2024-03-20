@@ -11,6 +11,7 @@ from .models import Prescription, Invoice, Appointment
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
 from django.utils import timezone
+from django.utils.timezone import localdate
 import datetime
 
 User = get_user_model()
@@ -53,6 +54,18 @@ def signup(request, user_role):
             role = user_role
             location = form.cleaned_data.get('location')
 
+            # check for duplicate users
+            all_users = User.objects.all()
+            # form = SignUpForm()
+            message = " is already used for an account"
+            for user in all_users:
+                if username == user.userID:
+                    message = "UserID" + message
+                    return render(request, f"patients/signup.html", {'form': form, 'role': user_role, 'error': message})
+                if email == user.email:
+                    message = "Email" + message
+                    return render(request, f"patients/signup.html", {'form': form, 'role': user_role, 'error': message})
+
             active = True
             if role == "doctor" or role == "nurse":
                 active = False
@@ -73,24 +86,56 @@ def signup(request, user_role):
             return redirect('home')
     return render(request, f"patients/signup.html", {'form': form, 'role': user_role})
 
+
+# sets any 'scheduled' appointments that are in the past to 'completed'
+def check_appointment_status():
+    all_appointments = Appointment.objects.all()
+    for appointment in all_appointments:
+        if appointment.appointment_status == "Scheduled":
+            now = datetime.datetime.now()
+            now_floored = datetime.datetime.now() - datetime.timedelta(minutes=now.minute % 10, seconds=now.second, microseconds=now.microsecond)
+            now_ceiled = now_floored + datetime.timedelta(minutes=10)
+            if (appointment.date < datetime.date.today()) or (appointment.date <= datetime.date.today() and appointment.appointment_time < now_ceiled.time()):
+                appointment.appointment_status = "Completed"
+                appointment.save()
+
     
 @login_required
 def dashboard(request):
     user = request.user
     if user.is_authenticated:
+        check_appointment_status()
         if user.role == "doctor" or user.role == "nurse":
-            appointments = Appointment.objects.filter(doctor=user.userID)
-            return render(request, f"patients/{user.role}_dashboard.html", {"user": user, "appointments": appointments})
+            all_appointments = Appointment.objects.filter(doctor=user.userID)
+            now = datetime.date.today()
+            appointments_today = all_appointments.filter(date=now).order_by("appointment_time")
+            next_appointment = appointments_today.filter(appointment_status="Scheduled").first()
+            completed_appointments = appointments_today.filter(appointment_status='Completed').count()
+            remaining_appointments = appointments_today.filter(appointment_status='Scheduled').count()
+            return render(request, f"patients/{user.role}_dashboard.html", {"user": user, "appointments": appointments_today, 
+                                    "next_appointment": next_appointment, "completed_appointments": completed_appointments, "scheduled_appointments": remaining_appointments})
+        elif user.role == "admin":
+            appointments_today = Appointment.objects.filter(date=datetime.date.today())
+            completed_appointments = appointments_today.filter(appointment_status='Completed').count()
+            remaining_appointments = appointments_today.filter(appointment_status='Scheduled').count()
+            return render(request, f"patients/{user.role}_dashboard.html", {"user": user, "completed_appointments": completed_appointments, "scheduled_appointments": remaining_appointments})
         else:
             return render(request, f"patients/{user.role}_dashboard.html", {"user": user})
     else:
         return redirect("user_login", user_role=user.role)
-    
+
+
 @login_required
 def weekly_schedule(request):
     if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
         return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/weekly_schedule.html")
+    check_appointment_status()
+    # retrive all appointments for the next week
+    all_appointments = Appointment.objects.filter(doctor=request.user.userID)
+    today = datetime.date.today()
+    next_week = today + datetime.timedelta(days=7)
+    weekly_appointments = all_appointments.filter(date__range=(today, next_week)).order_by("date")
+    return render(request, "patients/weekly_schedule.html", {"appointments": weekly_appointments})
 
 @login_required
 def doctor_prescriptions(request):
@@ -136,31 +181,34 @@ def request_reissue(request):
         return HttpResponseForbidden("You cannot access this.")
 
 @login_required
-def create_prescription(request):
+def current_appointment(request):
     if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
         return HttpResponseForbidden("You don't have permission to view this page.")
+    now = datetime.datetime.now()
+    # retrieve appointment that is within the current 10 minuter time slot
+    start_time = now - datetime.timedelta(minutes=now.minute % 10, seconds=now.second, microseconds=now.microsecond)
+    end_time = start_time + datetime.timedelta(minutes=10)
+    current_appointment = Appointment.objects.filter(doctor=request.user.userID).filter(date=datetime.date.today()).filter(appointment_time__range=(start_time.time(), end_time.time())).first()
     if request.method == "POST":
         form = CreatePrescriptionForm(request.POST)
         if form.is_valid():
-            # patientID = form.cleaned_data["patient"]
-            # appointmentID = form.cleaned_data["appointment"]
+            patientID = form.cleaned_data["patientID"]
+            appointmentID = form.cleaned_data["appointmentID"]
             title = form.cleaned_data["title"]
             description = form.cleaned_data["description"]
 
-            patient = User.objects.get(userID="patient1")
-            doctor = User.objects.get(userID="doctor1")
+            patient = User.objects.get(userID=patientID)
 
-            appointment = Appointment.objects.create(patient=patient, doctor=doctor, appointment_time=timezone.now(), status="Completed")
+            appointment = Appointment.objects.get(appointmentID=appointmentID)
             appointment.save()
-            # appointment = Appointment.objects.filter(appointmentID=)
 
             new_prescription = Prescription.objects.create(patient=patient, appointment=appointment, title=title, description=description, status="Active")
             new_prescription.save()
 
-            return redirect("doctor_prescriptions")
+            return redirect("dashboard")
     else:
         form = CreatePrescriptionForm()
-    return render(request, "patients/create_prescription.html", {"form": form})
+    return render(request, "patients/current_appointment.html", {"form": form, "current_appointment": current_appointment})
 
 @login_required
 def recent_patients(request):
@@ -255,7 +303,8 @@ def book_appointment(request):
             # Check for overlapping appointments
             if Appointment.objects.filter(Q(date=desired_date) & Q(appointment_time=desired_time), doctor=doctor).exists():
                 messages.error(request, "This time slot is already booked. Please choose another.")
-                return render(request, 'patients/book_appointment.html', {'form': form})
+                message = "This time slot is already booked. Please choose another."
+                return render(request, 'patients/book_appointment.html', {'form': form, 'message': message})
 
             appointment = Appointment.objects.create(
                 patient=request.user,

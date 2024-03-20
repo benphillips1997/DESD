@@ -19,15 +19,16 @@
         <li><a href="{% url 'operations' %}">Operations</a></li>
         {% endif %}
         {% if user.role == "doctor" or user.role == "nurse" %}
+        <li><a href="{% url 'current_appointment' %}">Current appointment</a></li>
         <li><a href="{% url 'weekly_schedule' %}">Weekly schedule</a></li>
         <li><a href="{% url 'recent_patients' %}">Recent patients</a></li>
         <li><a href="{% url 'doctor_prescriptions' %}">Prescription requests</a></li>
         <li><a href="{% url 'patient_records' %}">Patient records</a></li>
-        <li><a href="{% url 'invoices' %}">Invoices</a></li>
         {% endif %}
         {% if user.role == "patient" %}
         <li><a href="{% url 'patient_prescriptions' %}">Prescriptions</a></li>
         <li><a href="{% url 'history' %}">Visit history</a></li>
+        <li><a href="{% url 'invoices' %}">Invoices</a></li>
         <li><a href="{% url 'payments' %}">Payments</a></li>
         {% endif %}
         <li><a href="{% url 'settings' %}">Settings</a></li>
