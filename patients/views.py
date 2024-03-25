@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout as auth_logout
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 from django.db.models import Q
 from django.contrib import messages
 from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm
@@ -11,8 +13,9 @@ from .models import Prescription, Invoice, Appointment
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
 from django.utils import timezone
-from django.utils.timezone import localdate
+from django.utils.timezone import localdate, make_aware
 import datetime
+from time import localtime
 
 User = get_user_model()
 
@@ -223,10 +226,58 @@ def patient_records(request):
     return render(request, "patients/patient_records.html")
 
 @login_required
-def invoices(request):
+def print_invoice(request, invoice_id):
+    invoice = get_object_or_404(Invoice, invoiceID=invoice_id)
+    appointment = invoice.appointment
+    rate_per_minute = 0
+
+    start_datetime = make_aware(datetime.datetime.combine(appointment.date, appointment.appointment_time))
+    end_datetime = make_aware(datetime.datetime.combine(appointment.date, appointment.appointment_end_time))
+    duration_timedelta = end_datetime - start_datetime
+    duration_minutes = int(duration_timedelta.total_seconds() / 60)
+
+    if appointment.doctor.role == "Doctor":
+        rate_per_minute = 5
+    elif appointment.doctor.role == "Nurse":
+        rate_per_minute = 3
+    calculated_amount = "£" + str(duration_minutes * rate_per_minute)
+
+    patient_location = appointment.patient.location
+    practitioner_name = appointment.doctor.name
+    practitioner_role = appointment.doctor.get_role_display()
+
+    context = {
+        'invoice': invoice,
+        'duration_minutes': duration_minutes,
+        'amount': calculated_amount,
+        'patient_location': patient_location,
+        'practitioner_name': practitioner_name,
+        'practitioner_role': practitioner_role
+    }
+    return render(request, 'patients/print_invoice.html', context)
+
+@login_required
+def patient_invoices(request):
     if not request.user.groups.filter(name='Patient').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/invoices.html")
+    user_invoices = Invoice.objects.filter(appointment__patient=request.user).order_by('-date_issued')
+    for invoice in user_invoices:
+        start_time = invoice.appointment.appointment_time
+        end_time = invoice.appointment.appointment_end_time
+        start_datetime = datetime.datetime.combine(datetime.date.today(), start_time)
+        end_datetime = datetime.datetime.combine(datetime.date.today(), end_time)
+        duration_timedelta = end_datetime - start_datetime
+        duration_minutes = int(duration_timedelta.total_seconds() / 60)
+        invoice.duration = duration_minutes
+
+        if invoice.appointment.doctor.role == "doctor":
+            rate_per_minute = 5
+        elif invoice.appointment.doctor.role == "nurse":
+            rate_per_minute = 3
+            
+        invoice.amount = duration_minutes * rate_per_minute
+        
+    return render(request, "patients/patient_invoices.html", {'user_invoices': user_invoices})
 
 @login_required
 def history(request):
@@ -320,7 +371,6 @@ def book_appointment(request):
     else:
         form = BookAppointmentForm()
     return render(request, 'patients/book_appointment.html', {'form': form})
-
 
 @login_required
 def logout(request):

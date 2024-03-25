@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth.models import Group
+import datetime
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -46,8 +47,20 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(User, on_delete=models.RESTRICT, related_name="doctor")
     date = models.DateField()
     appointment_time = models.TimeField()
+    appointment_end_time = models.TimeField()
     appointment_status = models.CharField(max_length=20, choices=[("Scheduled", "Scheduled"), ("Completed", "Completed"), ("Cancelled", "Cancelled")])
 
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        super(Appointment, self).save(*args, **kwargs)
+        if is_new:
+            Invoice.objects.create(
+                appointment=self,
+                date_issued=self.date,
+                due_date=self.date + datetime.timedelta(days=30),
+                amount=0,
+                status="Unpaid"
+            )
 
 class Prescription(models.Model):
     prescriptionID = models.AutoField(primary_key=True)
@@ -60,6 +73,8 @@ class Prescription(models.Model):
 
 class Invoice(models.Model):
     invoiceID = models.AutoField(primary_key=True)
+    date_issued = models.DateField()
+    due_date = models.DateField()
     appointment = models.ForeignKey(Appointment, on_delete=models.RESTRICT)
-    cost = models.FloatField()
+    amount = models.FloatField()
     status = models.CharField(max_length=10, choices=[("Unpaid", "Unpaid"), ("Paid", "Paid")])

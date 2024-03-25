@@ -9,7 +9,7 @@ from django.db.models import Q
 
 User = get_user_model()
 
-from patients.models import Appointment
+from .models import Appointment, Invoice
 
 class SignUpForm(forms.Form):
     username = forms.CharField(label='')
@@ -52,7 +52,10 @@ class CreatePrescriptionForm(forms.Form):
         self.fields['title'].widget.attrs.update({'placeholder': 'Title'})
         self.fields['description'].widget.attrs.update({'placeholder': 'Description'})
 
-
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields = '__all__'
 
 class BookAppointmentForm(forms.ModelForm):
     doctor = forms.ModelChoiceField(queryset=User.objects.filter(role="doctor").order_by('name'), empty_label=None)

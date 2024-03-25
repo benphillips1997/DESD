@@ -28,7 +28,7 @@
         {% if user.role == "patient" %}
         <li><a href="{% url 'patient_prescriptions' %}">Prescriptions</a></li>
         <li><a href="{% url 'history' %}">Visit history</a></li>
-        <li><a href="{% url 'invoices' %}">Invoices</a></li>
+        <li><a href="{% url 'patient_invoices' %}">Invoices</a></li>
         <li><a href="{% url 'payments' %}">Payments</a></li>
         {% endif %}
         <li><a href="{% url 'settings' %}">Settings</a></li>

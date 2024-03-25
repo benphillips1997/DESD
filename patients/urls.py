@@ -30,7 +30,10 @@ urlpatterns = [
     path("request_reissue/", views.request_reissue, name="request_reissue"),
     path("patient_prescriptions/", views.patient_prescriptions, name="patient_prescriptions"),
     path("history/", views.history, name="history"),
-    path("invoices/", views.invoices, name="invoices"),
+
+    path('invoices/', views.patient_invoices, name='patient_invoices'),
+    path('print_invoice/<int:invoice_id>/', views.print_invoice, name='print_invoice'),
+
     path("payments/", views.payments, name="payments"),
 
     path("settings/", views.settings, name="settings"),
