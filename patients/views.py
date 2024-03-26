@@ -383,18 +383,24 @@ def book_appointment(request):
             desired_time = form.cleaned_data['appointment_time']
             desired_date = form.cleaned_data['date']
             doctor = form.cleaned_data['doctor']
+            duration = datetime.timedelta(minutes=30)
 
             # Check for overlapping appointments
             if Appointment.objects.filter(Q(date=desired_date) & Q(appointment_time=desired_time), doctor=doctor).exists():
                 messages.error(request, "This time slot is already booked. Please choose another.")
                 message = "This time slot is already booked. Please choose another."
                 return render(request, 'patients/book_appointment.html', {'form': form, 'message': message})
+            
+            start_datetime = datetime.datetime.combine(desired_date, desired_time)
+            end_datetime = start_datetime + duration
+            end_time = end_datetime.time()
 
             appointment = Appointment.objects.create(
                 patient=request.user,
                 doctor=doctor,
                 date=desired_date,
                 appointment_time=desired_time,
+                appointment_end_time=end_time,
                 appointment_status='Scheduled'
             )
             appointment.save()
