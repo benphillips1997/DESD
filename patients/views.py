@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout as auth_logout
 from django.contrib.auth import get_user_model
@@ -236,11 +236,12 @@ def print_invoice(request, invoice_id):
     duration_timedelta = end_datetime - start_datetime
     duration_minutes = int(duration_timedelta.total_seconds() / 60)
 
-    if appointment.doctor.role == "Doctor":
+    if invoice.appointment.doctor.role == "doctor":
         rate_per_minute = 5
-    elif appointment.doctor.role == "Nurse":
+    elif invoice.appointment.doctor.role == "nurse":
         rate_per_minute = 3
-    calculated_amount = "£" + str(duration_minutes * rate_per_minute)
+            
+    invoice.amount = duration_minutes * rate_per_minute
 
     patient_location = appointment.patient.location
     practitioner_name = appointment.doctor.name
@@ -249,7 +250,7 @@ def print_invoice(request, invoice_id):
     context = {
         'invoice': invoice,
         'duration_minutes': duration_minutes,
-        'amount': calculated_amount,
+        'rate_per_minute': rate_per_minute,
         'patient_location': patient_location,
         'practitioner_name': practitioner_name,
         'practitioner_role': practitioner_role
@@ -279,11 +280,43 @@ def patient_invoices(request):
         
     return render(request, "patients/patient_invoices.html", {'user_invoices': user_invoices})
 
+def is_admin(user):
+    return user.is_authenticated and user.role == 'admin'
+
 @login_required
-def history(request):
+@user_passes_test(is_admin)
+def admin_invoices(request):
+    all_invoices = Invoice.objects.all().order_by('-date_issued')
+    for invoice in all_invoices:
+        start_time = invoice.appointment.appointment_time
+        end_time = invoice.appointment.appointment_end_time
+        start_datetime = datetime.datetime.combine(datetime.date.today(), start_time)
+        end_datetime = datetime.datetime.combine(datetime.date.today(), end_time)
+        duration_timedelta = end_datetime - start_datetime
+        duration_minutes = int(duration_timedelta.total_seconds() / 60)
+        invoice.duration = duration_minutes
+
+        if invoice.appointment.doctor.role == "doctor":
+            rate_per_minute = 5
+        elif invoice.appointment.doctor.role == "nurse":
+            rate_per_minute = 3
+        
+        invoice.amount = f"£{duration_minutes * rate_per_minute:.2f}"
+        
+    return render(request, "patients/admin_invoices.html", {'all_invoices': all_invoices})
+
+@login_required
+def visit_history(request):
     if not request.user.groups.filter(name='Patient').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/history.html")
+
+    appointments = Appointment.objects.filter(
+        patient=request.user,
+        appointment_status="Completed"
+    ).order_by('-date')
+
+    return render(request, "patients/visit_history.html", {'appointments': appointments})
+
 
 @login_required
 def payments(request):

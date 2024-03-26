@@ -190,27 +190,27 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 }
 
 .invoices-main{
-    padding: 20px;
+    padding: 0px;
     text-align: center;
 }
 
 .invoices-body{
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding-top: 20px;
 }
 
 .invoices-body table{
     border: 2px solid #0E1B2B;
     overflow-y: scroll;
-    height: 300px;
+    height: 500px;
     display: block;
 }
 
 .invoices-body th, .invoices-body td{
     padding: 10px;
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 35px;
+    padding-right: 35px;
 }
 
 .invoices-body thead{
@@ -242,15 +242,34 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     color: #0E1B2B;
 }
 
-@media print {
-    body {
-        /* Print-specific styles here */
-    }
-    .invoice-print {
-        /* Styles for the invoice printout */
-    }
-    /* Hide elements not needed for printing */
-    .navbar, .footer, button {
-        display: none;
-    }
+.visit-history-main{
+    padding: 0px;
+    text-align: center;
+}
+
+.visit-history-body{
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.visit-history-body table{
+    border: 2px solid #0E1B2B;
+    overflow-y: scroll;
+    height: 500px;
+    display: block;
+}
+
+.visit-history-body th, .visit-history-body td{
+    padding: 10px;
+    padding-left: 35px;
+    padding-right: 35px;
+}
+
+.visit-history-body thead{
+    background-color: #0E1B2B;
+}
+
+.visit-history-body tbody{
+    background-color: #19314E;
 }

@@ -29,12 +29,12 @@ urlpatterns = [
     path("book_appointment/", views.book_appointment, name="book_appointment"),
     path("request_reissue/", views.request_reissue, name="request_reissue"),
     path("patient_prescriptions/", views.patient_prescriptions, name="patient_prescriptions"),
-    path("history/", views.history, name="history"),
+
+    path("visit_history/", views.visit_history, name="visit_history"),
 
     path('invoices/', views.patient_invoices, name='patient_invoices'),
     path('print_invoice/<int:invoice_id>/', views.print_invoice, name='print_invoice'),
-
-    path("payments/", views.payments, name="payments"),
+    path('admin_invoices/', views.admin_invoices, name='admin_invoices'),
 
     path("settings/", views.settings, name="settings"),
     path("logout/", views.logout, name="logout")

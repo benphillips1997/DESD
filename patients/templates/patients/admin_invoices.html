@@ -1,12 +1,10 @@
 {% extends "patients/dashboard_layout.html" %}
-{% block title %}
-Invoices
-{% endblock %}
+{% block title %}Invoices{% endblock %}
 {% block content %}
 <div class="invoices-main">
-    <h2>Your Invoices</h2>
+    <h2>All Invoices</h2>
     <div class="invoices-body">
-        <table>
+        <table class="invoices-table">
             <thead>
                 <tr>
                     <th>Invoice ID</th>
@@ -14,23 +12,23 @@ Invoices
                     <th>Date Issued</th>
                     <th>Due Date</th>
                     <th>Duration</th>
-                    <th>Practitioner</th>
                     <th>Amount</th>
                     <th>Status</th>
+                    <th>Patient</th>
                     <th>Details</th>
                 </tr>
             </thead>
             <tbody>
-                {% for invoice in user_invoices %}
+                {% for invoice in all_invoices %}
                 <tr>
                     <td>{{ invoice.invoiceID }}</td>
                     <td>Appointment</td>
                     <td>{{ invoice.date_issued|date:"d/m/Y" }}</td>
                     <td>{{ invoice.due_date|date:"d/m/Y" }}</td>
                     <td>{{ invoice.duration }} minutes</td>
-                    <td>{{ invoice.appointment.doctor.name }}</td>
-                    <td>£{{ invoice.amount }}</td>
+                    <td>{{ invoice.amount }}</td>
                     <td>{{ invoice.status }}</td>
+                    <td>{{ invoice.appointment.patient.name }}</td>
                     <td>
                         <button onclick="printInvoice('{{ invoice.invoiceID }}')" class="invoices-button">Print Invoice</button>
                     </td>
@@ -46,9 +44,9 @@ Invoices
 </div>
 
 <script>
-    function printInvoice(invoiceId) {
-        const url = `/print_invoice/${invoiceId}/`;
-        window.open(url, '_blank');
-    }
+function printInvoice(invoiceId) {
+    const url = `/print_invoice/${invoiceId}/`;
+    window.open(url, '_blank');
+}
 </script>
 {% endblock %}

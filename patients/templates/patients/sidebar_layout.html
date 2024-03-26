@@ -16,6 +16,7 @@
         <li><a href="{% url 'registrations' %}">Registrations</a></li>
         <li><a href="{% url 'records' %}">Records</a></li>
         <li><a href="{% url 'reports' %}">Reports</a></li>
+        <li><a href="{% url 'admin_invoices' %}">Invoices</a></li>
         <li><a href="{% url 'operations' %}">Operations</a></li>
         {% endif %}
         {% if user.role == "doctor" or user.role == "nurse" %}
@@ -27,9 +28,8 @@
         {% endif %}
         {% if user.role == "patient" %}
         <li><a href="{% url 'patient_prescriptions' %}">Prescriptions</a></li>
-        <li><a href="{% url 'history' %}">Visit history</a></li>
+        <li><a href="{% url 'visit_history' %}">Visit history</a></li>
         <li><a href="{% url 'patient_invoices' %}">Invoices</a></li>
-        <li><a href="{% url 'payments' %}">Payments</a></li>
         {% endif %}
         <li><a href="{% url 'settings' %}">Settings</a></li>
         <li><a href="{% url 'logout' %}">Logout</a></li>
