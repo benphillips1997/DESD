@@ -95,10 +95,8 @@ def check_appointment_status():
     all_appointments = Appointment.objects.all()
     for appointment in all_appointments:
         if appointment.appointment_status == "Scheduled":
-            now = datetime.datetime.now()
-            now_floored = datetime.datetime.now() - datetime.timedelta(minutes=now.minute % 10, seconds=now.second, microseconds=now.microsecond)
-            now_ceiled = now_floored + datetime.timedelta(minutes=10)
-            if (appointment.date < datetime.date.today()) or (appointment.date <= datetime.date.today() and appointment.appointment_time < now_ceiled.time()):
+            now = datetime.datetime.now()            
+            if (appointment.date < datetime.date.today()) or (appointment.date <= datetime.date.today() and appointment.appointment_time < now.time()):
                 appointment.appointment_status = "Completed"
                 appointment.save()
 
@@ -192,32 +190,40 @@ def current_appointment(request):
     start_time = now - datetime.timedelta(minutes=now.minute % 10, seconds=now.second, microseconds=now.microsecond)
     end_time = start_time + datetime.timedelta(minutes=10)
     current_appointment = Appointment.objects.filter(doctor=request.user.userID).filter(date=datetime.date.today()).filter(appointment_time__range=(start_time.time(), end_time.time())).first()
+    message = ""
     if request.method == "POST":
         form = CreatePrescriptionForm(request.POST)
         if form.is_valid():
-            patientID = form.cleaned_data["patientID"]
             appointmentID = form.cleaned_data["appointmentID"]
             title = form.cleaned_data["title"]
-            description = form.cleaned_data["description"]
-
-            patient = User.objects.get(userID=patientID)
+            description = form.cleaned_data["description"] 
 
             appointment = Appointment.objects.get(appointmentID=appointmentID)
-            appointment.save()
+
+            patient = appointment.patient
 
             new_prescription = Prescription.objects.create(patient=patient, appointment=appointment, title=title, description=description, status="Active")
             new_prescription.save()
 
-            return redirect("dashboard")
+            message = "Added prescription"
     else:
-        form = CreatePrescriptionForm()
-    return render(request, "patients/current_appointment.html", {"form": form, "current_appointment": current_appointment})
+        if current_appointment:
+            form = CreatePrescriptionForm(current_appointmentID=current_appointment.appointmentID)
+        else:
+            form = CreatePrescriptionForm()
+    return render(request, "patients/current_appointment.html", {"form": form, "current_appointment": current_appointment, "message": message})
 
 @login_required
 def recent_patients(request):
     if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
         return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/recent_patients.html")
+    check_appointment_status()
+    # retrive all appointments in the last year
+    all_appointments = Appointment.objects.filter(doctor=request.user.userID)
+    today = datetime.date.today()
+    last_year = today - datetime.timedelta(weeks=52)
+    recent_appointments = all_appointments.filter(date__range=(last_year, today), appointment_status="Completed").order_by("date")
+    return render(request, "patients/recent_patients.html", {"appointments": recent_appointments})
 
 @login_required
 def patient_records(request):
@@ -383,7 +389,7 @@ def book_appointment(request):
             desired_time = form.cleaned_data['appointment_time']
             desired_date = form.cleaned_data['date']
             doctor = form.cleaned_data['doctor']
-            duration = datetime.timedelta(minutes=30)
+            duration = datetime.timedelta(minutes=10)
 
             # Check for overlapping appointments
             if Appointment.objects.filter(Q(date=desired_date) & Q(appointment_time=desired_time), doctor=doctor).exists():

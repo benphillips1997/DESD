@@ -273,3 +273,10 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 .visit-history-body tbody{
     background-color: #19314E;
 }
+
+.current-appointment-body{
+    display: flex;
+    text-align: center;
+    padding: 10px;
+    vertical-align: middle;
+}

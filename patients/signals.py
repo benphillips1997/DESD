@@ -22,21 +22,21 @@ def create_users(sender, **kwargs):
     try:
         superuser = User.objects.get(userID="super1")
     except User.DoesNotExist:
-        superuser = User.objects.create_superuser(userID="super1", email="superuser@smartcare.com", password="pw1", role="admin", name=f"Super man", is_active=True)
+        superuser = User.objects.create_superuser(userID="super1", email="superuser@smartcare.com", password="pw1", role="admin", name=f"Super man", is_active=True, location="Bristol")
         superuser.save()
 
     # create admin
     try:
         admin = User.objects.get(userID="admin1")
     except User.DoesNotExist:
-        admin = User.objects.create_user(userID="admin1", email="admin@smartcare.com", password="pw1", role="admin", name=f"Ad Min", is_active=True)
+        admin = User.objects.create_user(userID="admin1", email="admin@smartcare.com", password="pw1", role="admin", name=f"Ad Min", is_active=True, location="Bristol")
         admin.save()
 
     # create patient
     try:
         patient = User.objects.get(userID="patient1")
     except User.DoesNotExist:
-        patient = User.objects.create_user(userID="patient1", email="patient@smartcare.com", password="pw1", role="patient", name=f"Pat Ient", is_active=True)
+        patient = User.objects.create_user(userID="patient1", email="patient@smartcare.com", password="pw1", role="patient", name=f"Pat Ient", is_active=True, location="Bristol")
         patient.save()
 
     # create doctor
@@ -44,14 +44,14 @@ def create_users(sender, **kwargs):
     try:
         doctor = User.objects.get(userID="doctor1")
     except User.DoesNotExist:
-        doctor = User.objects.create_user(userID="doctor1", email="doctor@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=True)
+        doctor = User.objects.create_user(userID="doctor1", email="doctor@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=True, location="Bristol")
         doctor.save()
 
     # this one needs verifying
     try:
         doctor2 = User.objects.get(userID="doctor2")
     except User.DoesNotExist:
-        doctor2 = User.objects.create_user(userID="doctor2", email="doctor2@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=False)
+        doctor2 = User.objects.create_user(userID="doctor2", email="doctor2@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=False, location="Bristol")
         doctor2.save()
 
     # create nurse
@@ -59,12 +59,12 @@ def create_users(sender, **kwargs):
     try:
         nurse = User.objects.get(userID="nurse1")
     except User.DoesNotExist:
-        nurse = User.objects.create_user(userID="nurse1", email="nurse@smartcare.com", password="pw1", role="nurse", name=f"Nur Se", is_active=True)
+        nurse = User.objects.create_user(userID="nurse1", email="nurse@smartcare.com", password="pw1", role="nurse", name=f"Nur Se", is_active=True, location="Bristol")
         nurse.save()
 
     # this one needs verifying
     try:
         nurse2 = User.objects.get(userID="nurse2")
     except User.DoesNotExist:
-        nurse2 = User.objects.create_user(userID="nurse2", email="nurse2@smartcare.com", password="pw1", role="nurse", name=f"Nur Se", is_active=False)
+        nurse2 = User.objects.create_user(userID="nurse2", email="nurse2@smartcare.com", password="pw1", role="nurse", name=f"Nur Se", is_active=False, location="Bristol")
         nurse2.save()

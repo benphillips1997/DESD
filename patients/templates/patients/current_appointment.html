@@ -3,36 +3,28 @@
 Appointment
 {% endblock %}
 {% block content %}
+{% if current_appointment %}
+<div class="dashboard-summary">
+    <h2>Current appointment</h2>
+    {% else %}
+    <h2>No current appointments</h2>
+    {% endif %}
+</div>
 <div class="dashboard-summary">
     {% if current_appointment %}
-    <h2>Current appointment</h2>
-        <h4>{{ current_appointment.patient.name }}</h4>
+    <div>
+
+        <h3>Patient name: {{ current_appointment.patient.name }}</h3>
         <br>
+    </div>
     <div class="dashboard-summary-block">
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit"></button>
+            <button type="submit">Add prescription</button>
         </form>
+        <h4>{{ message }}</h4>
     </div>
-    {% else %}
-    <h2>No current appointments</h2>
     {% endif %}
-    <button onclick="fillHiddenFields()"></button>
 </div>
-{% block javascript %}
-<script>
-    function fillHiddenFields()
-    {
-        alert("open");
-        var patientID_field = document.getElementsByName("patientID");
-        var appointmentID_field = document.getElementsByName("appointmentID");
-        alert(patientID_field.value);
-
-        patientID_field.value = "{{ currentappointment.patient.userID }}";
-        appointmentID_field.value = "{{ currentappointment.appointmentID }}";
-        alert(patientID_field.value);
-    }
-</script>
-{% endblock javascript %}
 {% endblock %}
