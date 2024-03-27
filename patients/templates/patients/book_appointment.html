@@ -31,14 +31,11 @@
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'timeGridWeek',
-            slotDuration: '00:30:00',
-            // Additional FullCalendar options
+            slotDuration: '00:10:00',
             events: '/path-to-your-events-view/',
             dateClick: function(info) {
-                // Handle date click
             },
             eventClick: function(info) {
-                // Handle event click
             }
         });
         calendar.render();

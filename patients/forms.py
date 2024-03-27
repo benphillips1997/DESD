@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models import Q
+from datetime import datetime, time, timedelta
 
 User = get_user_model()
 
@@ -59,14 +60,32 @@ class InvoiceForm(forms.ModelForm):
 
 class BookAppointmentForm(forms.ModelForm):
     doctor = forms.ModelChoiceField(queryset=User.objects.filter(role="doctor").order_by('name'), empty_label=None)
+    patient_type = forms.ChoiceField(choices=[('NHS', 'NHS'), ('Private', 'Private')], label='Patient Type')
 
     class Meta:
         model = Appointment
-        fields = ['date', 'appointment_time', 'doctor']
+        fields = ['date', 'appointment_time', 'doctor', 'patient_type']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
-            'appointment_time': forms.DateTimeInput(attrs={'type': 'time'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(BookAppointmentForm, self).__init__(*args, **kwargs)
+        time_slots = self.generate_time_slots(9, 17, 10)
+        self.fields['appointment_time'] = forms.ChoiceField(choices=time_slots, label='Appointment Time')
+
+    @staticmethod
+    def generate_time_slots(start_hour, end_hour, interval_minutes):
+        start_time = time(hour=start_hour)
+        end_time = time(hour=end_hour)
+        current_time = datetime.combine(datetime.today(), start_time)
+        time_slots = []
+
+        while current_time.time() < end_time:
+            time_slots.append((current_time.strftime('%H:%M'), current_time.strftime('%H:%M')))
+            current_time += timedelta(minutes=interval_minutes)
+
+        return time_slots
     def clean_date(self):
         desired_date = self.cleaned_data.get('date')
         if desired_date < timezone.localdate():

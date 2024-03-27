@@ -407,6 +407,7 @@ def book_appointment(request):
                 date=desired_date,
                 appointment_time=desired_time,
                 appointment_end_time=end_time,
+                patient_type=form.cleaned_data['patient_type'],
                 appointment_status='Scheduled'
             )
             appointment.save()
