@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.db.models import Q
 from django.contrib import messages
-from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm
+from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, UserUpdateForm, PasswordChangeForm
 from .models import Prescription, Invoice, Appointment
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
@@ -372,8 +372,38 @@ def operations(request):
     return render(request, "patients/operations.html")
 
 @login_required
-def settings(request):
-    return render(request, "patients/settings.html")
+def patient_settings(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = PasswordChangeForm(request.user, request.POST)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, 'Your settings were successfully updated.')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = PasswordChangeForm(user=request.user)
+
+    context = {'u_form': u_form, 'p_form': p_form}
+    return render(request, "patients/patient_settings.html", context)
+
+@login_required
+def password_change(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your password has been successfully updated.')
+            return redirect('password_change_done')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'myapp/my_custom_password_change_form.html', {'form': form})
+
+@login_required
+def delete_account(request):
+    pass
 
 @login_required
 def book_appointment(request):

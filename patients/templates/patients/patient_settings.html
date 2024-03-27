@@ -1,0 +1,65 @@
+{% extends "patients/dashboard_layout.html" %}
+{% block title %}
+Settings
+{% endblock %}
+{% block content %}
+<div class="settings-main">
+    {% if form.errors %}
+        <div class="form-errors">Please correct the errors below.</div>
+    {% endif %}
+
+    <!-- Left box -->
+    <div class="settings-form">
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div>
+                {% for field in u_form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}<br>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="form-actions">
+                <button type="submit" name="action" value="update_settings" class="settings-button">Update Settings</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Right box -->
+    <div class="settings-form">
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div>
+                {% for field in p_form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}<br>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="form-actions">
+                <button type="submit" name="action" value="change_password" class="settings-button">Change Password</button>
+            </div>
+        </form>
+        <form method="POST" action="{% url 'delete_account' %}">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="settings-button">Delete My Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

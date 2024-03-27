@@ -36,6 +36,8 @@ urlpatterns = [
     path('print_invoice/<int:invoice_id>/', views.print_invoice, name='print_invoice'),
     path('admin_invoices/', views.admin_invoices, name='admin_invoices'),
 
-    path("settings/", views.settings, name="settings"),
+    path("settings/", views.patient_settings, name="patient_settings"),
+    path('delete_account/', views.delete_account, name='delete_account'),
+    
     path("logout/", views.logout, name="logout")
 ]

@@ -85,6 +85,7 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     border-radius: 15px;
     vertical-align: middle;
     width: 20%;
+    box-shadow: 0 4px 8px rgba(0,0,0,1);
 }
 
 .upcoming-appointments{
@@ -272,4 +273,102 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .visit-history-body tbody{
     background-color: #19314E;
+}
+
+.settings-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 400px; 
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,1);
+    background-color: #0E1B2B;
+    border-radius: 15px;
+    margin: 10px;
+}
+
+input[type="email"],
+input[type="password"] {
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #19314E;
+    color: #D9D9D9;
+    font-size: 18px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+input{
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #19314E;
+    color: #D9D9D9;
+    font-size: 18px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+::placeholder {
+    color: #D9D9D9;
+    opacity: 0;
+}
+
+:-ms-input-placeholder { 
+    color: #D9D9D9;
+}
+
+::-ms-input-placeholder {
+    color: #D9D9D9;
+}
+
+.settings-form button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    color: #0E1B2B;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.settings-form button:hover {
+    background-color: #19314E;
+    color: #FEFEFD;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.settings-form label {
+    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.alert.alert-danger {
+    color: #FFBA1E;
+    font-family: 'Poppins', sans-serif;
 }

@@ -4,8 +4,12 @@ from django.contrib.admin import widgets
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.contrib.auth import password_validation
 from django.utils import timezone
 from django.db.models import Q
+from django import forms
+from django.contrib.auth.forms import UserChangeForm, SetPasswordForm
+from .models import User
 
 User = get_user_model()
 
@@ -82,5 +86,48 @@ class BookAppointmentForm(forms.ModelForm):
 
         return desired_time
 
+class UserUpdateForm(UserChangeForm):
+    date_of_birth = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'Date of Birth'}))
+    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'placeholder': 'Phone Number'}))
+    nhs_number = forms.CharField(max_length=10, required=False, widget=forms.TextInput(attrs={'placeholder': 'NHS Number'}))
+    location = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'placeholder': 'Location'}))
+        
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update({'placeholder': 'Email Address'})
+        self.fields['name'].widget.attrs.update({'placeholder': 'Full Name'})
+        if 'password' in self.fields:
+            del self.fields['password']
 
-    
+    class Meta:
+        model = User
+        fields = ['email', 'name', 'date_of_birth', 'phone_number', 'nhs_number', 'location']
+        
+
+class PasswordChangeForm(forms.Form):
+    old_password = forms.CharField(label='Current Password', widget=forms.PasswordInput)
+    new_password1 = forms.CharField(label='New Password', widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label='New Password Confirmation', widget=forms.PasswordInput)
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super(PasswordChangeForm, self).__init__(*args, **kwargs)
+
+    def clean_old_password(self):
+        old_password = self.cleaned_data.get('old_password')
+        if not self.user.check_password(old_password):
+            raise ValidationError('Your current password was entered incorrectly. Please enter it again.')
+        return old_password
+
+    def clean_new_password2(self):
+        new_password1 = self.cleaned_data.get('new_password1')
+        new_password2 = self.cleaned_data.get('new_password2')
+        if new_password1 and new_password2 and new_password1 != new_password2:
+            raise ValidationError('The two new password fields must match.')
+        return new_password2
+
+    def save(self, commit=True):
+        password = self.cleaned_data["new_password1"]
+        self.user.set_password(password)
+        if commit:
+            self.user.save()

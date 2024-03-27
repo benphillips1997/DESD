@@ -188,3 +188,88 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 .prescriptions-body tbody{
     background-color: #19314E;
 }
+
+.invoices-main{
+    padding: 0px;
+    text-align: center;
+}
+
+.invoices-body{
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.invoices-body table{
+    border: 2px solid #0E1B2B;
+    overflow-y: scroll;
+    height: 500px;
+    display: block;
+}
+
+.invoices-body th, .invoices-body td{
+    padding: 10px;
+    padding-left: 35px;
+    padding-right: 35px;
+}
+
+.invoices-body thead{
+    background-color: #0E1B2B;
+}
+
+.invoices-body tbody{
+    background-color: #19314E;
+}
+
+.invoices-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0E1B2B;
+    color: #FEFEFD;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.invoices-button:hover {
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+}
+
+.visit-history-main{
+    padding: 0px;
+    text-align: center;
+}
+
+.visit-history-body{
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.visit-history-body table{
+    border: 2px solid #0E1B2B;
+    overflow-y: scroll;
+    height: 500px;
+    display: block;
+}
+
+.visit-history-body th, .visit-history-body td{
+    padding: 10px;
+    padding-left: 35px;
+    padding-right: 35px;
+}
+
+.visit-history-body thead{
+    background-color: #0E1B2B;
+}
+
+.visit-history-body tbody{
+    background-color: #19314E;
+}
