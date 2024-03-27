@@ -3,5 +3,29 @@
 Recent patients
 {% endblock %}
 {% block content %}
-
+<div class="upcoming-appointments">
+    <h2>Weekly schedule</h2>
+    <div class="upcoming-appointments-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr>
+                    <td>{{ appointment.patient.name }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.appointment_time }}</td>
+                    <td>{{ appointment.appointment_status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

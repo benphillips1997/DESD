@@ -7,9 +7,13 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import password_validation
 from django.utils import timezone
 from django.db.models import Q
+<<<<<<< HEAD
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, SetPasswordForm
 from .models import User
+=======
+from datetime import datetime, time, timedelta
+>>>>>>> 064db8fa079f4e9ffb57f80f46bf7014abdc7075
 
 User = get_user_model()
 
@@ -45,32 +49,50 @@ class LoginForm(forms.Form):
 class CreatePrescriptionForm(forms.Form):
     title = forms.CharField(label='')
     description = forms.CharField(label='')
-
-    patientID = forms.CharField(widget=forms.HiddenInput())
     appointmentID = forms.CharField(widget=forms.HiddenInput())
 
-    
-
     def __init__(self, *args, **kwargs):
+        appointmentID = kwargs.pop("current_appointmentID", None)
         super(CreatePrescriptionForm, self).__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'placeholder': 'Title'})
         self.fields['description'].widget.attrs.update({'placeholder': 'Description'})
+        self.fields['appointmentID'].initial = appointmentID
+        
 
 class InvoiceForm(forms.ModelForm):
     class Meta:
         model = Invoice
         fields = '__all__'
 
+
 class BookAppointmentForm(forms.ModelForm):
     doctor = forms.ModelChoiceField(queryset=User.objects.filter(role="doctor").order_by('name'), empty_label=None)
+    patient_type = forms.ChoiceField(choices=[('NHS', 'NHS'), ('Private', 'Private')], label='Patient Type')
 
     class Meta:
         model = Appointment
-        fields = ['date', 'appointment_time', 'doctor']
+        fields = ['date', 'appointment_time', 'doctor', 'patient_type']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
-            'appointment_time': forms.DateTimeInput(attrs={'type': 'time'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(BookAppointmentForm, self).__init__(*args, **kwargs)
+        time_slots = self.generate_time_slots(9, 17, 10)
+        self.fields['appointment_time'] = forms.ChoiceField(choices=time_slots, label='Appointment Time')
+
+    @staticmethod
+    def generate_time_slots(start_hour, end_hour, interval_minutes):
+        start_time = time(hour=start_hour)
+        end_time = time(hour=end_hour)
+        current_time = datetime.combine(datetime.today(), start_time)
+        time_slots = []
+
+        while current_time.time() < end_time:
+            time_slots.append((current_time.strftime('%H:%M'), current_time.strftime('%H:%M')))
+            current_time += timedelta(minutes=interval_minutes)
+
+        return time_slots
     def clean_date(self):
         desired_date = self.cleaned_data.get('date')
         if desired_date < timezone.localdate():

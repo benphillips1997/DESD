@@ -51,6 +51,11 @@ class Appointment(models.Model):
     date = models.DateField()
     appointment_time = models.TimeField()
     appointment_end_time = models.TimeField()
+    PATIENT_TYPE_CHOICES = [
+        ('NHS', 'NHS'),
+        ('Private', 'Private'),
+    ]
+    patient_type = models.CharField(max_length=7, choices=PATIENT_TYPE_CHOICES, default='NHS')
     appointment_status = models.CharField(max_length=20, choices=[("Scheduled", "Scheduled"), ("Completed", "Completed"), ("Cancelled", "Cancelled")])
 
     def save(self, *args, **kwargs):
