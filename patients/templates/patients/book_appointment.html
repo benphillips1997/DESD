@@ -1,15 +1,28 @@
 {% extends "patients/dashboard_layout.html" %}
 {% block title %}Book Appointment{% endblock %}
 {% block content %}
-<div id="calendar"></div> <!-- Calendar container -->
-
-<form method="post" action="{% url 'book_appointment' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Book Appointment">
-</form>
-<p>{{ message }}</p>
-
+<div class="visit-history-main">
+    <h2>Book Appointment</h2>
+    <div class="visit-history-body">
+        <form method="post" action="{% url 'book_appointment' %}">
+            {% csrf_token %}
+            <table>
+                <tbody>
+                    <tr>
+                        {% for field in form %}
+                        <td>
+                            {{ field.errors }}
+                            {{ field.label_tag }} {{ field }}
+                        </td>
+                        {% endfor %}
+                        <td><input class="invoices-button" type="submit" value="Book Appointment"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>{{ message }}</p>
+        </form>
+    </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js"></script>

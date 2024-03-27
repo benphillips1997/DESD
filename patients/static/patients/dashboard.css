@@ -100,7 +100,7 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .upcoming-appointments-body table{
     border: 2px solid #0E1B2B;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 300px;
     display: block;
 }
@@ -134,7 +134,7 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .registrations-body table{
     border: 2px solid #0E1B2B;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 300px;
     display: block;
 }
@@ -168,7 +168,7 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .prescriptions-body table{
     border: 2px solid #0E1B2B;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 300px;
     display: block;
 }
@@ -202,7 +202,7 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .invoices-body table{
     border: 2px solid #0E1B2B;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 500px;
     display: block;
 }
@@ -255,7 +255,7 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .visit-history-body table{
     border: 2px solid #0E1B2B;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 500px;
     display: block;
 }
