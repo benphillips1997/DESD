@@ -280,3 +280,61 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     padding: 10px;
     vertical-align: middle;
 }
+.records-main {
+    padding: 20px;
+    text-align: center;
+}
+
+.records-body {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.records-body table {
+    border: 2px solid #0E1B2B;
+    overflow-y: auto;
+    height: 300px;
+    display: block;
+}
+
+.records-body th, .records-body td {
+    padding: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.records-body thead {
+    background-color: #0E1B2B;
+}
+
+.records-body tbody {
+    background-color: #19314E;
+}
+
+
+.records-body .search-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.records-body .search-form input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px 0 0 20px;
+    flex-grow: 1;
+}
+
+.records-body .search-form button {
+    padding: 10px 20px;
+    background-color: #0E1B2B;
+    color: white;
+    border: none;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+}
+
+.records-body .search-form button i {
+    font-size: 1rem;
+}

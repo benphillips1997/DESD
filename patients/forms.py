@@ -102,4 +102,5 @@ class BookAppointmentForm(forms.ModelForm):
         return desired_time
 
 
-    
+class PatientSearchForm(forms.Form):
+    query = forms.CharField(label='Search by Patient Name', required=False, widget=forms.TextInput(attrs={'placeholder': 'Patient Name'}))

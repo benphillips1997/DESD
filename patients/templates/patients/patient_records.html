@@ -1,8 +1,32 @@
 {% extends "patients/dashboard_layout.html" %}
-{% block title %}
-Patient records
-{% endblock %}
+
 {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
+<div class="records-main">
+    <h2>Search Patient Records</h2>
+    <form method="get" class="search-form">
+        <input type="text" name="query" placeholder="Search patients..." value="{{ request.GET.query }}" class="search-input">
+        <button type="submit" class="search-button">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+</div>
 
+{% if patients %}
+<div class="records-body">
+    <h3>Results:</h3>
+    <ul>
+        {% for patient in patients %}
+        <li>{{ patient.name }} - <a href="{% url 'patient_detail' patient.id %}">View Details</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% else %}
+    {% if request.GET.query %}
+    <div class="records-body">
+        <p>No patients found matching the search criteria.</p>
+    </div>
+    {% endif %}
+{% endif %}
 {% endblock %}

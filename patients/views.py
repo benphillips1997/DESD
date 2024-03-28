@@ -8,8 +8,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.db.models import Q
 from django.contrib import messages
-from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm
-from .models import Prescription, Invoice, Appointment
+from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, PatientSearchForm
+from .models import Prescription, Invoice, Appointment, Patient
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
 from django.utils import timezone
@@ -359,11 +359,25 @@ def verify_user(request):
     else:
         return HttpResponseForbidden("You cannot access this.")
 
+def is_staff_member(user):
+    return user.groups.filter(name__in=['Doctor', 'Nurse', 'Admin']).exists() or user.is_staff
+
 @login_required
+@user_passes_test(is_staff_member, login_url='/login/', redirect_field_name=None)
 def records(request):
-    if not request.user.groups.filter(name='Admin').exists():
-        return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/records.html")
+    search_form = PatientSearchForm(request.GET or None)  # Initialize the form with GET data if present
+    patients = None
+
+    if 'query' in request.GET and search_form.is_valid():  # Check if 'query' parameter exists and form is valid
+        query = search_form.cleaned_data['query']
+        patients = Patient.objects.filter(name__icontains=query)
+        if not patients:
+            messages.info(request, "No patients found matching the search criteria.")
+
+    return render(request, 'patients/patient_records.html', {
+        'search_form': search_form,
+        'patients': patients
+    })
 
 @login_required
 def reports(request):

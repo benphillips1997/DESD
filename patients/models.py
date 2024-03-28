@@ -83,3 +83,10 @@ class Invoice(models.Model):
     appointment = models.ForeignKey(Appointment, on_delete=models.RESTRICT)
     amount = models.FloatField()
     status = models.CharField(max_length=10, choices=[("Unpaid", "Unpaid"), ("Paid", "Paid")])
+
+class Patient(models.Model):
+    name = models.CharField(max_length=100)
+    # Add other fields relevant to your patient records
+
+    def __str__(self):
+        return self.name
