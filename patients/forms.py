@@ -7,13 +7,10 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import password_validation
 from django.utils import timezone
 from django.db.models import Q
-<<<<<<< HEAD
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, SetPasswordForm
 from .models import User
-=======
 from datetime import datetime, time, timedelta
->>>>>>> 064db8fa079f4e9ffb57f80f46bf7014abdc7075
 
 User = get_user_model()
 
