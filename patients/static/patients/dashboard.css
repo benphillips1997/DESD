@@ -275,7 +275,6 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     background-color: #19314E;
 }
 
-<<<<<<< HEAD
 .settings-main {
     display: flex;
     justify-content: center;
@@ -372,11 +371,4 @@ input{
 .alert.alert-danger {
     color: #FFBA1E;
     font-family: 'Poppins', sans-serif;
-=======
-.current-appointment-body{
-    display: flex;
-    text-align: center;
-    padding: 10px;
-    vertical-align: middle;
->>>>>>> 064db8fa079f4e9ffb57f80f46bf7014abdc7075
 }

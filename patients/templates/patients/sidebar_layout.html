@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <title>{% block title %}{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'patients/dashboard.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/dashboard.css' %}"/>
 </head>
 
 <body>
@@ -22,7 +22,7 @@
         {% if user.role == "doctor" or user.role == "nurse" %}
         <li><a href="{% url 'current_appointment' %}">Current appointment</a></li>
         <li><a href="{% url 'weekly_schedule' %}">Weekly schedule</a></li>
-        <li><a href="{% url 'recent_patients' %}">Recent patients</a></li>
+        <li><a href="{% url 'recent_patients' %}">Recent appointments</a></li>
         <li><a href="{% url 'doctor_prescriptions' %}">Prescription requests</a></li>
         <li><a href="{% url 'patient_records' %}">Patient records</a></li>
         {% endif %}

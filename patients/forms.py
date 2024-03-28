@@ -44,8 +44,8 @@ class LoginForm(forms.Form):
 
 
 class CreatePrescriptionForm(forms.Form):
-    title = forms.CharField(label='')
-    description = forms.CharField(label='')
+    title = forms.CharField(label='Title')
+    description = forms.CharField(label='Description')
     appointmentID = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
@@ -63,7 +63,7 @@ class InvoiceForm(forms.ModelForm):
 
 
 class BookAppointmentForm(forms.ModelForm):
-    doctor = forms.ModelChoiceField(queryset=User.objects.filter(role="doctor").order_by('name'), empty_label=None)
+    doctor = forms.ModelChoiceField(queryset=User.objects.filter(Q(role="doctor") | Q(role="nurse")).filter(is_active=True).order_by('name'), empty_label=None)
     patient_type = forms.ChoiceField(choices=[('NHS', 'NHS'), ('Private', 'Private')], label='Patient Type')
 
     class Meta:
@@ -90,6 +90,7 @@ class BookAppointmentForm(forms.ModelForm):
             current_time += timedelta(minutes=interval_minutes)
 
         return time_slots
+        
     def clean_date(self):
         desired_date = self.cleaned_data.get('date')
         if desired_date < timezone.localdate():
@@ -99,6 +100,8 @@ class BookAppointmentForm(forms.ModelForm):
     def clean_appointment_time(self):
         desired_time = self.cleaned_data.get('appointment_time')
         desired_date = self.cleaned_data.get('date')
+
+        desired_time = datetime.strptime(desired_time, '%H:%M').time()
         
         if desired_date == timezone.localdate() and desired_time < timezone.localtime().time():
             raise ValidationError("You cannot book this appointment. Please select another time.")

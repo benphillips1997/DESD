@@ -95,8 +95,8 @@ def check_appointment_status():
     all_appointments = Appointment.objects.all()
     for appointment in all_appointments:
         if appointment.appointment_status == "Scheduled":
-            now = datetime.datetime.now()            
-            if (appointment.date < datetime.date.today()) or (appointment.date <= datetime.date.today() and appointment.appointment_time < now.time()):
+            now = datetime.datetime.now()
+            if (appointment.date < datetime.date.today()) or (appointment.date <= datetime.date.today() and appointment.appointment_end_time < now.time()):
                 appointment.appointment_status = "Completed"
                 appointment.save()
 
@@ -135,7 +135,9 @@ def weekly_schedule(request):
     all_appointments = Appointment.objects.filter(doctor=request.user.userID)
     today = datetime.date.today()
     next_week = today + datetime.timedelta(days=7)
-    weekly_appointments = all_appointments.filter(date__range=(today, next_week)).order_by("date")
+    
+    weekly_appointments = all_appointments.filter(date__range=(today, next_week)).order_by("date", "appointment_time")
+    
     return render(request, "patients/weekly_schedule.html", {"appointments": weekly_appointments})
 
 @login_required
@@ -188,8 +190,7 @@ def current_appointment(request):
     now = datetime.datetime.now()
     # retrieve appointment that is within the current 10 minuter time slot
     start_time = now - datetime.timedelta(minutes=now.minute % 10, seconds=now.second, microseconds=now.microsecond)
-    end_time = start_time + datetime.timedelta(minutes=10)
-    current_appointment = Appointment.objects.filter(doctor=request.user.userID).filter(date=datetime.date.today()).filter(appointment_time__range=(start_time.time(), end_time.time())).first()
+    current_appointment = Appointment.objects.filter(doctor=request.user.userID).filter(date=datetime.date.today()).filter(appointment_time=(start_time.time())).first()
     message = ""
     if request.method == "POST":
         form = CreatePrescriptionForm(request.POST)
@@ -221,9 +222,28 @@ def recent_patients(request):
     # retrive all appointments in the last year
     all_appointments = Appointment.objects.filter(doctor=request.user.userID)
     today = datetime.date.today()
-    last_year = today - datetime.timedelta(weeks=52)
-    recent_appointments = all_appointments.filter(date__range=(last_year, today), appointment_status="Completed").order_by("date")
-    return render(request, "patients/recent_patients.html", {"appointments": recent_appointments})
+    time_before = today - datetime.timedelta(weeks=4)
+    recent_appointments = all_appointments.filter(date__range=(time_before, today), appointment_status="Completed").order_by("date")
+    message = ""
+    if request.method == "POST":
+        form = CreatePrescriptionForm(request.POST, auto_id=True)
+        if form.is_valid():
+            appointmentID = form.cleaned_data["appointmentID"]
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["description"] 
+
+            appointment = Appointment.objects.get(appointmentID=appointmentID)
+
+            patient = appointment.patient
+
+            new_prescription = Prescription.objects.create(patient=patient, appointment=appointment, title=title, description=description, status="Active")
+            new_prescription.save()
+
+            message = f"Added prescription {title} for {patient.name}"
+    else:
+        form = CreatePrescriptionForm(auto_id=True)
+    return render(request, "patients/recent_patients.html", {"appointments": recent_appointments, "form": form, "message": message})
+
 
 @login_required
 def patient_records(request):

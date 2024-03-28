@@ -4,7 +4,7 @@ Recent patients
 {% endblock %}
 {% block content %}
 <div class="upcoming-appointments">
-    <h2>Weekly schedule</h2>
+    <h2>Recent appointments</h2>
     <div class="upcoming-appointments-body">
         <table>
             <thead>
@@ -13,19 +13,56 @@ Recent patients
                     <th>Date</th>
                     <th>Time</th>
                     <th>Status</th>
+                    <th>Add prescription</th>
                 </tr>
             </thead>
             <tbody>
                 {% for appointment in appointments %}
-                <tr>
+                <tr id="{{ appointment.appointmentID }}">
                     <td>{{ appointment.patient.name }}</td>
                     <td>{{ appointment.date }}</td>
                     <td>{{ appointment.appointment_time }}</td>
                     <td>{{ appointment.appointment_status }}</td>
+                    <td><button onclick="showPrescriptionBlock('{{ appointment.appointmentID }}')">Add a prescription</button></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    <div class="dashboard-summary">
+        <div hidden class="dashboard-summary-block" id="prescription-block">
+            <p id="prescription-block-text"></p>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Add prescription</button>
+            </form>
+        </div>
+    </div>
+    <h4 id="message">{{ message }}</h4>
 </div>
+<script>
+    function showPrescriptionBlock(appointmentID)
+    {
+        var prescriptionBlock = document.getElementById("prescription-block");
+        prescriptionBlock.removeAttribute('hidden');
+        
+        var row = document.getElementById(appointmentID);
+        var patientName = row.getElementsByTagName("td")[0].innerHTML;
+
+        var prescriptionBlockText = document.getElementById("prescription-block-text");
+        prescriptionBlockText.innerHTML = "Prescription for " + patientName;
+
+        var appointmentID_field = document.getElementById("appointmentID");
+        appointmentID_field.value = appointmentID;
+
+        var message = document.getElementById("message");
+        message.hidden = true;
+
+        var titleField = document.getElementById("title");
+        titleField.value = "";
+        var descriptionField = document.getElementById("description");
+        descriptionField.value = "";
+    }
+</script>
 {% endblock %}
