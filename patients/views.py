@@ -8,13 +8,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.db.models import Q
 from django.contrib import messages
-<<<<<<< HEAD
+
 from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, PatientSearchForm
 from .models import Prescription, Invoice, Appointment, Patient
-=======
+
 from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, UserUpdateForm, PasswordChangeForm
 from .models import Prescription, Invoice, Appointment
->>>>>>> d8f7acc6687d8b36b5e8f50f1444f13897f75710
+
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
 from django.utils import timezone
