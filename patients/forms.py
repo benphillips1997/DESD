@@ -4,8 +4,12 @@ from django.contrib.admin import widgets
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.contrib.auth import password_validation
 from django.utils import timezone
 from django.db.models import Q
+from django import forms
+from django.contrib.auth.forms import UserChangeForm, SetPasswordForm
+from .models import User
 from datetime import datetime, time, timedelta
 
 User = get_user_model()
@@ -40,8 +44,8 @@ class LoginForm(forms.Form):
 
 
 class CreatePrescriptionForm(forms.Form):
-    title = forms.CharField(label='')
-    description = forms.CharField(label='')
+    title = forms.CharField(label='Title')
+    description = forms.CharField(label='Description')
     appointmentID = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
@@ -59,7 +63,7 @@ class InvoiceForm(forms.ModelForm):
 
 
 class BookAppointmentForm(forms.ModelForm):
-    doctor = forms.ModelChoiceField(queryset=User.objects.filter(role="doctor").order_by('name'), empty_label=None)
+    doctor = forms.ModelChoiceField(queryset=User.objects.filter(Q(role="doctor") | Q(role="nurse")).filter(is_active=True).order_by('name'), empty_label=None)
     patient_type = forms.ChoiceField(choices=[('NHS', 'NHS'), ('Private', 'Private')], label='Patient Type')
 
     class Meta:
@@ -86,6 +90,7 @@ class BookAppointmentForm(forms.ModelForm):
             current_time += timedelta(minutes=interval_minutes)
 
         return time_slots
+        
     def clean_date(self):
         desired_date = self.cleaned_data.get('date')
         if desired_date < timezone.localdate():
@@ -95,12 +100,26 @@ class BookAppointmentForm(forms.ModelForm):
     def clean_appointment_time(self):
         desired_time = self.cleaned_data.get('appointment_time')
         desired_date = self.cleaned_data.get('date')
+
+        desired_time = datetime.strptime(desired_time, '%H:%M').time()
         
         if desired_date == timezone.localdate() and desired_time < timezone.localtime().time():
             raise ValidationError("You cannot book this appointment. Please select another time.")
 
         return desired_time
 
+class UserUpdateForm(UserChangeForm):
+    date_of_birth = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'Date of Birth'}))
+    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'placeholder': 'Phone Number'}))
+    nhs_number = forms.CharField(max_length=10, required=False, widget=forms.TextInput(attrs={'placeholder': 'NHS Number'}))
+    location = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'placeholder': 'Location'}))
+        
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update({'placeholder': 'Email Address'})
+        self.fields['name'].widget.attrs.update({'placeholder': 'Full Name'})
+        if 'password' in self.fields:
+            del self.fields['password']
 
 class PatientSearchForm(forms.Form):
     query = forms.CharField(label='Search by Patient Name', required=False, widget=forms.TextInput(attrs={'placeholder': 'Patient Name'}))

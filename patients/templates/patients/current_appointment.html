@@ -1,23 +1,25 @@
 {% extends "patients/dashboard_layout.html" %}
 {% block title %}
-Appointment
+Current appointment
 {% endblock %}
 {% block content %}
-{% if current_appointment %}
 <div class="dashboard-summary">
+    {% if current_appointment %}
     <h2>Current appointment</h2>
     {% else %}
     <h2>No current appointments</h2>
     {% endif %}
 </div>
+{% if current_appointment %}
 <div class="dashboard-summary">
-    {% if current_appointment %}
     <div>
-
         <h3>Patient name: {{ current_appointment.patient.name }}</h3>
         <br>
     </div>
+</div>
+<div class="dashboard-summary">
     <div class="dashboard-summary-block">
+        <h4>Add a prescription</h4>
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
@@ -25,6 +27,6 @@ Appointment
         </form>
         <h4>{{ message }}</h4>
     </div>
-    {% endif %}
 </div>
+{% endif %}
 {% endblock %}

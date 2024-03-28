@@ -202,7 +202,11 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .invoices-body table{
     border: 2px solid #0E1B2B;
+<<<<<<< HEAD
+    overflow-y: scroll;
+=======
     overflow-y: auto;
+>>>>>>> 064db8fa079f4e9ffb57f80f46bf7014abdc7075
     height: 500px;
     display: block;
 }
@@ -255,7 +259,11 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .visit-history-body table{
     border: 2px solid #0E1B2B;
+<<<<<<< HEAD
+    overflow-y: scroll;
+=======
     overflow-y: auto;
+>>>>>>> 064db8fa079f4e9ffb57f80f46bf7014abdc7075
     height: 500px;
     display: block;
 }
@@ -272,6 +280,8 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .visit-history-body tbody{
     background-color: #19314E;
+<<<<<<< HEAD
+=======
 }
 
 .current-appointment-body{
@@ -279,4 +289,5 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     text-align: center;
     padding: 10px;
     vertical-align: middle;
+>>>>>>> 064db8fa079f4e9ffb57f80f46bf7014abdc7075
 }

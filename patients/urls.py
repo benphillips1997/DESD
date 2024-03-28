@@ -14,7 +14,6 @@ urlpatterns = [
     path("dashboard/", views.dashboard, name="dashboard"),
     path("weekly_schedule/", views.weekly_schedule, name="weekly_schedule"),
     path("doctor_prescriptions/", views.doctor_prescriptions, name="doctor_prescriptions"),
-    # path("create_prescription/", views.create_prescription, name="create_prescription"),
     path("reissue_prescription", views.reissue_prescription, name="reissue_prescription"),
     path("recent_patients/", views.recent_patients, name="recent_patients"),
     path("patient_records/", views.patient_records, name="patient_records"),
@@ -36,6 +35,8 @@ urlpatterns = [
     path('print_invoice/<int:invoice_id>/', views.print_invoice, name='print_invoice'),
     path('admin_invoices/', views.admin_invoices, name='admin_invoices'),
 
-    path("settings/", views.settings, name="settings"),
+    path("settings/", views.patient_settings, name="patient_settings"),
+    path('delete_account/', views.delete_account, name='delete_account'),
+    
     path("logout/", views.logout, name="logout")
 ]

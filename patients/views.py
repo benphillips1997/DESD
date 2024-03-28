@@ -8,8 +8,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.db.models import Q
 from django.contrib import messages
+<<<<<<< HEAD
 from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, PatientSearchForm
 from .models import Prescription, Invoice, Appointment, Patient
+=======
+from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, UserUpdateForm, PasswordChangeForm
+from .models import Prescription, Invoice, Appointment
+>>>>>>> d8f7acc6687d8b36b5e8f50f1444f13897f75710
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
 from django.utils import timezone
@@ -95,8 +100,8 @@ def check_appointment_status():
     all_appointments = Appointment.objects.all()
     for appointment in all_appointments:
         if appointment.appointment_status == "Scheduled":
-            now = datetime.datetime.now()            
-            if (appointment.date < datetime.date.today()) or (appointment.date <= datetime.date.today() and appointment.appointment_time < now.time()):
+            now = datetime.datetime.now()
+            if (appointment.date < datetime.date.today()) or (appointment.date <= datetime.date.today() and appointment.appointment_end_time < now.time()):
                 appointment.appointment_status = "Completed"
                 appointment.save()
 
@@ -135,7 +140,9 @@ def weekly_schedule(request):
     all_appointments = Appointment.objects.filter(doctor=request.user.userID)
     today = datetime.date.today()
     next_week = today + datetime.timedelta(days=7)
-    weekly_appointments = all_appointments.filter(date__range=(today, next_week)).order_by("date")
+    
+    weekly_appointments = all_appointments.filter(date__range=(today, next_week)).order_by("date", "appointment_time")
+    
     return render(request, "patients/weekly_schedule.html", {"appointments": weekly_appointments})
 
 @login_required
@@ -188,8 +195,7 @@ def current_appointment(request):
     now = datetime.datetime.now()
     # retrieve appointment that is within the current 10 minuter time slot
     start_time = now - datetime.timedelta(minutes=now.minute % 10, seconds=now.second, microseconds=now.microsecond)
-    end_time = start_time + datetime.timedelta(minutes=10)
-    current_appointment = Appointment.objects.filter(doctor=request.user.userID).filter(date=datetime.date.today()).filter(appointment_time__range=(start_time.time(), end_time.time())).first()
+    current_appointment = Appointment.objects.filter(doctor=request.user.userID).filter(date=datetime.date.today()).filter(appointment_time=(start_time.time())).first()
     message = ""
     if request.method == "POST":
         form = CreatePrescriptionForm(request.POST)
@@ -221,9 +227,28 @@ def recent_patients(request):
     # retrive all appointments in the last year
     all_appointments = Appointment.objects.filter(doctor=request.user.userID)
     today = datetime.date.today()
-    last_year = today - datetime.timedelta(weeks=52)
-    recent_appointments = all_appointments.filter(date__range=(last_year, today), appointment_status="Completed").order_by("date")
-    return render(request, "patients/recent_patients.html", {"appointments": recent_appointments})
+    time_before = today - datetime.timedelta(weeks=4)
+    recent_appointments = all_appointments.filter(date__range=(time_before, today), appointment_status="Completed").order_by("date")
+    message = ""
+    if request.method == "POST":
+        form = CreatePrescriptionForm(request.POST, auto_id=True)
+        if form.is_valid():
+            appointmentID = form.cleaned_data["appointmentID"]
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["description"] 
+
+            appointment = Appointment.objects.get(appointmentID=appointmentID)
+
+            patient = appointment.patient
+
+            new_prescription = Prescription.objects.create(patient=patient, appointment=appointment, title=title, description=description, status="Active")
+            new_prescription.save()
+
+            message = f"Added prescription {title} for {patient.name}"
+    else:
+        form = CreatePrescriptionForm(auto_id=True)
+    return render(request, "patients/recent_patients.html", {"appointments": recent_appointments, "form": form, "message": message})
+
 
 @login_required
 def patient_records(request):
@@ -392,8 +417,38 @@ def operations(request):
     return render(request, "patients/operations.html")
 
 @login_required
-def settings(request):
-    return render(request, "patients/settings.html")
+def patient_settings(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = PasswordChangeForm(request.user, request.POST)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, 'Your settings were successfully updated.')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = PasswordChangeForm(user=request.user)
+
+    context = {'u_form': u_form, 'p_form': p_form}
+    return render(request, "patients/patient_settings.html", context)
+
+@login_required
+def password_change(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your password has been successfully updated.')
+            return redirect('password_change_done')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'myapp/my_custom_password_change_form.html', {'form': form})
+
+@login_required
+def delete_account(request):
+    pass
 
 @login_required
 def book_appointment(request):

@@ -52,8 +52,8 @@ Prescriptions
             success: function(json) {
                 // remove row
                 var row = document.getElementById(prescriptionID);
-                document.getElementsByTagName("td")[4].innerHTML = "Active";
-                document.getElementsByTagName("td")[5].remove();
+                row.getElementsByTagName("td")[4].innerHTML = "Active";
+                row.getElementsByTagName("td")[5].remove();
                 // display success message
                 var success_message = document.getElementById("success-message");
                 success_message.innerHTML = "Re-issued " + json.prescription_name + " for " + json.user_name;
