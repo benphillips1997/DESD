@@ -59,15 +59,31 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     height: auto;
 }
 
-.dashboard-heading{
-    padding: 30px;
+.dashboard-heading {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 15px;
 }
 
-.dashboard-profile{
+.dashboard-profile {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-name, .profile-image {
+    display: flex;
+    align-items: center;
+}
+
+.heading-line {
+    width: 100%;
+    border-top: 3px solid #0E1B2B;
+    margin-bottom: 50px;
+}
+
+.profile-image {
+    margin-left: 20px;
 }
 
 .dashboard-summary{
@@ -349,6 +365,8 @@ input{
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
 }
 
 .settings-form button:hover {
@@ -371,4 +389,31 @@ input{
 .alert.alert-danger {
     color: #FFBA1E;
     font-family: 'Poppins', sans-serif;
+}
+
+.settings-main {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.settings-form, .right-container {
+    margin-bottom: 20px;
+}
+
+.right-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.delete-account-box .form-actions button {
+    margin-top: 0;
+}
+
+.alert-success {
+    color: #FFBA1E;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 10px;
 }

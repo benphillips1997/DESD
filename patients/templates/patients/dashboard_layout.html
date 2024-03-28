@@ -1,17 +1,19 @@
 {% extends "patients/sidebar_layout.html" %}
-{% block title %}
-Invoices
-{% endblock %}
+{% load static %}
 {% block main %}
 <div class="main">
     <div class="dashboard-heading">
         <h1>{{ user.role|title }} Dashboard</h1>
         <div class="dashboard-profile">
-            <h1>{{ user.name }}</h1>
-            {% load static %}
-            <img src="{% static 'patients/fill-image.png' %}">
+            <div class="profile-name">
+                <h2>{{ user.name }}</h2>
+            </div>
+            <div class="profile-image">
+                <img src="{% static 'patients/fill-image.png' %}" alt="Profile Image">
+            </div>
         </div>
     </div>
+    <div class="heading-line"></div>
     {% block content %}
     {% endblock %}
 </div>

@@ -109,10 +109,25 @@ class BookAppointmentForm(forms.ModelForm):
         return desired_time
 
 class UserUpdateForm(UserChangeForm):
-    date_of_birth = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'Date of Birth'}))
-    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'placeholder': 'Phone Number'}))
-    nhs_number = forms.CharField(max_length=10, required=False, widget=forms.TextInput(attrs={'placeholder': 'NHS Number'}))
-    location = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'placeholder': 'Location'}))
+    date_of_birth = forms.DateField(
+        required=False,
+        label='Date of Birth',
+        widget=forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'placeholder': 'Date of Birth', 'max': timezone.now().date().isoformat()}),
+        input_formats=['%Y-%m-%d', '%d/%m/%Y']
+    )
+    phone_number = forms.CharField(
+        max_length=20, 
+        required=False, 
+        label='Phone Number', 
+        widget=forms.TextInput(attrs={'placeholder': '+44XXXXXXXXXX'})
+    )
+    nhs_number = forms.CharField(max_length=10, required=False, label='NHS Number', widget=forms.TextInput(attrs={'placeholder': 'NHS Number'}))
+    location = forms.CharField(
+        max_length=255, 
+        required=False, 
+        label='Location',
+        widget=forms.TextInput(attrs={'placeholder': 'Location', 'id': 'location-autocomplete'})
+    )
         
     def __init__(self, *args, **kwargs):
         super(UserUpdateForm, self).__init__(*args, **kwargs)
@@ -120,6 +135,18 @@ class UserUpdateForm(UserChangeForm):
         self.fields['name'].widget.attrs.update({'placeholder': 'Full Name'})
         if 'password' in self.fields:
             del self.fields['password']
+
+    def clean_date_of_birth(self):
+        dob = self.cleaned_data.get('date_of_birth')
+        if dob and dob > timezone.now().date():
+            raise ValidationError("The date of birth cannot be in the future.")
+        return dob
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number and not phone_number.startswith('+44'):
+            raise ValidationError("Phone number must start with '+44'.")
+        return phone_number
 
     class Meta:
         model = User

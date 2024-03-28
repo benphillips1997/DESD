@@ -400,20 +400,26 @@ def operations(request):
 @login_required
 def patient_settings(request):
     if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = PasswordChangeForm(request.user, request.POST)
-        if u_form.is_valid() and p_form.is_valid():
-            u_form.save()
-            p_form.save()
-            messages.success(request, 'Your settings were successfully updated.')
-        else:
-            messages.error(request, 'Please correct the errors below.')
+        if 'action' in request.POST and request.POST['action'] == 'update_settings':
+            u_form = UserUpdateForm(request.POST, instance=request.user)
+            p_form = PasswordChangeForm(user=request.user)
+            if u_form.is_valid():
+                u_form.save()
+                messages.success(request, 'Your profile has been updated.')
+                return redirect('patient_settings')
+        elif 'action' in request.POST and request.POST['action'] == 'change_password':
+            p_form = PasswordChangeForm(request.user, request.POST)
+            u_form = UserUpdateForm(instance=request.user)
+            if p_form.is_valid():
+                p_form.save()
+                messages.success(request, 'Your password has been updated.')
+                return redirect('patient_settings')
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = PasswordChangeForm(user=request.user)
 
     context = {'u_form': u_form, 'p_form': p_form}
-    return render(request, "patients/patient_settings.html", context)
+    return render(request, 'patients/patient_settings.html', context)
 
 @login_required
 def password_change(request):
@@ -425,11 +431,22 @@ def password_change(request):
             return redirect('password_change_done')
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'myapp/my_custom_password_change_form.html', {'form': form})
+    return render(request, 'patients/patient_settings.html', {'form': form})
 
 @login_required
 def delete_account(request):
-    pass
+    if request.method == 'POST':
+        if request.session.get('confirm_delete', False):
+            user = request.user
+            user.is_active = False
+            user.save()
+            logout(request)
+            return redirect('home')
+        else:
+            request.session['confirm_delete'] = True
+            return redirect('home')
+    request.session.pop('confirm_delete', None)
+    return redirect('home')
 
 @login_required
 def book_appointment(request):

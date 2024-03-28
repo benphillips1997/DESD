@@ -4,39 +4,39 @@ Settings
 {% endblock %}
 {% block content %}
 <div class="settings-main">
-    {% if form.errors %}
-        <div class="form-errors">Please correct the errors below.</div>
-    {% endif %}
-
-    <!-- Left box -->
+    <!-- Left box for UserUpdateForm -->
     <div class="settings-form">
         <form method="POST" action="">
             {% csrf_token %}
-            <div>
-                {% for field in u_form %}
-                    <div class="form-group">
-                        {{ field.label_tag }}<br>
-                        {{ field }}
-                        {% if field.help_text %}
-                            <small class="form-text text-muted">{{ field.help_text }}</small>
-                        {% endif %}
-                        {% for error in field.errors %}
-                            <div class="alert alert-danger">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-            </div>
+            {% for field in u_form %}
+                <div class="form-group">
+                    {{ field.label_tag }}<br>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
             <div class="form-actions">
                 <button type="submit" name="action" value="update_settings" class="settings-button">Update Settings</button>
             </div>
+            <!-- Display success messages specifically for UserUpdateForm here -->
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="alert alert-success" role="alert">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
         </form>
     </div>
 
-    <!-- Right box -->
-    <div class="settings-form">
-        <form method="POST" action="">
-            {% csrf_token %}
-            <div>
+    <!-- Right side for PasswordChangeForm -->
+    <div class="right-container">
+        <div class="settings-form">
+            <form method="POST" action="">
+                {% csrf_token %}
                 {% for field in p_form %}
                     <div class="form-group">
                         {{ field.label_tag }}<br>
@@ -49,17 +49,48 @@ Settings
                         {% endfor %}
                     </div>
                 {% endfor %}
-            </div>
-            <div class="form-actions">
-                <button type="submit" name="action" value="change_password" class="settings-button">Change Password</button>
-            </div>
-        </form>
-        <form method="POST" action="{% url 'delete_account' %}">
-            {% csrf_token %}
-            <div class="form-actions">
-                <button type="submit" class="settings-button">Delete My Account</button>
-            </div>
-        </form>
+                <div class="form-actions">
+                    <button type="submit" name="action" value="change_password" class="settings-button">Change Password</button>
+                </div>
+                <!-- Display success messages specifically for PasswordChangeForm here -->
+                {% for message in messages %}
+                    {% if message.tags == 'password_success' %}
+                        <div class="alert alert-success" role="alert">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            </form>
+        </div>
+
+        <!-- Delete Account Button -->
+        <div class="settings-form delete-account-box">
+            <form method="POST" action="{% url 'delete_account' %}" id="deleteAccountForm">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button type="button" class="settings-button" onclick="confirmDeletion()">Delete My Account</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<script>
+function confirmDeletion() {
+    const confirmationMessage = 'Are you sure you want to delete your account? Your medical records will be securely retained for 8 years as required by UK regulations.';
+    if (confirm(confirmationMessage)) {
+        document.getElementById('deleteAccountForm').submit();
+    }
+}
+</script>
+<script>
+function initAutocomplete() {
+    var autocomplete = new google.maps.places.Autocomplete(
+        document.getElementById('location-autocomplete'), {types: ['geocode']});
+    autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        document.getElementById('location-autocomplete').value = place.formatted_address;
+    });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyClf_ZYavP9QOh6mb2vnlUUfjzwr1InXQ4&libraries=places&callback=initAutocomplete" async defer></script>
+
 {% endblock %}
