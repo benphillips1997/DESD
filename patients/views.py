@@ -332,9 +332,6 @@ def admin_invoices(request):
 
 @login_required
 def visit_history(request):
-    if not request.user.groups.filter(name='Patient').exists():
-        return HttpResponseForbidden("You don't have permission to view this page.")
-
     appointments = Appointment.objects.filter(
         patient=request.user,
         appointment_status="Completed"
