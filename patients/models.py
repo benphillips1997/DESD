@@ -104,3 +104,12 @@ class Patient(models.Model):
 
     def __str__(self):
         return self.name
+
+class SurgeryChangeRequest(models.Model):
+    nhs_number = models.CharField(max_length=20)
+    relocation_date = models.DateField()
+    destination = models.CharField(max_length=255)
+    comments = models.TextField()
+
+    def __str__(self):
+        return f"Surgery Change Request - NHS Number: {self.nhs_number}"

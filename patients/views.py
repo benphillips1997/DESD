@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from django.db.models import Q
 from django.contrib import messages
 
-from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, PatientSearchForm
+from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, PatientSearchForm, SurgeryChangeRequestForm
 from .models import Prescription, Invoice, Appointment, Patient
 
 from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, UserUpdateForm, PasswordChangeForm
@@ -443,6 +443,17 @@ def patient_settings(request):
 
     context = {'u_form': u_form, 'p_form': p_form}
     return render(request, 'patients/patient_settings.html', context)
+
+def change_surgery_request(request):
+    if request.method == 'POST':
+        form = SurgeryChangeRequestForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = SurgeryChangeRequestForm()
+    return render(request, 'patients/change_surgery_request.html', {'form': form})
+
 
 @login_required
 def password_change(request):

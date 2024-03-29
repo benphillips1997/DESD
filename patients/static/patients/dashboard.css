@@ -85,7 +85,6 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 .profile-image {
     margin-left: 20px;
 }
-
 .dashboard-summary{
     margin-top: 20px;
     margin-bottom: 20px;
@@ -103,6 +102,44 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     width: 20%;
     box-shadow: 0 4px 8px rgba(0,0,0,1);
 }
+.patient-dashboard-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.patient-dashboard-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    max-width: 40%;
+}
+
+.patient-dashboard-right {
+    flex: 1;
+    max-width: 58%;
+}
+
+.patient-dashboard-summary-block {
+    margin-bottom: 10px;
+    text-align: center;
+    background-color: #0E1B2B;
+    padding: 10px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+}
+
+
+.patient-dashboard-summary-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 
 .upcoming-appointments{
     padding: 20px;
@@ -458,4 +495,73 @@ input{
     color: #FFBA1E;
     font-family: 'Poppins', sans-serif;
     margin-top: 10px;
+}
+.change-surgery-request {
+    padding: 20px;
+    background-color: #0E1B2B;
+    border-radius: 10px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 50%;
+    margin: 20px auto;
+    text-align: left;
+}
+
+.change-surgery-request h2 {
+    color: white;
+    padding: 10px;
+    margin-top: 0;
+    border-radius: 10px 10px 0 0;
+}
+
+.change-surgery-request fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.change-surgery-request legend {
+    display: none;
+}
+
+.change-surgery-request .form-group {
+    margin: 10px 20px;
+}
+
+.change-surgery-request .form-group label,
+.change-surgery-request .form-group input,
+.change-surgery-request .form-group textarea {
+    width: calc(100% - 40px);
+    display: block;
+    margin-bottom: 10px;
+}
+
+.change-surgery-request .form-group input,
+.change-surgery-request .form-group textarea {
+    background-color: #12233C;
+    border: 1px solid #0E1B2B;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.change-surgery-request .form-group textarea {
+    resize: none;
+}
+
+.change-surgery-request button {
+    width: auto;
+    padding: 10px 30px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    background-color: #0E1B2B;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.change-surgery-request button:hover {
+    background-color: #19314E; 
 }

@@ -3,20 +3,50 @@
 Dashboard
 {% endblock %}
 {% block content %}
-<div class="dashboard-summary">
-    <div class="dashboard-summary-block">
-        <h3>Your GP</h3>
-        <h2>{{ user.location }}</h2>
+<div class="patient-dashboard-container">
+    <div class="patient-dashboard-left">
+        <div class="patient-dashboard-summary">
+            <div class="patient-dashboard-summary-block">
+                <h3>Your GP</h3>
+                <h2>{{ user.location }}</h2>
+            </div>
+            <div class="patient-dashboard-summary-block">
+                <h3>Date and time</h3>
+                <h2>{% now "jS F Y" %}</h2>
+                <h2>{% now "H:i" %}</h2>
+            </div>
+            <div class="patient-dashboard-summary-block">
+                <h2><a href="{% url 'book_appointment' %}">Book an appointment</a></h2>
+            </div>
+        </div>
     </div>
-    <div class="dashboard-summary-block">
-        <h3>Date and time</h3>
-        <h2>{% now "jS F Y" %}</h2>
-        <h2>{% now "H:i" %}</h2>
-    </div>
-</div>
-<div class="dashboard-summary">
-    <div class="dashboard-summary-block">
-        <h2><a href="{% url 'book_appointment' %}">Book an appointment</a></h2>
+    <div class="patient-dashboard-right">
+        <div class="change-surgery-request">
+            <h2>Request Change of Surgery</h2>
+            <form method="post" action="{% url 'change_surgery_request' %}">
+                {% csrf_token %}
+                <fieldset>
+                    <legend>Patient Information</legend>
+                    <div class="form-group">
+                        <label for="nhs_number">NHS Number:</label>
+                        <input type="text" id="nhs_number" name="nhs_number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="relocation_date">Relocation Date:</label>
+                        <input type="date" id="relocation_date" name="relocation_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="destination">Destination:</label>
+                        <input type="text" id="destination" name="destination" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comments">Comments:</label>
+                        <textarea id="comments" name="comments" rows="4" cols="50"></textarea>
+                    </div>
+                </fieldset>
+                <button type="submit">Submit Request</button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

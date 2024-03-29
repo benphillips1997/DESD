@@ -14,7 +14,7 @@ from datetime import datetime, time, timedelta
 
 User = get_user_model()
 
-from .models import Appointment, Invoice
+from .models import Appointment, Invoice , SurgeryChangeRequest
 
 class SignUpForm(forms.Form):
     username = forms.CharField(label='')
@@ -197,3 +197,8 @@ class PatientSearchForm(forms.Form):
             'placeholder': 'Search patients...'
         })
     )
+
+class SurgeryChangeRequestForm(forms.ModelForm):
+    class Meta:
+        model = SurgeryChangeRequest
+        fields = ['nhs_number', 'relocation_date', 'destination', 'comments']
