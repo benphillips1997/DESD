@@ -6,8 +6,8 @@ Dashboard
 <div class="dashboard-summary">
     <div class="dashboard-summary-block">
         <h3>Appointments today</h3>
-        <h2>1 Completed</h2>
-        <h2>22 Remaining</h2>
+        <h2>{{ completed_appointments }} Completed</h2>
+        <h2>{{ scheduled_appointments }} Remaining</h2>
     </div>
     <div class="dashboard-summary-block">
         <h3>Date and time</h3>
@@ -16,8 +16,8 @@ Dashboard
     </div>
     <div class="dashboard-summary-block">
         <h3>Next appointment</h3>
-        <h2>John Doe</h2>
-        <h2>10 minutes</h2>
+        <h2>{{ next_appointment.patient.name }}</h2>
+        <h2>{{ next_appointment.appointment_time }}</h2>
     </div>
 </div>
 <div class="upcoming-appointments">
