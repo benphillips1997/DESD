@@ -387,7 +387,7 @@ input[type="password"] {
 
 
 .records-body table {
-    width: 100%;
+    width: 40%;
     border-collapse: collapse;
     margin-top: 20px;
 }
@@ -409,7 +409,7 @@ input[type="password"] {
 
 input{
     font-family: 'Poppins', sans-serif;
-    width: 100%;
+    width: 70%;
     padding: 10px;
     margin: 5px 0;
     background-color: #19314E;
@@ -420,6 +420,7 @@ input{
     border: none;
     outline: none;
     box-shadow: none;
+    justify-content: center;
 }
 
 ::placeholder {
