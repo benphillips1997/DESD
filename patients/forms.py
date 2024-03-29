@@ -21,7 +21,7 @@ class SignUpForm(forms.Form):
     email = forms.EmailField(label='')
     first_name = forms.CharField(label='')
     surname = forms.CharField(label='')
-    dob = forms.DateField( label='Date of Birth', widget=forms.DateInput( format='%d-%m-%Y', attrs={ 'class' : 'form-control', 'type': 'date', 'placeholder': 'Date of Birth', 'max': timezone.now().date().isoformat()}) )
+    dob = forms.DateField( label='', widget=forms.DateInput( format='%d-%m-%Y', attrs={ 'class' : 'form-control', 'type': 'date', 'placeholder': 'Date of Birth', 'max': timezone.now().date().isoformat()}) )
     phone_no = forms.IntegerField(label='')
     nhs_no = forms.IntegerField(label='')
     password = forms.CharField(widget=forms.PasswordInput, label='')
