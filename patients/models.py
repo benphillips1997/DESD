@@ -34,6 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     location = models.CharField(max_length=255)
+    requested_deletion = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -62,11 +63,16 @@ class Appointment(models.Model):
         is_new = self._state.adding
         super(Appointment, self).save(*args, **kwargs)
         if is_new:
+            if self.doctor.role == "doctor":
+                rate_per_minute = 5
+            elif self.doctor.role == "nurse":
+                rate_per_minute = 3
+            invoice_amount = rate_per_minute * 10
             Invoice.objects.create(
                 appointment=self,
                 date_issued=self.date,
                 due_date=self.date + datetime.timedelta(days=30),
-                amount=0,
+                amount=invoice_amount,
                 status="Unpaid"
             )
 
@@ -79,6 +85,39 @@ class Prescription(models.Model):
     status = models.CharField(max_length=20, choices=[("Active", "Active"), ("Inactive", "Inactive"), ("Re-issue requested", "Re-issue requested")])
 
 
+class PrescriptionMedicine(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=255)
+    recommended_daily_dosage = models.CharField(max_length=100, blank=True, null=True)
+
+    def str(self):
+        return self.name
+
+    prescription_medicines = [
+        ('Omeprazole', 'Proton pump inhibitors', ''),
+        ('Lansoprazole', 'Proton pump inhibitors', ''),
+        ('Simvastatin', 'Statins', ''),
+        ('Atorvastatin', 'Statins', ''),
+        ('Pravastatin', 'Statins', ''),
+        ('Bisoprolol', 'Beta-Blockers', ''),
+        ('Atenolol', 'Beta-Blockers', ''),
+        ('Propranolol', 'Beta-Blockers', ''),
+        ('Amlodipine', 'Calcium-channel blockers', ''),
+        ('Felodipine', 'Calcium-channel blockers', ''),
+        ('Diltiazem', 'Calcium-channel blockers', ''),
+        ('Nifedipine', 'Calcium-channel blockers', ''),
+        ('Lercanidipine', 'Calcium-channel blockers', ''),
+        ('Cyclizine', 'H1 receptor Antagonists', ''),
+        ('Cetirizine', 'H1 receptor Antagonists', ''),
+        ('Loratadine', 'H1 receptor Antagonists', ''),
+        ('Fexofenadine', 'H1 receptor Antagonists', ''),
+        ('Chlorphenamine', 'H1 receptor Antagonists', ''),
+        ('Tramadol', 'Opioids', ''),
+        ('Codeine', 'Opioids', ''),
+        ('Dihydrocodeine', 'Opioids', ''),
+    ]
+
+
 class Invoice(models.Model):
     invoiceID = models.AutoField(primary_key=True)
     date_issued = models.DateField()
@@ -87,23 +126,6 @@ class Invoice(models.Model):
     amount = models.FloatField()
     status = models.CharField(max_length=10, choices=[("Unpaid", "Unpaid"), ("Paid", "Paid")])
 
-class Patient(models.Model):
-    userID = models.CharField(max_length=100, primary_key=True)
-    email = models.EmailField(max_length=254)
-    name = models.CharField(max_length=255)
-    date_of_birth = models.DateField(null=True, blank=True)
-    phone_number = models.CharField(max_length=20, null=True, blank=True)
-    nhs_number = models.CharField(max_length=20, null=True, blank=True)
-    role = models.CharField(max_length=50)
-    is_active = models.BooleanField(default=True)
-    location = models.CharField(max_length=255, null=True, blank=True)
-
-    class Meta:
-        managed = False
-        db_table = 'patients_user'
-
-    def __str__(self):
-        return self.name
 
 class SurgeryChangeRequest(models.Model):
     nhs_number = models.CharField(max_length=20)

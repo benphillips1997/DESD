@@ -113,6 +113,7 @@ class BookAppointmentForm(forms.ModelForm):
 
         return desired_time
 
+
 class UserUpdateForm(UserChangeForm):
     date_of_birth = forms.DateField(
         required=False,
@@ -202,3 +203,10 @@ class SurgeryChangeRequestForm(forms.ModelForm):
     class Meta:
         model = SurgeryChangeRequest
         fields = ['nhs_number', 'relocation_date', 'destination', 'comments']
+
+class ReportsForm(forms.Form):
+    duration = forms.ChoiceField(choices=[("Daily", "Daily"), ("Weekly", "Weekly"), ("Monthly", "Monthly")])
+    type = forms.ChoiceField(choices=[("Private", "Private"), ("NHS", "NHS"), ("All", "All")])
+
+    def __init__(self, *args, **kwargs):
+        super(ReportsForm, self).__init__(*args, **kwargs)

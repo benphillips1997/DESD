@@ -9,7 +9,7 @@
 
 <body>
 <nav class="sidebar">
-    <ul>        
+    <ul>
         <li><img class="sidebar-logo" src="{% static 'patients/smartcare_logo.png' %}" alt="Smartcare logo"></li>
         <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
         {% if user.role == "admin" %}
@@ -24,7 +24,7 @@
         <li><a href="{% url 'weekly_schedule' %}">Weekly schedule</a></li>
         <li><a href="{% url 'recent_patients' %}">Recent appointments</a></li>
         <li><a href="{% url 'doctor_prescriptions' %}">Prescription requests</a></li>
-        <li><a href="{% url 'patient_records' %}">Patient records</a></li>
+        <li><a href="{% url 'records' %}">Patient records</a></li>
         {% endif %}
         {% if user.role == "patient" %}
         <li><a href="{% url 'patient_prescriptions' %}">Prescriptions</a></li>

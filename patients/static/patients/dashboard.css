@@ -57,6 +57,7 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 .sidebar-logo{
     width: 100%;
     height: auto;
+    margin-bottom: 0;
 }
 
 .dashboard-heading {
@@ -468,6 +469,34 @@ input{
 .alert.alert-danger {
     color: #FFBA1E;
     font-family: 'Poppins', sans-serif;
+}
+
+.reports-body{
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.reports-body table{
+    border: 2px solid #0E1B2B;
+    overflow-y: auto;
+    height: 300px;
+    display: block;
+}
+
+.reports-body th, .reports-body td{
+    padding: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+    text-align: center;
+}
+
+.reports-body thead{
+    background-color: #0E1B2B;
+}
+
+.reports-body tbody{
+    background-color: #19314E;
 }
 
 .settings-main {

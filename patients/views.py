@@ -10,11 +10,8 @@ from django.views.generic import TemplateView
 from django.db.models import Q
 from django.contrib import messages
 
-from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, PatientSearchForm, SurgeryChangeRequestForm
-from .models import Prescription, Invoice, Appointment, Patient
-
-from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, UserUpdateForm, PasswordChangeForm
-from .models import Prescription, Invoice, Appointment
+from .models import Prescription, Invoice, Appointment, SurgeryChangeRequest
+from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, UserUpdateForm, PasswordChangeForm, ReportsForm, SurgeryChangeRequestForm
 
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
@@ -24,6 +21,11 @@ import datetime
 from time import localtime
 
 User = get_user_model()
+
+import random
+import string
+from django.utils import timezone
+
 
 def home(request):
     return render(request, "patients/home.html")
@@ -162,6 +164,20 @@ def reissue_prescription(request):
         return JsonResponse({"prescriptionID": prescriptionID, "prescription_name": prescription.title, "user_name": prescription.patient.name}, status=200)
     else:
         return HttpResponseForbidden("You cannot access this.")
+    
+
+@login_required
+def unissue_prescription(request):
+    if request.method == "POST":
+        prescriptionID = request.POST.get("data")
+        prescription = Prescription.objects.get(prescriptionID=prescriptionID)
+        prescription.status = "Inactive"
+        prescription.save()
+
+        return JsonResponse({"prescriptionID": prescriptionID, "prescription_name": prescription.title, "user_name": prescription.patient.name}, status=200)
+    else:
+        return HttpResponseForbidden("You cannot access this.")
+    
 
 @login_required
 def patient_prescriptions(request):
@@ -223,11 +239,11 @@ def recent_patients(request):
     if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
         return HttpResponseForbidden("You don't have permission to view this page.")
     check_appointment_status()
-    # retrive all appointments in the last year
+    # retrive all appointments in a previous period
     all_appointments = Appointment.objects.filter(doctor=request.user.userID)
     today = datetime.date.today()
     time_before = today - datetime.timedelta(weeks=4)
-    recent_appointments = all_appointments.filter(date__range=(time_before, today), appointment_status="Completed").order_by("date")
+    recent_appointments = all_appointments.filter(date__range=(time_before, today), appointment_status="Completed").order_by("date", "appointment_time")
     message = ""
     if request.method == "POST":
         form = CreatePrescriptionForm(request.POST, auto_id=True)
@@ -250,12 +266,6 @@ def recent_patients(request):
 
 
 @login_required
-def patient_records(request):
-    if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
-        return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/patient_records.html")
-
-@login_required
 def print_invoice(request, invoice_id):
     invoice = get_object_or_404(Invoice, invoiceID=invoice_id)
     appointment = invoice.appointment
@@ -270,8 +280,6 @@ def print_invoice(request, invoice_id):
         rate_per_minute = 5
     elif invoice.appointment.doctor.role == "nurse":
         rate_per_minute = 3
-            
-    invoice.amount = duration_minutes * rate_per_minute
 
     patient_location = appointment.patient.location
     practitioner_name = appointment.doctor.name
@@ -300,13 +308,6 @@ def patient_invoices(request):
         duration_timedelta = end_datetime - start_datetime
         duration_minutes = int(duration_timedelta.total_seconds() / 60)
         invoice.duration = duration_minutes
-
-        if invoice.appointment.doctor.role == "doctor":
-            rate_per_minute = 5
-        elif invoice.appointment.doctor.role == "nurse":
-            rate_per_minute = 3
-            
-        invoice.amount = duration_minutes * rate_per_minute
         
     return render(request, "patients/patient_invoices.html", {'user_invoices': user_invoices})
 
@@ -326,12 +327,6 @@ def admin_invoices(request):
         duration_minutes = int(duration_timedelta.total_seconds() / 60)
         invoice.duration = duration_minutes
 
-        if invoice.appointment.doctor.role == "doctor":
-            rate_per_minute = 5
-        elif invoice.appointment.doctor.role == "nurse":
-            rate_per_minute = 3
-        
-        invoice.amount = f"£{duration_minutes * rate_per_minute:.2f}"
         
     return render(request, "patients/admin_invoices.html", {'all_invoices': all_invoices})
 
@@ -358,39 +353,49 @@ def payments(request):
 def registrations(request):
     if not request.user.groups.filter(name='Admin').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
-    
-    unverified_patients = User.objects.filter(role='patient', is_active=False)
-    unverified_doctors = User.objects.filter(role='doctor', is_active=False)
-    unverified_nurses = User.objects.filter(role='nurse', is_active=False)
+    all_users = User.objects.all()
+    unverified_users = []
+    for user in all_users:
+        if not user.is_active:
+            unverified_users.append(user)
+    deleted_users = []
+    for user in all_users:
+        if user.requested_deletion:
+            deleted_users.append(user)
+    return render(request, "patients/registrations.html", {"unverified_users": unverified_users, "deleted_users": deleted_users})
 
-    # Pass the filtered users to the context
-    context = {
-        "unverified_patients": unverified_patients,
-        "unverified_doctors": unverified_doctors,
-        "unverified_nurses": unverified_nurses,
-    }
-    
-    return render(request, "patients/registrations.html", context)
 @login_required
 def verify_user(request):
     if request.method == "POST":
         userID = request.POST.get("data")
 
         # activate user
-        success = False
         all_users = User.objects.all()
         for user in all_users:
             if userID == user.userID:
-                success = True
                 user.is_active = True
                 user.save()
 
-        return JsonResponse({"success": success, "userID": userID}, status=200)
+        return JsonResponse({"userID": userID}, status=200)
+    else:
+        return HttpResponseForbidden("You cannot access this.")
+
+@login_required
+def verify_deletion(request):
+    if request.method == "POST":
+        userID = request.POST.get("data")
+
+        # delete user
+        user = User.objects.get(userID=userID)
+        user.delete()
+
+        return JsonResponse({"userID": userID}, status=200)
     else:
         return HttpResponseForbidden("You cannot access this.")
 
 def is_staff_member(user):
     return user.groups.filter(name__in=['Doctor', 'Nurse', 'Admin']).exists() or user.is_staff
+
 
 @login_required
 def records(request):
@@ -398,7 +403,7 @@ def records(request):
     patients = None
 
     if query:
-        patients = Patient.objects.filter(name__icontains=query, role='patient').values(
+        patients = User.objects.filter(name__icontains=query, role='patient').values(
             'userID', 'email', 'name', 'date_of_birth', 'phone_number', 'nhs_number', 'role', 'is_active', 'location'
         )
 
@@ -412,7 +417,51 @@ def records(request):
 def reports(request):
     if not request.user.groups.filter(name='Admin').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/reports.html")
+    invoice_list = []
+    if request.method == "POST":
+        form = ReportsForm(request.POST)
+        if form.is_valid():
+            duration = form.cleaned_data['duration']
+            type = form.cleaned_data['type']
+
+            timeframe = 0
+            if duration == "Daily":
+                timeframe = 1
+            elif duration == "Weekly":
+                timeframe = 7
+            elif duration == "Monthly":
+                timeframe = 28
+
+            start_date = datetime.date.today() - datetime.timedelta(days=timeframe)
+
+            total_amount_paid = 0
+            total_amount_unpaid = 0
+            total_charged_to_nhs = 0
+
+            # get list of invoices in selected time frame
+            invoices = Invoice.objects.all()
+            for invoice in invoices:
+                if invoice.appointment.date <= datetime.date.today() and invoice.appointment.date > start_date and (invoice.appointment.patient_type == type or type == "All"):
+                    invoice_list.append(invoice)
+                    # calculate charges
+                    if invoice.appointment.patient_type == "NHS":
+                        total_charged_to_nhs += invoice.amount
+                    elif invoice.status == "Unpaid":
+                        total_amount_unpaid += invoice.amount
+                    elif invoice.status == "Paid":
+                        total_amount_paid += invoice.amount
+
+            # check type and set to none if not applicable for search citeria
+            if type == "Private":
+                total_charged_to_nhs = None
+            elif type == "NHS":
+                total_amount_paid = None
+                total_amount_unpaid = None
+
+            return render(request, "patients/reports.html", {"form": form, "invoice_list": invoice_list, "total_paid": total_amount_paid, "total_unpaid": total_amount_unpaid, "total_nhs": total_charged_to_nhs})
+    else:
+        form = ReportsForm()
+    return render(request, "patients/reports.html", {"form": form, "invoice_list": invoice_list})
 
 @login_required
 def operations(request):
@@ -472,7 +521,7 @@ def delete_account(request):
     if request.method == 'POST':
         if request.session.get('confirm_delete', False):
             user = request.user
-            user.is_active = False
+            user.requested_deletion = True
             user.save()
             logout(request)
             return redirect('home')

@@ -15,8 +15,8 @@ urlpatterns = [
     path("weekly_schedule/", views.weekly_schedule, name="weekly_schedule"),
     path("doctor_prescriptions/", views.doctor_prescriptions, name="doctor_prescriptions"),
     path("reissue_prescription", views.reissue_prescription, name="reissue_prescription"),
+    path("unissue_prescription", views.unissue_prescription, name="unissue_prescription"),
     path("recent_patients/", views.recent_patients, name="recent_patients"),
-    path("patient_records/", views.patient_records, name="patient_records"),
     path("current_appointment", views.current_appointment, name="current_appointment"),
     path('change-surgery-request/', views.change_surgery_request, name='change_surgery_request'),
 
@@ -25,6 +25,7 @@ urlpatterns = [
     path("reports/", views.reports, name="reports"),
     path("operations/", views.operations, name="operations"),
     path("verify_user/", views.verify_user, name="verify_user"),
+    path("verify_deletion/", views.verify_deletion, name="verify_deletion"),    
 
     path("book_appointment/", views.book_appointment, name="book_appointment"),
     path("request_reissue/", views.request_reissue, name="request_reissue"),

@@ -3,5 +3,94 @@
 Reports
 {% endblock %}
 {% block content %}
+<div class="dashboard-summary">
+    <h2>Calculate periodic turnover reports</h2>
+</div>
+<div class="dashboard-summary">
+    <div class="dashboard-summary-block">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Calculate</button>
+        </form>
+    </div>
+</div>
+<div class="reports-body">
+    <table>
+        <thead>
+            <tr>
+                <th>Patient name</th>
+                <th>Appointment date</th>
+                <th>Amount</th>
+                <th>Paid status</th>
+                <th>Pay type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoice_list %}
+            <tr>
+                <td>{{ invoice.appointment.patient.name }}</td>
+                <td>{{ invoice.appointment.date }}</td>
+                <td>£{{ invoice.amount }}</td>
+                <td>{{ invoice.status }}</td>
+                <td>{{ invoice.appointment.patient_type }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">No data</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div style="text-align: center;">
+    {% if invoice_list %}
+        {% if total_paid != None %}
+        <h3>Total amount paid £{{ total_paid }}</h3>
+        {% endif %}
+        {% if total_unpaid != None %}
+        <h3>Total amount unpaid £{{ total_unpaid }}</h3>
+        {% endif %}
+        {% if total_nhs != None %}
+        <h3>Total amount charged to the NHS £{{ total_nhs }}</h3>
+        {% endif %}
+        <br>
+        <button onclick="generateReport()">Generate report</button>
+    {% endif %}
+</div>
+<br><br>
+<script>
+    function generateReport()
+    {
+        var rows = document.getElementsByTagName("table")[0].rows;
+        
+        var report = window.open();
 
+        // write summary of report
+        report.document.write("<div style='text-align: center;'>");
+        {% if total_paid != None %}
+        report.document.write("<h2>Total paid: " + {{total_paid}} + "</h2>");
+        {% endif %}
+        {% if total_unpaid != None %}
+        report.document.write("<h2>Total unpaid: " + {{total_unpaid}} + "</h2>");
+        {% endif %}
+        {% if total_nhs != None %}
+        report.document.write("<h2>Total charged to the NHS: " + {{total_nhs}} + "</h2>");
+        {% endif %}
+
+        report.document.write("</div>");
+
+
+        // write out rows from table
+        report.document.write("<div style='text-align: center;'>")
+        for (var i = 1; i < rows.length-1; i++){
+            report.document.write("<p>");
+            for (var j = 0; j < 5; j++){
+                report.document.write(" " + rows[i].cells[j].innerHTML + " ");
+            }
+            report.document.write("</p>");
+        }
+        report.document.write("</div>")
+    };
+</script>
 {% endblock %}

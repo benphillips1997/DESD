@@ -14,7 +14,7 @@ Prescriptions
                     <th>Presciption name</th>
                     <th>Description</th>
                     <th>Status</th>
-                    <th>Re-issue prescription</th>
+                    <th>Change issue status</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +30,7 @@ Prescriptions
                     {% elif prescription.status == "Inactive" %}
                     <td><button name="accept-re-issue-button" onclick="accept_reissue('{{ prescription.prescriptionID }}')">Re-issue</button></td>
                     {% else %}
-                    <td></td>
+                    <td><button name="accept-re-issue-button" onclick="un_issue('{{ prescription.prescriptionID }}')">Un-issue</button></td>
                     {% endif %}
                 </tr>
                 {% endfor %}
@@ -68,6 +68,33 @@ Prescriptions
             }
         });
     };
+
+    function un_issue(prescriptionID)
+    {
+        $.ajax({
+            url: "{% url 'unissue_prescription' %}",
+            type: "POST",
+            data: { data: prescriptionID, 'csrfmiddlewaretoken': '{{ csrf_token }}' }, // data to pass
+            // handle success
+            success: function(json) {
+                // remove row
+                var row = document.getElementById(prescriptionID);
+                row.getElementsByTagName("td")[4].innerHTML = "Inactive";
+                row.getElementsByTagName("td")[5].remove();
+                // display success message
+                var success_message = document.getElementById("success-message");
+                success_message.innerHTML = "Un-issued " + json.prescription_name + " for " + json.user_name;
+                success_message.removeAttribute('hidden');
+            },
+            // handle error
+            error: function(xhr, errmsg, err) {
+                // alert("error\nerrmsg: " + errmsg + "\nerr: " + err + "\nend\nStatus:" + xhr.status + ": " + xhr.responseText);
+                var success_message = document.getElementById("success-message");
+                success_message.innerHTML = "Error: Was not successful";
+                success_message.removeAttribute('hidden');
+            }
+        });
+    }
 </script>
 {% endblock javascript %}
 {% endblock %}
