@@ -356,7 +356,7 @@ input[type="number"],
 input[type="search"],
 input[type="tel"],
 input[type="url"] {
-    width: 100%; /* Ensure full width */
+    width: 100%;
 }
 
 input[type="email"],
