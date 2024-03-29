@@ -21,9 +21,11 @@ class SignUpForm(forms.Form):
     email = forms.EmailField(label='')
     first_name = forms.CharField(label='')
     surname = forms.CharField(label='')
+    dob = forms.DateField( label='Date of Birth', widget=forms.DateInput( format='%d-%m-%Y', attrs={ 'class' : 'form-control', 'type': 'date', 'placeholder': 'Date of Birth', 'max': timezone.now().date().isoformat()}) )
+    phone_no = forms.IntegerField(label='')
+    nhs_no = forms.IntegerField(label='')
     password = forms.CharField(widget=forms.PasswordInput, label='')
-
-    location = forms.CharField(widget=forms.HiddenInput(), required=False)   # Hidden input to store location data
+    location = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
@@ -31,6 +33,9 @@ class SignUpForm(forms.Form):
         self.fields['email'].widget.attrs.update({'placeholder': 'Email address'})
         self.fields['first_name'].widget.attrs.update({'placeholder': 'First Name'})
         self.fields['surname'].widget.attrs.update({'placeholder': 'Surname'})
+        self.fields['dob'].widget.attrs.update({'placeholder': 'Date Of Birth'})
+        self.fields['phone_no'].widget.attrs.update({'placeholder': 'Phone Number'})
+        self.fields['nhs_no'].widget.attrs.update({'placeholder': 'NHS Number'})
         self.fields['password'].widget.attrs.update({'placeholder': 'Password'})  
 
 class LoginForm(forms.Form):
@@ -180,3 +185,15 @@ class PasswordChangeForm(forms.Form):
         self.user.set_password(password)
         if commit:
             self.user.save()
+
+class PatientSearchForm(forms.Form):
+    query = forms.CharField(
+        max_length=100, 
+        required=False,
+        label='Patient Name',
+        help_text='Enter the name of the patient to search.',
+        widget=forms.TextInput(attrs={
+            'class': 'search-input', 
+            'placeholder': 'Search patients...'
+        })
+    )

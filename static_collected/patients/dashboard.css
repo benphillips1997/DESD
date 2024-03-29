@@ -59,15 +59,31 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     height: auto;
 }
 
-.dashboard-heading{
-    padding: 30px;
+.dashboard-heading {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 15px;
 }
 
-.dashboard-profile{
+.dashboard-profile {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-name, .profile-image {
+    display: flex;
+    align-items: center;
+}
+
+.heading-line {
+    width: 100%;
+    border-top: 3px solid #0E1B2B;
+    margin-bottom: 50px;
+}
+
+.profile-image {
+    margin-left: 20px;
 }
 
 .dashboard-summary{
@@ -300,15 +316,57 @@ input[type="password"] {
     font-family: 'Poppins', sans-serif;
     width: 100%;
     padding: 10px;
-    margin: 5px 0;
-    background-color: #19314E;
-    color: #D9D9D9;
-    font-size: 18px;
-    box-sizing: border-box;
+    vertical-align: middle;
+}
+.search-form-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.search-form {
+    display: flex;
+    width: 50%;
+    justify-content: space-between;
+}
+
+.search-input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid #0E1B2B;
     border-radius: 4px;
+}
+
+.search-button {
+    width: 15%;
+    padding: 10px 20px;
+    background-color: #0E1B2B;
+    color: white;
     border: none;
-    outline: none;
-    box-shadow: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+.records-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.records-body th, .records-body td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #0E1B2B;
+}
+
+.records-body thead {
+    background-color: #0E1B2B;
+    color: white;
+}
+
+.records-body tbody tr:hover {
+    background-color: #0E1B2B;
 }
 
 input{
@@ -349,6 +407,8 @@ input{
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
 }
 
 .settings-form button:hover {
@@ -371,4 +431,31 @@ input{
 .alert.alert-danger {
     color: #FFBA1E;
     font-family: 'Poppins', sans-serif;
+}
+
+.settings-main {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.settings-form, .right-container {
+    margin-bottom: 20px;
+}
+
+.right-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.delete-account-box .form-actions button {
+    margin-top: 0;
+}
+
+.alert-success {
+    color: #FFBA1E;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 10px;
 }

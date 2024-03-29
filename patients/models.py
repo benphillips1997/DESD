@@ -88,8 +88,19 @@ class Invoice(models.Model):
     status = models.CharField(max_length=10, choices=[("Unpaid", "Unpaid"), ("Paid", "Paid")])
 
 class Patient(models.Model):
-    name = models.CharField(max_length=100)
-    # Add other fields relevant to your patient records
+    userID = models.CharField(max_length=100, primary_key=True)
+    email = models.EmailField(max_length=254)
+    name = models.CharField(max_length=255)
+    date_of_birth = models.DateField(null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    nhs_number = models.CharField(max_length=20, null=True, blank=True)
+    role = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
+    location = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'patients_user'
 
     def __str__(self):
         return self.name

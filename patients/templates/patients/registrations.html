@@ -4,8 +4,35 @@ Registrations
 {% endblock %}
 {% block content %}
 <div class="registrations-main">
-    <h2>Doctor and Nurse registrations to verify</h2>
+    <h2>Patient registrations to verify</h2>
     <div class="registrations-body">        
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Verify</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in unverified_patients %}
+                <tr id="{{ patient.userID }}">
+                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.email }}</td>
+                    <td><button name="verify-button" onclick="verify_user('{{ patient.userID }}')">Verify</button></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No patient registrations to verify.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="registrations-main">
+    <h2>Doctor/Nurse registrations to verify</h2>
+    <div class="registrations-body">
         <table>
             <thead>
                 <tr>
@@ -16,7 +43,7 @@ Registrations
                 </tr>
             </thead>
             <tbody>
-                {% for user in unverified_users %}
+                {% for user in unverified_doctors %}
                 <tr id="{{ user.userID }}">
                     <td>{{ user.name }}</td>
                     <td>{{ user.email }}</td>
@@ -24,10 +51,22 @@ Registrations
                     <td><button name="verify-button" onclick="verify_user('{{ user.userID }}')">Verify</button></td>
                 </tr>
                 {% endfor %}
+                {% for user in unverified_nurses %}
+                <tr id="{{ user.userID }}">
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td><button name="verify-button" onclick="verify_user('{{ user.userID }}')">Verify</button></td>
+                </tr>
+                {% endfor %}
+                {% if unverified_doctors|length == 0 and unverified_nurses|length == 0 %}
+                <tr>
+                    <td colspan="4">No doctor or nurse registrations to verify.</td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
-    <h4 hidden id="verify-message"></h4>
 </div>
 {% block javascript %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -37,20 +76,17 @@ Registrations
         $.ajax({
             url: "{% url 'verify_user' %}",
             type: "POST",
-            data: { data: userID, 'csrfmiddlewaretoken': '{{ csrf_token }}' }, // data to pass
-            // handle success
+            data: { data: userID, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+
             success: function(json) {
-                // alert("success");
-                // on success remove the row
+
                 var row = document.getElementById(userID);
                 row.parentNode.removeChild(row);
                 var verify_message = document.getElementById("verify-message");
                 verify_message.innerHTML = "Successfully verified user: " + json.userID;
                 verify_message.removeAttribute('hidden');
             },
-            // handle error
             error: function(xhr, errmsg, err) {
-                // alert("error\nerrmsg: " + errmsg + "\nerr: " + err + "\nend\nStatus:" + xhr.status + ": " + xhr.responseText);
                 var verify_message = document.getElementById("verify-message");
                 verify_message.innerHTML = "Error: Could not verify";
                 verify_message.removeAttribute('hidden');

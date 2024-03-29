@@ -1,32 +1,56 @@
 {% extends "patients/dashboard_layout.html" %}
-
 {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
 <div class="records-main">
     <h2>Search Patient Records</h2>
-    <form method="get" class="search-form">
-        <input type="text" name="query" placeholder="Search patients..." value="{{ request.GET.query }}" class="search-input">
-        <button type="submit" class="search-button">
-            <i class="fas fa-search"></i>
-        </button>
-    </form>
-</div>
-
-{% if patients %}
-<div class="records-body">
-    <h3>Results:</h3>
-    <ul>
-        {% for patient in patients %}
-        <li>{{ patient.name }} - <a href="{% url 'patient_detail' patient.id %}">View Details</a></li>
-        {% endfor %}
-    </ul>
-</div>
-{% else %}
-    {% if request.GET.query %}
-    <div class="records-body">
-        <p>No patients found matching the search criteria.</p>
+    <div class="search-form-container">
+        <form method="get" class="search-form">
+            <input type="text" name="query" placeholder="Search patients..." value="{{ request.GET.query }}" class="search-input">
+            <button type="submit" class="search-button">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
     </div>
+    {% if patients %}
+    <div class="records-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Date of Birth</th>
+                    <th>Phone Number</th>
+                    <th>NHS Number</th>
+                    <th>Role</th>
+                    <th>Is Active</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td>{{ patient.userID }}</td>
+                    <td>{{ patient.email }}</td>
+                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.date_of_birth }}</td>
+                    <td>{{ patient.phone_number }}</td>
+                    <td>{{ patient.nhs_number }}</td>
+                    <td>{{ patient.role }}</td>
+                    <td>{{ patient.is_active }}</td>
+                    <td>{{ patient.location }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        {% if query %}
+            <p>No patients found matching the search criteria.</p>
+        {% else %}
+            <p>Enter a search query to find patients.</p>
+        {% endif %}
     {% endif %}
-{% endif %}
+</div>
 {% endblock %}

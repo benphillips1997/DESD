@@ -1,3 +1,4 @@
+from .models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseForbidden
@@ -74,9 +75,7 @@ def signup(request, user_role):
                     message = "Email" + message
                     return render(request, f"patients/signup.html", {'form': form, 'role': user_role, 'error': message})
 
-            active = True
-            if role == "doctor" or role == "nurse":
-                active = False
+            active = False
             user = User.objects.create_user(userID=username, email=email, password=password, role=role, name=f"{first_name} {surname}", is_active=active, location=location)
             user.save()
 
@@ -359,13 +358,19 @@ def payments(request):
 def registrations(request):
     if not request.user.groups.filter(name='Admin').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
-    all_users = User.objects.all()
-    unverified_users = []
-    for user in all_users:
-        if not user.is_active:
-            unverified_users.append(user)
-    return render(request, "patients/registrations.html", {"unverified_users": unverified_users})
+    
+    unverified_patients = User.objects.filter(role='patient', is_active=False)
+    unverified_doctors = User.objects.filter(role='doctor', is_active=False)
+    unverified_nurses = User.objects.filter(role='nurse', is_active=False)
 
+    # Pass the filtered users to the context
+    context = {
+        "unverified_patients": unverified_patients,
+        "unverified_doctors": unverified_doctors,
+        "unverified_nurses": unverified_nurses,
+    }
+    
+    return render(request, "patients/registrations.html", context)
 @login_required
 def verify_user(request):
     if request.method == "POST":
@@ -388,21 +393,20 @@ def is_staff_member(user):
     return user.groups.filter(name__in=['Doctor', 'Nurse', 'Admin']).exists() or user.is_staff
 
 @login_required
-@user_passes_test(is_staff_member, login_url='/login/', redirect_field_name=None)
 def records(request):
-    search_form = PatientSearchForm(request.GET or None)  # Initialize the form with GET data if present
+    query = request.GET.get('query')
     patients = None
 
-    if 'query' in request.GET and search_form.is_valid():  # Check if 'query' parameter exists and form is valid
-        query = search_form.cleaned_data['query']
-        patients = Patient.objects.filter(name__icontains=query)
-        if not patients:
-            messages.info(request, "No patients found matching the search criteria.")
+    if query:
+        patients = Patient.objects.filter(name__icontains=query, role='patient').values(
+            'userID', 'email', 'name', 'date_of_birth', 'phone_number', 'nhs_number', 'role', 'is_active', 'location'
+        )
 
     return render(request, 'patients/patient_records.html', {
-        'search_form': search_form,
-        'patients': patients
+        'patients': patients,
+        'query': query
     })
+
 
 @login_required
 def reports(request):
