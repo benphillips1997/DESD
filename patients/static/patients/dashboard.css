@@ -348,6 +348,16 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     border-radius: 15px;
     margin: 10px;
 }
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="date"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"] {
+    width: 100%; /* Ensure full width */
+}
 
 input[type="email"],
 input[type="password"] {
@@ -356,6 +366,7 @@ input[type="password"] {
     padding: 10px;
     vertical-align: middle;
 }
+
 .search-form-container {
     display: flex;
     justify-content: center;
@@ -535,6 +546,7 @@ input{
     max-width: 50%;
     margin: 20px auto;
     text-align: left;
+    font-family: 'Poppins', sans-serif;
 }
 
 .change-surgery-request h2 {
@@ -568,7 +580,7 @@ input{
 
 .change-surgery-request .form-group input,
 .change-surgery-request .form-group textarea {
-    background-color: #12233C;
+    background-color: #19314E;
     border: 1px solid #0E1B2B;
     color: white;
     padding: 10px;
