@@ -356,7 +356,7 @@ def registrations(request):
     all_users = User.objects.all()
     unverified_users = []
     for user in all_users:
-        if not user.is_active:
+        if not user.is_active and not user.requested_deletion:
             unverified_users.append(user)
     deleted_users = []
     for user in all_users:
@@ -522,6 +522,7 @@ def delete_account(request):
         if request.session.get('confirm_delete', False):
             user = request.user
             user.requested_deletion = True
+            user.is_active = False
             user.save()
             logout(request)
             return redirect('home')
