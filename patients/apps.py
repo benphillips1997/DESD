@@ -12,3 +12,6 @@ class PatientsConfig(AppConfig):
 
         from .signals import create_users
         post_migrate.connect(create_users, sender=self)
+
+        from .signals import create_appointments
+        post_migrate.connect(create_appointments, sender=self)

@@ -1,5 +1,10 @@
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
+from .models import Appointment
+import random
+import string
+from django.utils import timezone
+import datetime
 
 User = get_user_model()
 
@@ -69,10 +74,6 @@ def create_users(sender, **kwargs):
         nurse2 = User.objects.create_user(userID="nurse2", email="nurse2@smartcare.com", password="pw1", role="nurse", name=f"Nur Se", is_active=False, location="Bristol")
         nurse2.save()
 
-    import random
-    import string
-    from django.utils import timezone
-
     try:
         many = User.objects.get(userID="dontdelete")
     except User.DoesNotExist:
@@ -104,3 +105,26 @@ def create_users(sender, **kwargs):
             )
 
             user.save()
+
+
+def create_appointments(sender, **kwargs):
+    try:
+        many = User.objects.get(userID="dontdelete2")
+    except User.DoesNotExist:
+        many = User.objects.create_user(userID="dontdelete2", email="dontdelete2@smartcare.com", password="pw1", role="patient", name=f"dont delete2", is_active=True, location="Bristol")
+        many.save()
+        for i in range(-10, 30):
+            patient = random.choice(User.objects.filter(role="patient"))
+            doctor = random.choice([User.objects.get(userID="doctor1"), User.objects.get(userID="nurse1")])
+            time = datetime.time(hour=random.randint(9, 16))
+            end_time = (datetime.datetime.combine(datetime.date(1,1,1),time) + datetime.timedelta(minutes=10)).time()
+            appointment = Appointment.objects.create(
+                patient=patient, 
+                doctor=doctor, 
+                date=(datetime.date.today() - datetime.timedelta(days=i)),
+                appointment_time=time,
+                appointment_end_time=end_time,
+                patient_type=random.choice(["NHS", "Private"]),
+                appointment_status="Scheduled"
+            )
+            appointment.save()
