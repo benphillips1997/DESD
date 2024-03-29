@@ -68,3 +68,39 @@ def create_users(sender, **kwargs):
     except User.DoesNotExist:
         nurse2 = User.objects.create_user(userID="nurse2", email="nurse2@smartcare.com", password="pw1", role="nurse", name=f"Nur Se", is_active=False, location="Bristol")
         nurse2.save()
+
+    import random
+    import string
+    from django.utils import timezone
+
+    try:
+        many = User.objects.get(userID="dontdelete")
+    except User.DoesNotExist:
+        many = User.objects.create_user(userID="dontdelete", email="dontdelete@smartcare.com", password="pw1", role="patient", name=f"dont delete", is_active=True, location="Bristol")
+        many.save()
+        # Function to create random data for users
+        num_users=10
+        default_password='pw1'
+        for i in range(num_users):
+            username = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+            email = f"{username}@example.com"
+            first_name = ''.join(random.choices(string.ascii_lowercase, k=5)).capitalize()
+            surname = ''.join(random.choices(string.ascii_lowercase, k=5)).capitalize()
+            dob = timezone.now().date().replace(year=timezone.now().year - random.randint(18, 100))
+            phone_no = ''.join(random.choices(string.digits, k=10))
+            nhs_no = ''.join(random.choices(string.digits, k=10))
+            password = default_password
+            role = random.choice(['nurse', 'patient', 'admin', 'doctor'])  # Choose a random role
+            location = 'Test Location'
+
+            # Create the user
+            user = User.objects.create_user(
+                userID=username,
+                email=email,
+                password=password,
+                name=first_name + " " + surname,
+                role=role,  # Add the role field
+                location=location  # Add the location field
+            )
+
+            user.save()
