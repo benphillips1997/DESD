@@ -17,7 +17,6 @@
         <li><a href="{% url 'records' %}">Records</a></li>
         <li><a href="{% url 'reports' %}">Reports</a></li>
         <li><a href="{% url 'admin_invoices' %}">Invoices</a></li>
-        <li><a href="{% url 'operations' %}">Operations</a></li>
         {% endif %}
         {% if user.role == "doctor" or user.role == "nurse" %}
         <li><a href="{% url 'current_appointment' %}">Current appointment</a></li>
