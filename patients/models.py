@@ -119,6 +119,11 @@ class PrescriptionMedicine(models.Model):
 
 
 class Invoice(models.Model):
+    TYPE_CHOICES = (
+        ('Appointment', 'Appointment'),
+        ('Prescription', 'Prescription'),
+    )
+    type = models.CharField(max_length=12, choices=TYPE_CHOICES, default='Appointment')
     invoiceID = models.AutoField(primary_key=True)
     date_issued = models.DateField()
     due_date = models.DateField()

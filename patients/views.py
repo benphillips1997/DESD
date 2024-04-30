@@ -17,8 +17,8 @@ from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
 from django.utils import timezone
 from django.utils.timezone import localdate, make_aware
-import datetime
 from time import localtime
+from datetime import datetime, timedelta, date
 
 User = get_user_model()
 
@@ -101,8 +101,8 @@ def check_appointment_status():
     all_appointments = Appointment.objects.all()
     for appointment in all_appointments:
         if appointment.appointment_status == "Scheduled":
-            now = datetime.datetime.now()
-            if (appointment.date < datetime.date.today()) or (appointment.date <= datetime.date.today() and appointment.appointment_end_time < now.time()):
+            now = datetime.now()
+            if (appointment.date < date.today()) or (appointment.date <= date.today() and appointment.appointment_end_time < now.time()):
                 appointment.appointment_status = "Completed"
                 appointment.save()
 
@@ -114,7 +114,7 @@ def dashboard(request):
         check_appointment_status()
         if user.role == "doctor" or user.role == "nurse":
             all_appointments = Appointment.objects.filter(doctor=user.userID)
-            now = datetime.date.today()
+            now = date.today()
             appointments_today = all_appointments.filter(date=now).order_by("appointment_time")
             next_appointment = appointments_today.filter(appointment_status="Scheduled").first()
             completed_appointments = appointments_today.filter(appointment_status='Completed').count()
@@ -122,7 +122,7 @@ def dashboard(request):
             return render(request, f"patients/{user.role}_dashboard.html", {"user": user, "appointments": appointments_today, 
                                     "next_appointment": next_appointment, "completed_appointments": completed_appointments, "scheduled_appointments": remaining_appointments})
         elif user.role == "admin":
-            appointments_today = Appointment.objects.filter(date=datetime.date.today())
+            appointments_today = Appointment.objects.filter(date=date.today())
             completed_appointments = appointments_today.filter(appointment_status='Completed').count()
             remaining_appointments = appointments_today.filter(appointment_status='Scheduled').count()
             return render(request, f"patients/{user.role}_dashboard.html", {"user": user, "completed_appointments": completed_appointments, "scheduled_appointments": remaining_appointments})
@@ -139,8 +139,8 @@ def weekly_schedule(request):
     check_appointment_status()
     # retrive all appointments for the next week
     all_appointments = Appointment.objects.filter(doctor=request.user.userID)
-    today = datetime.date.today()
-    next_week = today + datetime.timedelta(days=7)
+    today = date.today()
+    next_week = today + timedelta(days=7)
     
     weekly_appointments = all_appointments.filter(date__range=(today, next_week)).order_by("date", "appointment_time")
     
@@ -207,10 +207,9 @@ def request_reissue(request):
 def current_appointment(request):
     if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
         return HttpResponseForbidden("You don't have permission to view this page.")
-    now = datetime.datetime.now()
-    # retrieve appointment that is within the current 10 minuter time slot
-    start_time = now - datetime.timedelta(minutes=now.minute % 10, seconds=now.second, microseconds=now.microsecond)
-    current_appointment = Appointment.objects.filter(doctor=request.user.userID).filter(date=datetime.date.today()).filter(appointment_time=(start_time.time())).first()
+    now = datetime.now()
+    start_time = now - timedelta(minutes=now.minute % 10, seconds=now.second, microseconds=now.microsecond)
+    current_appointment = Appointment.objects.filter(doctor=request.user.userID).filter(date=date.today()).filter(appointment_time=(start_time.time())).first()
     message = ""
     if request.method == "POST":
         form = CreatePrescriptionForm(request.POST)
@@ -220,18 +219,29 @@ def current_appointment(request):
             description = form.cleaned_data["description"] 
 
             appointment = Appointment.objects.get(appointmentID=appointmentID)
-
             patient = appointment.patient
 
-            new_prescription = Prescription.objects.create(patient=patient, appointment=appointment, title=title, description=description, status="Active")
+            new_prescription = Prescription.objects.create(
+                patient=patient,
+                appointment=appointment,
+                title=title,
+                description=description,
+                status="Active"
+            )
             new_prescription.save()
 
-            message = "Added prescription"
+            Invoice.objects.create(
+                appointment=appointment,
+                type='Prescription',
+                amount=9.65,
+                date_issued=timezone.now(),
+                due_date=timezone.now() + timedelta(days=30),
+                status='Unpaid'
+            )
+
+            message = "Prescription added and invoice created."
     else:
-        if current_appointment:
-            form = CreatePrescriptionForm(current_appointmentID=current_appointment.appointmentID)
-        else:
-            form = CreatePrescriptionForm()
+        form = CreatePrescriptionForm(initial={'appointmentID': current_appointment.appointmentID if current_appointment else None})
     return render(request, "patients/current_appointment.html", {"form": form, "current_appointment": current_appointment, "message": message})
 
 @login_required
@@ -241,8 +251,8 @@ def recent_patients(request):
     check_appointment_status()
     # retrive all appointments in a previous period
     all_appointments = Appointment.objects.filter(doctor=request.user.userID)
-    today = datetime.date.today()
-    time_before = today - datetime.timedelta(weeks=4)
+    today = date.today()
+    time_before = today - timedelta(weeks=4)
     recent_appointments = all_appointments.filter(date__range=(time_before, today), appointment_status="Completed").order_by("date", "appointment_time")
     message = ""
     if request.method == "POST":
@@ -266,13 +276,13 @@ def recent_patients(request):
 
 
 @login_required
-def print_invoice(request, invoice_id):
+def print_appointment_invoice(request, invoice_id):
     invoice = get_object_or_404(Invoice, invoiceID=invoice_id)
     appointment = invoice.appointment
     rate_per_minute = 0
 
-    start_datetime = make_aware(datetime.datetime.combine(appointment.date, appointment.appointment_time))
-    end_datetime = make_aware(datetime.datetime.combine(appointment.date, appointment.appointment_end_time))
+    start_datetime = make_aware(datetime.combine(appointment.date, appointment.appointment_time))
+    end_datetime = make_aware(datetime.combine(appointment.date, appointment.appointment_end_time))
     duration_timedelta = end_datetime - start_datetime
     duration_minutes = int(duration_timedelta.total_seconds() / 60)
 
@@ -293,22 +303,55 @@ def print_invoice(request, invoice_id):
         'practitioner_name': practitioner_name,
         'practitioner_role': practitioner_role
     }
-    return render(request, 'patients/print_invoice.html', context)
+    return render(request, 'patients/print_appointment_invoice.html', context)
+
+@login_required
+def print_prescription_invoice(request, invoice_id):
+    invoice = get_object_or_404(Invoice, invoiceID=invoice_id)
+    appointment = invoice.appointment
+    amount = 9.65
+
+    prescription = Prescription.objects.filter(appointment=appointment).first()
+
+    start_datetime = make_aware(datetime.combine(appointment.date, appointment.appointment_time))
+    end_datetime = make_aware(datetime.combine(appointment.date, appointment.appointment_end_time))
+    duration_timedelta = end_datetime - start_datetime
+    duration_minutes = int(duration_timedelta.total_seconds() / 60)
+
+    patient_location = appointment.patient.location
+    practitioner_name = appointment.doctor.name
+    practitioner_role = appointment.doctor.get_role_display()
+
+    context = {
+        'invoice': invoice,
+        'prescription': prescription,
+        'duration_minutes': duration_minutes,
+        'patient_location': patient_location,
+        'practitioner_name': practitioner_name,
+        'practitioner_role': practitioner_role,
+        'amount': amount
+    }
+    return render(request, 'patients/print_prescription_invoice.html', context)
 
 @login_required
 def patient_invoices(request):
     if not request.user.groups.filter(name='Patient').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
+
     user_invoices = Invoice.objects.filter(appointment__patient=request.user).order_by('-date_issued')
+    
     for invoice in user_invoices:
-        start_time = invoice.appointment.appointment_time
-        end_time = invoice.appointment.appointment_end_time
-        start_datetime = datetime.datetime.combine(datetime.date.today(), start_time)
-        end_datetime = datetime.datetime.combine(datetime.date.today(), end_time)
-        duration_timedelta = end_datetime - start_datetime
-        duration_minutes = int(duration_timedelta.total_seconds() / 60)
-        invoice.duration = duration_minutes
-        
+        if invoice.type == 'Appointment':
+            start_time = invoice.appointment.appointment_time
+            end_time = invoice.appointment.appointment_end_time
+            start_datetime = datetime.combine(date.today(), start_time)
+            end_datetime = datetime.combine(date.today(), end_time)
+            duration_timedelta = end_datetime - start_datetime
+            duration_minutes = int(duration_timedelta.total_seconds() / 60)
+            invoice.duration = duration_minutes
+        else:
+            invoice.duration = 'N/A'
+
     return render(request, "patients/patient_invoices.html", {'user_invoices': user_invoices})
 
 def is_admin(user):
@@ -321,8 +364,8 @@ def admin_invoices(request):
     for invoice in all_invoices:
         start_time = invoice.appointment.appointment_time
         end_time = invoice.appointment.appointment_end_time
-        start_datetime = datetime.datetime.combine(datetime.date.today(), start_time)
-        end_datetime = datetime.datetime.combine(datetime.date.today(), end_time)
+        start_datetime = datetime.combine(date.today(), start_time)
+        end_datetime = datetime.combine(date.today(), end_time)
         duration_timedelta = end_datetime - start_datetime
         duration_minutes = int(duration_timedelta.total_seconds() / 60)
         invoice.duration = duration_minutes
@@ -429,7 +472,7 @@ def reports(request):
             elif duration == "Monthly":
                 timeframe = 28
 
-            start_date = datetime.date.today() - datetime.timedelta(days=timeframe)
+            start_date = date.today() - timedelta(days=timeframe)
 
             total_amount_paid = 0
             total_amount_unpaid = 0
@@ -438,7 +481,7 @@ def reports(request):
             # get list of invoices in selected time frame
             invoices = Invoice.objects.all()
             for invoice in invoices:
-                if invoice.appointment.date <= datetime.date.today() and invoice.appointment.date > start_date and (invoice.appointment.patient_type == type or type == "All"):
+                if invoice.appointment.date <= date.today() and invoice.appointment.date > start_date and (invoice.appointment.patient_type == type or type == "All"):
                     invoice_list.append(invoice)
                     # calculate charges
                     if invoice.appointment.patient_type == "NHS":
@@ -531,21 +574,35 @@ def delete_account(request):
 
 @login_required
 def book_appointment(request):
+    current_appointment = Appointment.objects.filter(
+        patient=request.user,
+        date__gte=timezone.now().date(),
+        appointment_status='Scheduled'
+    ).first()
+
     if request.method == 'POST':
+        if 'cancel' in request.POST:
+            current_appointment.appointment_status = 'Cancelled'
+            current_appointment.save()
+            messages.success(request, "Your appointment has been cancelled.")
+            return redirect('book_appointment')
+            
         form = BookAppointmentForm(request.POST)
         if form.is_valid():
+            if current_appointment:
+                messages.error(request, "You already have an upcoming appointment. Please cancel it before booking a new one.")
+                return render(request, 'patients/book_appointment.html', {'form': form, 'current_appointment': current_appointment})
+                
             desired_time = form.cleaned_data['appointment_time']
             desired_date = form.cleaned_data['date']
             doctor = form.cleaned_data['doctor']
-            duration = datetime.timedelta(minutes=10)
+            duration = timedelta(minutes=10)
 
-            # Check for overlapping appointments
             if Appointment.objects.filter(Q(date=desired_date) & Q(appointment_time=desired_time), doctor=doctor).exists():
                 messages.error(request, "This time slot is already booked. Please choose another.")
-                message = "This time slot is already booked. Please choose another."
-                return render(request, 'patients/book_appointment.html', {'form': form, 'message': message})
-            
-            start_datetime = datetime.datetime.combine(desired_date, desired_time)
+                return render(request, 'patients/book_appointment.html', {'form': form})
+
+            start_datetime = datetime.combine(desired_date, desired_time)
             end_datetime = start_datetime + duration
             end_time = end_datetime.time()
 
@@ -558,13 +615,16 @@ def book_appointment(request):
                 patient_type=form.cleaned_data['patient_type'],
                 appointment_status='Scheduled'
             )
-            appointment.save()
 
-            message = f"Successfully booked appointment at {str(desired_date)} {str(desired_time)} with {doctor.name}"
-            return render(request, 'patients/book_appointment.html', {'form': form, 'message': message})
+            messages.success(request, f"Successfully booked appointment at {desired_date} {desired_time} with {doctor.name}")
+            return redirect('dashboard')
     else:
         form = BookAppointmentForm()
-    return render(request, 'patients/book_appointment.html', {'form': form})
+
+    return render(request, 'patients/book_appointment.html', {
+        'form': form, 
+        'current_appointment': current_appointment if current_appointment else None
+    })
 
 @login_required
 def logout(request):

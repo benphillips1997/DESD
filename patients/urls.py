@@ -34,7 +34,8 @@ urlpatterns = [
     path("visit_history/", views.visit_history, name="visit_history"),
 
     path('invoices/', views.patient_invoices, name='patient_invoices'),
-    path('print_invoice/<int:invoice_id>/', views.print_invoice, name='print_invoice'),
+    path('print_appointment_invoice/<int:invoice_id>/', views.print_appointment_invoice, name='print_appointment_invoice'),
+    path('print_prescription_invoice/<int:invoice_id>/', views.print_prescription_invoice, name='print_prescription_invoice'),
     path('admin_invoices/', views.admin_invoices, name='admin_invoices'),
 
     path("settings/", views.patient_settings, name="patient_settings"),

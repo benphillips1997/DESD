@@ -1,48 +1,100 @@
 {% extends "patients/dashboard_layout.html" %}
 {% block title %}Book Appointment{% endblock %}
 {% block content %}
-<div class="visit-history-main">
-    <h2>Book Appointment</h2>
-    <div class="visit-history-body">
-        <form method="post" action="{% url 'book_appointment' %}">
-            {% csrf_token %}
-            <table>
-                <tbody>
-                    <tr>
+<div class="booking-container">
+    <div class="booking-box">
+        <h2>Book Appointment</h2>
+        <div class="booking-body">
+            <form method="post" action="{% url 'book_appointment' %}">
+                {% csrf_token %}
+                <table>
+                    <tbody>
                         {% for field in form %}
-                        <td>
-                            {% if field.errors %}
-                                <div class="alert alert-danger">
-                                    {{ field.errors|striptags }}
-                                </div>
-                            {% endif %}
-                            {{ field.label_tag }} {{ field }}
-                        </td>
+                        <tr>
+                            <th>{{ field.label }}</th>
+                            <td>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ field.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
                         {% endfor %}
-                        <td><input class="invoices-button" type="submit" value="Book Appointment"></td>
+                        <tr>
+                            <td colspan="2">
+                                <button type="submit" class="booking-form-button">Book Appointment</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% if message %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <div class="booking-box">
+        <h2>Upcoming Appointment</h2>
+        <div class="booking-body">
+            {% if upcoming_appointment %}
+                <table>
+                    <tr>
+                        <th>Date:</th>
+                        <td>{{ upcoming_appointment.date }}</td>
                     </tr>
-                </tbody>
-            </table>
-            <p>{{ message }}</p>
-        </form>
+                    <tr>
+                        <th>Time:</th>
+                        <td>{{ upcoming_appointment.appointment_time }}</td>
+                    </tr>
+                    <tr>
+                        <th>Practitioner:</th>
+                        <td>{{ upcoming_appointment.doctor.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Type:</th>
+                        <td>{{ upcoming_appointment.patient_type }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <form method="post" action="{% url 'cancel_appointment' upcoming_appointment.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="cancel-appointment-button">Cancel Appointment</button>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+                {% if cancel_message %}
+                    <div class="alert alert-success">{{ cancel_message }}</div>
+                {% endif %}
+            {% else %}
+                <p>No upcoming appointments.</p>
+            {% endif %}
+        </div>
     </div>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
-            slotDuration: '00:10:00',
-            events: '/path-to-your-events-view/',
-            dateClick: function(info) {
-            },
-            eventClick: function(info) {
-            }
-        });
-        calendar.render();
+        if (calendarEl) { 
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: ['dayGrid', 'timeGrid'],
+                initialView: 'timeGridWeek',
+                slotDuration: '00:10:00',
+                events: '/events/', 
+                dateClick: function(info) {
+                },
+                eventClick: function(info) {
+                }
+            });
+            calendar.render();
+        }
     });
 </script>
 {% endblock %}

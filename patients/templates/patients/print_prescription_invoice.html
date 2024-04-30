@@ -1,0 +1,114 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice #{{ invoice.invoiceID }}</title>
+    <style>
+        body { font-family: 'Helvetica', 'Arial', sans-serif; margin: 0 auto; max-width: 800px; }
+        .invoice-header, .invoice-footer { background-color: #F0F0F0; text-align: center; }
+        .invoice-body { padding: 10px; padding-top: 0px;}
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { text-align: left; padding: 5px; border-bottom: 1px solid #ddd; }
+        th { background-color: #0E1B2B; color: white; }
+        .text-right { text-align: right; }
+        .invoice-to { margin-bottom: 20px; }
+        .invoice-to table { border: none; }
+        .invoice-to th, .invoice-to td { border: none; padding: 4px; }
+        .invoice-to th { text-align: left; white-space: nowrap; }
+        .invoice-to td { width: 100%; }
+        .header-bar { 
+            background-color: #0E1B2B; 
+            text-align: center;
+        }
+        .header-bar img { 
+            width: auto; 
+            height: 200px;
+        }
+        .footer-bar { 
+            background-color: #0E1B2B; 
+            color: white;
+            text-align: center; 
+            padding: 10px;
+            margin-top: 20px;
+        }
+        .payment-due-text {
+            font-weight: bold;
+            color: #FF0000;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <img src="{% static 'patients/smartcare_logo.png' %}" alt="SmartCare Logo">
+    </div>
+
+    <div class="invoice-header">
+        <h1>Invoice #{{ invoice.invoiceID }}</h1>
+        <p>SmartCare Surgery</p>
+        <p>123 Health Street, Bristol, BS1 4ND</p>
+    </div>
+
+    <div class="invoice-body">
+        <section class="invoice-to">
+            <h2>Invoice To:</h2>
+            <table>
+                <tr>
+                    <th>Name:</th>
+                    <td>{{ invoice.appointment.patient.name }}</td>
+                </tr>
+                <tr>
+                    <th>Email:</th>
+                    <td>{{ invoice.appointment.patient.email }}</td>
+                </tr>
+                <tr>
+                    <th>Location:</th>
+                    <td>{{ invoice.appointment.patient.location }}</td>
+                </tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>Prescription Details:</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Prescription {{ prescription.title }} from {{ invoice.appointment.doctor.role|capfirst }} {{ invoice.appointment.doctor.name }} on {{ invoice.appointment.date }}.</td>
+                        <td class="text-right">NHS Prescription Charge</td>
+                    </tr>
+                    <tr>
+                        <td>Total Amount:</td>
+                        <td class="text-right">£{{ invoice.amount|floatformat:2 }}</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total Due:</th>
+                        <th class="text-right">£{{ invoice.amount|floatformat:2 }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+    </div>
+
+    <div class="invoice-footer">
+        <div class="payment-due">
+            <p class="payment-due-text">Payment due by {{ invoice.due_date }}</p>
+        </div>
+        <p>If you have any questions about this invoice, please contact 079 6916 9154</p>
+        <p>Thank you for choosing SmartCare Surgery.</p>
+    </div>
+
+    <div class="footer-bar">
+        SmartCare Surgery © {{ invoice.date_issued.year }}
+    </div>
+</body>
+</html>
