@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Pay</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/dashboard.css' %}"/>
+</head>
+
+<body>
+    <div class="pay-verify-top">
+        <h3>You are paying</h3>
+    </div>
+    <div class="pay-verify-middle">
+        <h1>£{{amount}}</h1>
+    </div>
+    <div class="pay-verify-bottom">
+        <form action="{% url 'pay' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="amount" value="{{ amount }}">
+            <input type="hidden" name="appointmentID" value="{{ appointmentID }}">
+            <input type="submit" value="Continue to pay" class="pay-verify-button"/>
+        </form>
+    </div>
+</body>
+</html>

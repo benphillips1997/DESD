@@ -11,10 +11,13 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm, SetPasswordForm
 from .models import User
 from datetime import datetime, time, timedelta
+from django.core.validators import RegexValidator
 
 User = get_user_model()
 
 from .models import Appointment, Invoice , SurgeryChangeRequest
+
+numeric_validator = RegexValidator(r'^[0-9+]', 'Only digit characters.')
 
 class SignUpForm(forms.Form):
     username = forms.CharField(label='')
@@ -210,3 +213,13 @@ class ReportsForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(ReportsForm, self).__init__(*args, **kwargs)
+
+class CardDetailsForm(forms.Form):
+    card_holder_name = forms.CharField(max_length=255, required=True)
+    card_number = forms.CharField(max_length=16, required=True)
+    expiry_month = forms.CharField(max_length=2, required=True)
+    expiry_year = forms.CharField(max_length=4, required=True)
+    csv = forms.CharField(max_length=3, required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(CardDetailsForm, self).__init__(*args, **kwargs)

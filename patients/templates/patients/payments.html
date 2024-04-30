@@ -3,5 +3,59 @@
 Payments
 {% endblock %}
 {% block content %}
-
+<div class="payments-main">
+    <h2>Payment details</h2>
+    <div class="payments-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>Appointment date</th>
+                    <th>Appointment time</th>
+                    <th>Practitioner</th>
+                    <th>Cost</th>
+                    <th>Status</th>
+                    <th>Pay for appointment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in user_invoices %}
+                <tr id="">
+                    <td>{{ data.appointment.date }}</td>
+                    <td>{{ data.appointment.appointment_time }}</td>
+                    <td>{{ data.appointment.doctor.name }}</td>
+                    <td>£{{ data.amount }}</td>
+                    <td>{{ data.status }}</td>
+                    <td>
+                        {% if data.status == "Unpaid" %}
+                        <form action="{% url 'pay_verify' %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="amount" value="{{ data.amount }}">
+                            <input type="hidden" name="appointmentID" value="{{ data.appointment.appointmentID }}">
+                            <input type="submit" value="Pay" class="payments-button"/>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No invoices found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        {% if total_unpaid == 0 %}
+        <h2>No payments due</h2>
+        {% else %}
+        <h2>Total amount owed: £{{ total_unpaid }}</h2>
+        <form action="{% url 'pay_verify' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="amount" value="{{ total_unpaid }}">
+            <input type="hidden" name="appointmentID" value="all">
+            <input type="submit" value="Pay in full" class="payments-button-large"/>
+        </form>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

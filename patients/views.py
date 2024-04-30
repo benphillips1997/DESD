@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.contrib import messages
 
 from .models import Prescription, Invoice, Appointment, SurgeryChangeRequest
-from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, UserUpdateForm, PasswordChangeForm, ReportsForm, SurgeryChangeRequestForm
+from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, UserUpdateForm, PasswordChangeForm, ReportsForm, SurgeryChangeRequestForm, CardDetailsForm
 
 from django.http import JsonResponse
 from smartcare_surgery import settings as project_settings
@@ -373,6 +373,7 @@ def admin_invoices(request):
         
     return render(request, "patients/admin_invoices.html", {'all_invoices': all_invoices})
 
+
 @login_required
 def visit_history(request):
     appointments = Appointment.objects.filter(
@@ -387,21 +388,60 @@ def visit_history(request):
 def payments(request):
     if not request.user.groups.filter(name='Patient').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/payments.html")
+    user_invoices = Invoice.objects.filter(appointment__patient=request.user, appointment__patient_type="Private").order_by('-appointment__date', '-appointment__appointment_time')
+    total_unpaid = 0
+    for invoice in user_invoices:
+        if invoice.status == "Unpaid":
+            total_unpaid += invoice.amount
+    return render(request, "patients/payments.html", {'user_invoices': user_invoices, 'total_unpaid': total_unpaid})
+
+@login_required
+def pay_verify(request):
+    if not request.user.groups.filter(name='Patient').exists():
+        return HttpResponseForbidden("You don't have permission to view this page.")
+    if request.method == "POST":
+        amount = request.POST.get("amount")
+        appointmentID = request.POST.get("appointmentID")
+        return render(request, "patients/pay_verify.html", {'amount': amount, 'appointmentID': appointmentID})
+    else:
+        return redirect("payments")
+
+@login_required
+def pay(request):
+    if not request.user.groups.filter(name='Patient').exists():
+        return HttpResponseForbidden("You don't have permission to view this page.")
+    if request.method == "POST":
+        form = CardDetailsForm(request.POST)
+        amount = request.POST.get("amount")
+        appointment = None
+        appointmentID = request.POST.get("appointmentID")
+        if form.is_valid():
+            if request.POST.get("appointmentID") == "all":
+                user_invoices = Invoice.objects.filter(appointment__patient=request.user)
+                for invoice in user_invoices:
+                    if invoice.status == "Unpaid":
+                        invoice.status = "Paid"
+                        invoice.save()
+            else:
+                invoice = Invoice.objects.get(appointment__patient=request.user, appointment__appointmentID=request.POST.get("appointmentID"))
+                invoice.status = "Paid"
+                invoice.save()
+                appointment = Appointment.objects.get(appointmentID=appointmentID)
+            return render(request, "patients/pay_success.html", {'amount': amount, 'appointment': appointment})
+        form = CardDetailsForm()
+        return render(request, "patients/pay.html", {'amount': amount, 'appointmentID': appointmentID, 'form': form})
+    else:
+        return redirect("payments")
+
 
 @login_required
 def registrations(request):
     if not request.user.groups.filter(name='Admin').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
-    all_users = User.objects.all()
-    unverified_users = []
-    for user in all_users:
-        if not user.is_active and not user.requested_deletion:
-            unverified_users.append(user)
-    deleted_users = []
-    for user in all_users:
-        if user.requested_deletion:
-            deleted_users.append(user)
+    
+    unverified_users = User.objects.filter(is_active=False, requested_deletion=False)
+    deleted_users = User.objects.filter(requested_deletion=True)
+    
     return render(request, "patients/registrations.html", {"unverified_users": unverified_users, "deleted_users": deleted_users})
 
 @login_required
@@ -451,7 +491,6 @@ def records(request):
         'patients': patients,
         'query': query
     })
-
 
 @login_required
 def reports(request):

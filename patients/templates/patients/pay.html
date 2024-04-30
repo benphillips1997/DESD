@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Pay</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'patients/dashboard.css' %}"/>
+</head>
+
+<body>
+    <div class="pay-heading">
+        <h1>You are paying £{{amount}}</h1>
+    </div>
+    <div class="pay-details">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="hidden" name="amount" value="{{ amount }}">
+            <input type="hidden" name="appointmentID" value="{{ appointmentID }}">
+            <input type="submit" value="Confirm transaction" class="pay-button"/>
+        </form>
+    </div>
+</body>
+</html>

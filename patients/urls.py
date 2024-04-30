@@ -30,6 +30,9 @@ urlpatterns = [
     path("book_appointment/", views.book_appointment, name="book_appointment"),
     path("request_reissue/", views.request_reissue, name="request_reissue"),
     path("patient_prescriptions/", views.patient_prescriptions, name="patient_prescriptions"),
+    path("payments/", views.payments, name="payments"),
+    path("pay_verify/", views.pay_verify, name="pay_verify"),
+    path("pay/", views.pay, name="pay"),
 
     path("visit_history/", views.visit_history, name="visit_history"),
 
