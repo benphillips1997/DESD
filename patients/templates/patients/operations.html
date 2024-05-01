@@ -4,12 +4,12 @@ Operations
 {% endblock %}
 {% block content %}
 <div class="tab">
-    <button class="tablinks" id="change_schedules_button" onclick="openTab(event, 'change_schedules')">Change schedules</button>
+    <button class="tablinks active" onclick="openTab(event, 'change_schedules')">Change schedules</button>
     <button class="tablinks" onclick="openTab(event, 'remove_patients')">Remove patients</button>
     <button class="tablinks" onclick="openTab(event, 'change_appointment_price')">Change appointment price</button>
 </div>
 
-<div id="change_schedules" class="tabcontent">
+<div id="change_schedules" class="tabcontent" style="display:block">
     <div class="operations-heading">
         <h1>Change schedules</h1>
         <label for="practitioners">Select a practitioner:</label>
@@ -24,7 +24,7 @@ Operations
     </div>
 
     <div class="operations-body">
-        <table>
+        <table id="schedule-table">
             <thead>
                 <tr>
                     <th>Practitioner name</th>
@@ -131,8 +131,6 @@ Operations
         }
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";
-
-        // document.getElementById("change_schedules_button").click(); //open by default
     };
 
     function deletePatient(userID) 
@@ -165,13 +163,14 @@ Operations
 
         document.getElementById("schedule-heading").innerHTML = "Schedule for " + text;
 
+        var table = document.getElementById("schedule-table");
         var tableBody = document.getElementById("schedule-table-body" + value);
         var length = {{ practitioners|length }};
         for (var i = 0; i < length; i++) {
             document.getElementById("schedule-table-body" + (i + 1)).style.display = "none";
         }
         tableBody.removeAttribute('hidden');
-        tableBody.style.display = "block";
+        tableBody.style.display = "table-header-group";
     });
 
     function removeAppointment(appointmentID) 

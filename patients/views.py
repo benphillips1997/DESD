@@ -553,7 +553,7 @@ def operations(request):
     practitioners = User.objects.filter(Q(role='doctor') | Q(role='nurse'))
     prac_list = []
     for practitioner in practitioners:
-        appointments = Appointment.objects.filter(doctor=practitioner)
+        appointments = Appointment.objects.filter(doctor=practitioner, appointment_status="Scheduled")
         prac_appointments = []
         for appointment in appointments:
             prac_appointments.append(appointment)
@@ -725,6 +725,7 @@ def book_appointment(request):
                 patient_type=form.cleaned_data['patient_type'],
                 appointment_status='Scheduled'
             )
+            appointment.save()
 
             messages.success(request, f"Successfully booked appointment at {desired_date} {desired_time} with {doctor.name}")
             return redirect('book_appointment')

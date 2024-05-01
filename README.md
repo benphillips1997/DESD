@@ -56,23 +56,13 @@ Patient account:
     -password: pw1
 
 Doctor account - verified:
-    -userID: doctor1
-    -email: doctor@smartcare.com
-    -password: pw1
-
-Doctor account - unverified:
-    -userID: doctor2
-    -email: doctor2@smartcare.com
+    -userID: DrFirst01
+    -email: dr_first@smartcare.com
     -password: pw1
 
 Nurse account - verified:
-    -userID: nurse1
-    -email: nurse@smartcare.com
-    -password: pw1
-
-Nurse account - unverified:
-    -userID: nurse2
-    -email: nurse2@smartcare.com
+    -userID: MsBest01
+    -email: ms_best@smartcare.com
     -password: pw1
 
 
