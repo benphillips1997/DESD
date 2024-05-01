@@ -71,7 +71,6 @@ Registrations
             data: { data: userID, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
 
             success: function(json) {
-
                 var row = document.getElementById(userID);
                 row.parentNode.removeChild(row);
                 var verify_message = document.getElementById("verify-message");

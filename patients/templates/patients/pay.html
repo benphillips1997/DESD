@@ -8,6 +8,11 @@
 </head>
 
 <body>
+    <a href="{% url 'payments' %}" style="text-decoration: none;">
+        <button class="left-side-button">
+            <img src="{% static 'patients/back_arrow (2).svg' %}" alt="Back">
+        </button>
+    </a>
     <div class="pay-heading">
         <h1>You are paying £{{amount}}</h1>
     </div>

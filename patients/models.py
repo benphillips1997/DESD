@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.contrib.auth.models import Group
 import datetime
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -47,8 +48,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Appointment(models.Model):
     appointmentID = models.AutoField(primary_key=True)
-    patient = models.ForeignKey(User, on_delete=models.RESTRICT, related_name="patient")
-    doctor = models.ForeignKey(User, on_delete=models.RESTRICT, related_name="doctor")
+    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name="patient")
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="doctor")
     date = models.DateField()
     appointment_time = models.TimeField()
     appointment_end_time = models.TimeField()
@@ -64,9 +65,9 @@ class Appointment(models.Model):
         super(Appointment, self).save(*args, **kwargs)
         if is_new:
             if self.doctor.role == "doctor":
-                rate_per_minute = 5
+                rate_per_minute = AppointmentPrice.objects.get(priceID=1).doctor_price / 10
             elif self.doctor.role == "nurse":
-                rate_per_minute = 3
+                rate_per_minute = AppointmentPrice.objects.get(priceID=1).nurse_price / 10
             invoice_amount = rate_per_minute * 10
             Invoice.objects.create(
                 appointment=self,
@@ -76,10 +77,15 @@ class Appointment(models.Model):
                 status="Unpaid"
             )
 
+class AppointmentPrice(models.Model):
+    priceID = models.IntegerField(primary_key=True)
+    doctor_price = models.FloatField(default=50)
+    nurse_price = models.FloatField(default=30)
+
 class Prescription(models.Model):
     prescriptionID = models.AutoField(primary_key=True)
-    patient = models.ForeignKey(User, on_delete=models.RESTRICT)
-    appointment = models.ForeignKey(Appointment, on_delete=models.RESTRICT)
+    patient = models.ForeignKey(User, on_delete=models.CASCADE)
+    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=[("Active", "Active"), ("Inactive", "Inactive"), ("Re-issue requested", "Re-issue requested")])
@@ -127,7 +133,7 @@ class Invoice(models.Model):
     invoiceID = models.AutoField(primary_key=True)
     date_issued = models.DateField()
     due_date = models.DateField()
-    appointment = models.ForeignKey(Appointment, on_delete=models.RESTRICT)
+    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
     amount = models.FloatField()
     status = models.CharField(max_length=10, choices=[("Unpaid", "Unpaid"), ("Paid", "Paid")])
 
@@ -140,3 +146,8 @@ class SurgeryChangeRequest(models.Model):
 
     def __str__(self):
         return f"Surgery Change Request - NHS Number: {self.nhs_number}"
+
+
+class WorkingSchedule(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    schedule = models.JSONField(default=None)

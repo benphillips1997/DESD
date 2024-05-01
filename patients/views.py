@@ -9,8 +9,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.db.models import Q
 from django.contrib import messages
+import json
 
-from .models import Prescription, Invoice, Appointment, SurgeryChangeRequest
+from .models import Prescription, Invoice, Appointment, SurgeryChangeRequest, WorkingSchedule, AppointmentPrice
 from .forms import BookAppointmentForm, SignUpForm, LoginForm, CreatePrescriptionForm, UserUpdateForm, PasswordChangeForm, ReportsForm, SurgeryChangeRequestForm, CardDetailsForm
 
 from django.http import JsonResponse
@@ -77,7 +78,9 @@ def signup(request, user_role):
                     message = "Email" + message
                     return render(request, f"patients/signup.html", {'form': form, 'role': user_role, 'error': message})
 
-            active = False
+            active = True
+            if role == 'doctor' or role == 'nurse':
+                active = False
             user = User.objects.create_user(userID=username, email=email, password=password, role=role, name=f"{first_name} {surname}", is_active=active, location=location)
             user.save()
 
@@ -546,7 +549,74 @@ def reports(request):
 def operations(request):
     if not request.user.groups.filter(name='Admin').exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
-    return render(request, "patients/operations.html")
+
+    practitioners = User.objects.filter(Q(role='doctor') | Q(role='nurse'))
+    prac_list = []
+    for practitioner in practitioners:
+        appointments = Appointment.objects.filter(doctor=practitioner)
+        prac_appointments = []
+        for appointment in appointments:
+            prac_appointments.append(appointment)
+        practitioner.appointments = prac_appointments
+        prac_list.append(practitioner)
+
+    patients = User.objects.filter(role='patient')
+
+    price = AppointmentPrice.objects.get(priceID=1)
+    return render(request, "patients/operations.html", {"practitioners": prac_list, "patients": patients, "price": price})
+
+@login_required
+def remove_appointment(request):
+    if request.method == "POST":
+        appointmentID = request.POST.get("data")
+
+        # delete appointment
+        appointment = Appointment.objects.get(appointmentID=appointmentID)
+        appointment.delete()
+
+        return JsonResponse({"appointmentID": appointmentID}, status=200)
+    else:
+        return HttpResponseForbidden("You cannot access this.")
+
+@login_required
+def delete_patient(request):
+    if request.method == "POST":
+        userID = request.POST.get("data")
+
+        # delete user
+        user = User.objects.get(userID=userID)
+        user.delete()
+
+        return JsonResponse({"userID": userID}, status=200)
+    else:
+        return HttpResponseForbidden("You cannot access this.")
+    
+@login_required
+def change_price_doctor(request):
+    if request.method == "POST":
+        price = request.POST.get("data")
+
+        appointment_price = AppointmentPrice.objects.get(priceID=1)
+        appointment_price.doctor_price = int(price)
+        appointment_price.save()
+
+        return JsonResponse({"price": price}, status=200)
+    else:
+        return HttpResponseForbidden("You cannot access this.")
+    
+@login_required
+def change_price_nurse(request):
+    if request.method == "POST":
+        price = request.POST.get("data")
+
+        appointment_price = AppointmentPrice.objects.get(priceID=1)
+        appointment_price.nurse_price = int(price)
+        appointment_price.save()
+
+        return JsonResponse({"price": price}, status=200)
+    else:
+        return HttpResponseForbidden("You cannot access this.")
+
 
 @login_required
 def patient_settings(request):
@@ -581,7 +651,6 @@ def change_surgery_request(request):
     else:
         form = SurgeryChangeRequestForm()
     return render(request, 'patients/change_surgery_request.html', {'form': form})
-
 
 @login_required
 def password_change(request):

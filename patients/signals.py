@@ -1,12 +1,21 @@
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
-from .models import Appointment
+from .models import Appointment, WorkingSchedule, AppointmentPrice
 import random
 import string
 from django.utils import timezone
 import datetime
 
 User = get_user_model()
+
+
+def create_price(sender, **kwargs):
+    try:
+        price = AppointmentPrice.objects.get(priceID=1)
+    except:
+        price = AppointmentPrice.objects.create(priceID=1)
+        price.save()
+
 
 def create_groups(sender, **kwargs):
     all_groups = ["Admin", "Doctor", "Nurse", "Patient"]
@@ -51,6 +60,8 @@ def create_users(sender, **kwargs):
     except User.DoesNotExist:
         doctor = User.objects.create_user(userID="doctor1", email="doctor@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=True, location="Bristol")
         doctor.save()
+        # schedule1 = WorkingSchedule.objects.create(user=doctor, schedule={"Monday": True, "Tuesday": False, "Wednesday": False, "Thursday": False, "Friday": True, "Saturday": False, "Sunday": False})
+        # schedule1.save()
 
     # this one needs verifying
     try:
@@ -59,6 +70,24 @@ def create_users(sender, **kwargs):
         doctor2 = User.objects.create_user(userID="doctor2", email="doctor2@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=False, location="Bristol")
         doctor2.save()
 
+    #active
+    try:
+        doctor3 = User.objects.get(userID="doctor3")
+    except User.DoesNotExist:
+        doctor3 = User.objects.create_user(userID="doctor3", email="doctor3@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=True, location="Bristol")
+        doctor3.save()
+        # schedule2 = WorkingSchedule.objects.create(doctor3, {"Monday": False, "Tuesday": True, "Wednesday": True, "Thursday": True, "Friday": False, "Saturday": True, "Sunday": True})
+        # schedule2.save()
+
+    #active
+    try:
+        doctor4 = User.objects.get(userID="doctor4")
+    except User.DoesNotExist:
+        doctor4 = User.objects.create_user(userID="doctor4", email="doctor4@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=True, location="Bristol")
+        doctor4.save()
+        # schedule3 = WorkingSchedule.objects.create(doctor4, {"Monday": False, "Tuesday": True, "Wednesday": True, "Thursday": True, "Friday": False, "Saturday": True, "Sunday": True})
+        # schedule3.save()
+
     # create nurse
     # this one is active
     try:
@@ -66,6 +95,8 @@ def create_users(sender, **kwargs):
     except User.DoesNotExist:
         nurse = User.objects.create_user(userID="nurse1", email="nurse@smartcare.com", password="pw1", role="nurse", name=f"Nur Se", is_active=True, location="Bristol")
         nurse.save()
+        # schedule4 = WorkingSchedule.objects.create(nurse, {"Monday": True, "Tuesday": False, "Wednesday": False, "Thursday": False, "Friday": True, "Saturday": False, "Sunday": False})
+        # schedule4.save()
 
     # this one needs verifying
     try:

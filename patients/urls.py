@@ -26,6 +26,10 @@ urlpatterns = [
     path("operations/", views.operations, name="operations"),
     path("verify_user/", views.verify_user, name="verify_user"),
     path("verify_deletion/", views.verify_deletion, name="verify_deletion"),    
+    path("delete_patient/", views.delete_patient, name="delete_patient"),
+    path("change_price_doctor/", views.change_price_doctor, name="change_price_doctor"),
+    path("change_price_nurse/", views.change_price_nurse, name="change_price_nurse"),
+    path("remove_appointment/", views.remove_appointment, name="remove_appointment"),
 
     path("book_appointment/", views.book_appointment, name="book_appointment"),
     path("request_reissue/", views.request_reissue, name="request_reissue"),
