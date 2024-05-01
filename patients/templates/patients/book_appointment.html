@@ -7,17 +7,14 @@
         <div class="booking-body">
             <form method="post" action="{% url 'book_appointment' %}">
                 {% csrf_token %}
-                <table>
+                <table class="book-appointment-table">
                     <tbody>
                         {% for field in form %}
                         <tr>
                             <th>{{ field.label }}</th>
-                            <td>
-                                {{ field }}
+                            <td>{{ field }}
                                 {% if field.errors %}
-                                    <div class="alert alert-danger">
-                                        {{ field.errors|striptags }}
-                                    </div>
+                                    <div class="alert alert-danger">{{ field.errors|striptags }}</div>
                                 {% endif %}
                             </td>
                         </tr>
@@ -29,49 +26,47 @@
                         </tr>
                     </tbody>
                 </table>
-                {% if message %}
-                    <div class="alert alert-success">{{ message }}</div>
+                {% if messages %}
+                <div class="alert-container">
+                    {% for message in messages %}
+                    <div class="alert {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
                 {% endif %}
             </form>
         </div>
     </div>
 
     <div class="booking-box">
-        <h2>Upcoming Appointment</h2>
+        <h2>Upcoming Appointments</h2>
         <div class="booking-body">
-            {% if upcoming_appointment %}
-                <table>
-                    <tr>
-                        <th>Date:</th>
-                        <td>{{ upcoming_appointment.date }}</td>
-                    </tr>
-                    <tr>
-                        <th>Time:</th>
-                        <td>{{ upcoming_appointment.appointment_time }}</td>
-                    </tr>
-                    <tr>
-                        <th>Practitioner:</th>
-                        <td>{{ upcoming_appointment.doctor.name }}</td>
-                    </tr>
-                    <tr>
-                        <th>Type:</th>
-                        <td>{{ upcoming_appointment.patient_type }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <form method="post" action="{% url 'cancel_appointment' upcoming_appointment.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="cancel-appointment-button">Cancel Appointment</button>
-                            </form>
-                        </td>
-                    </tr>
-                </table>
-                {% if cancel_message %}
-                    <div class="alert alert-success">{{ cancel_message }}</div>
-                {% endif %}
-            {% else %}
-                <p>No upcoming appointments.</p>
-            {% endif %}
+            <table class="upcoming-appointments-table">
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Practitioner</th>
+                    <th>Type</th>
+                    <th>Action</th>
+                </tr>
+                {% for appointment in current_appointments %}
+                <tr>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.appointment_time }}</td>
+                    <td>{{ appointment.doctor.name }}</td>
+                    <td>{{ appointment.patient_type }}</td>
+                    <td>
+                        <form method="post" action="{% url 'book_appointment' %}">
+                            {% csrf_token %}
+                            <button type="submit" name="cancel_appointment" value="{{ appointment.appointmentID }}" class="cancel-appointment-button">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No upcoming appointments.</td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
 </div>
