@@ -20,9 +20,6 @@ from django.utils import timezone
 from django.utils.timezone import localdate, make_aware
 from time import localtime
 from datetime import datetime, timedelta, date
-import logging
-
-logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
