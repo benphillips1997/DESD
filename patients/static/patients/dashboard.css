@@ -848,3 +848,111 @@ input{
     text-align: center;
     padding-top: 50px;
 }
+
+.pay-success-button {
+    justify-content: center;
+    align-items: center;
+    background-color: #0E1B2B;
+    color: #FEFEFD;
+    border: none;
+    padding: 15px 50px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+    text-decoration: none;
+    width: auto;
+}
+
+.pay-success-button:hover {
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+}
+
+
+.left-side-button {
+    position: fixed;
+    top: 50%;
+    left: 50px;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+}
+
+.left-side-button img {
+    width: 100%;
+    height: auto;
+}
+
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    background-color: #ccc;
+}
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.operations-heading {
+    text-align: center;
+}
+
+.operations-body{
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.operations-body table{
+    border: 2px solid #0E1B2B;
+    overflow-y: auto;
+    height: 300px;
+    display: block;
+}
+
+.operations-body th, .operations-body td{
+    padding: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+    text-align: center;
+}
+
+.operations-body thead{
+    background-color: #0E1B2B;
+}
+
+.operations-body tbody{
+    background-color: #19314E;
+}
+
+.operations-heading label{
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}

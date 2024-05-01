@@ -3,5 +3,242 @@
 Operations
 {% endblock %}
 {% block content %}
+<div class="tab">
+    <button class="tablinks" id="change_schedules_button" onclick="openTab(event, 'change_schedules')">Change schedules</button>
+    <button class="tablinks" onclick="openTab(event, 'remove_patients')">Remove patients</button>
+    <button class="tablinks" onclick="openTab(event, 'change_appointment_price')">Change appointment price</button>
+</div>
 
+<div id="change_schedules" class="tabcontent">
+    <div class="operations-heading">
+        <h1>Change schedules</h1>
+        <label for="practitioners">Select a practitioner:</label>
+        <select id="practitioners" name="practitioners">
+            {% for practitioner in practitioners %}
+            <option value='{{ forloop.counter }}'>{{ practitioner.name }}</option>
+            {% endfor %}
+        </select>
+
+        {% if practitioners %}
+        <h3 id="schedule-heading">Schedule for {{ practitioners.0.name }}</h3>
+    </div>
+
+    <div class="operations-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>Practitioner name</th>
+                    <th>Appointment date</th>
+                    <th>Appointment time</th>
+                    <th>Patient</th>
+                    <th>Appointment status</th>
+                    <th>Remove appointment</th>
+                </tr>
+            </thead>
+            {% for practitioner in practitioners %}
+            <tbody id="schedule-table-body{{forloop.counter}}" {% if forloop.counter != 1 %}hidden{% endif %}>
+                {% for appointment in practitioner.appointments %}
+                <tr id="{{ appointment.appointmentID }}">
+                    <td>{{ appointment.doctor.name }}</td>
+                    <td>{{ appointment.date }}</td>
+                    <td>{{ appointment.appointment_time }}</td>
+                    <td>{{ appointment.patient.name }}</td>
+                    <td>{{ appointment.appointment_status }}</td>
+                    <td><button onclick="removeAppointment('{{ appointment.appointmentID }}')">Remove</button></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">No appointments</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+    <h4 id="verify-message-appointments" style="text-align: center;" hidden></h4>
+</div>
+
+<div id="remove_patients" class="tabcontent">
+    <div class="operations-heading">
+        <h1>Remove patients</h1>
+    </div>   
+
+    <div class="operations-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient name</th>
+                    <th>Patient ID</th>
+                    <th>Patient email</th>
+                    <th>Delete patient account</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr id="{{ patient.userID }}">
+                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.userID }}</td>
+                    <td>{{ patient.email }}</td>
+                    <td><button onclick="deletePatient('{{ patient.userID }}')">Delete</button></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center;">No patients</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h4 id="verify-message-patients" style="text-align: center;" hidden></h4>
+</div>
+
+<div id="change_appointment_price" class="tabcontent">
+    <div class="operations-heading">
+        <h1>Change appointment price</h1>
+    </div>
+
+    <div class="dashboard-summary">
+        <div class="dashboard-summary-block">
+            <h2 id="current_price_doctor">Current price for 10 minute session with a doctor: £{{ price.doctor_price }}</h2>
+            <label for="doctor_price">Enter new price:</label>
+            <input id="doctor_price" type="text">
+            <button onclick="changePriceDoctor()">Change</button>
+        </div>
+        <div class="dashboard-summary-block">
+            <h2 id="current_price_nurse">Current price for 10 minute session with a nurse: £{{ price.nurse_price }}</h2>
+            <label for="nurse_price">Enter new price:</label>
+            <input id="nurse_price" type="text">
+            <button onclick="changePriceNurse()">Change</button>
+        </div>
+    </div>
+
+    <h4 id="verify-message-price" style="text-align: center;" hidden></h4>
+</div>
+
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+
+        // document.getElementById("change_schedules_button").click(); //open by default
+    };
+
+    function deletePatient(userID) 
+    {
+        $.ajax({
+            url: "{% url 'delete_patient' %}",
+            type: "POST",
+            data: { data: userID, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+
+            success: function(json) {
+                var row = document.getElementById(userID);
+                row.parentNode.removeChild(row);
+                var verify_message = document.getElementById("verify-message-patients");
+                verify_message.innerHTML = "Successfully deleted user: " + json.userID;
+                verify_message.removeAttribute('hidden');
+            },
+            error: function(xhr, errmsg, err) {
+                var verify_message = document.getElementById("verify-message-patients");
+                verify_message.innerHTML = "Error: Could not delete";
+                verify_message.removeAttribute('hidden');
+            }
+        });
+    };
+
+    var practitionersDropDown = document.getElementById("practitioners");
+
+    practitionersDropDown.addEventListener("change", function(event) {
+        var value = event.target.value;
+        var text = practitionersDropDown.options[practitionersDropDown.selectedIndex].text;
+
+        document.getElementById("schedule-heading").innerHTML = "Schedule for " + text;
+
+        var tableBody = document.getElementById("schedule-table-body" + value);
+        var length = {{ practitioners|length }};
+        for (var i = 0; i < length; i++) {
+            document.getElementById("schedule-table-body" + (i + 1)).style.display = "none";
+        }
+        tableBody.removeAttribute('hidden');
+        tableBody.style.display = "block";
+    });
+
+    function removeAppointment(appointmentID) 
+    {
+        $.ajax({
+            url: "{% url 'remove_appointment' %}",
+            type: "POST",
+            data: { data: appointmentID, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+
+            success: function(json) {
+                var row = document.getElementById(appointmentID);
+                row.parentNode.removeChild(row);
+                var verify_message = document.getElementById("verify-message-appointments");
+                verify_message.innerHTML = "Successfully removed appointment";
+                verify_message.removeAttribute('hidden');
+            },
+            error: function(xhr, errmsg, err) {
+                var verify_message = document.getElementById("verify-message-appointments");
+                verify_message.innerHTML = "Error: Could not delete appointment";
+                verify_message.removeAttribute('hidden');
+            }
+        });
+    };
+
+    function changePriceDoctor() 
+    {
+        $.ajax({
+            url: "{% url 'change_price_doctor' %}",
+            type: "POST",
+            data: { data: document.getElementById("doctor_price").value , 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+
+            success: function(json) {
+                document.getElementById("current_price_doctor").innerHTML = "Current price for 10 minute session with a doctor" + ": £" + json.price;
+                var verify_message = document.getElementById("verify-message-price");
+                verify_message.innerHTML = "Successfully changed price to: " + json.price;
+                verify_message.removeAttribute('hidden');
+            },
+            error: function(xhr, errmsg, err) {
+                alert(json.json);
+                var verify_message = document.getElementById("verify-message-price");
+                verify_message.innerHTML = "Error: Could not change price";
+                verify_message.removeAttribute('hidden');
+            }
+        });
+    };
+
+    function changePriceNurse() 
+    {
+        $.ajax({
+            url: "{% url 'change_price_nurse' %}",
+            type: "POST",
+            data: { data: document.getElementById("nurse_price").value , 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+
+            success: function(json) {
+                document.getElementById("current_price_nurse").innerHTML = "Current price for 10 minute session with a nurse" + ": £" + json.price;
+                var verify_message = document.getElementById("verify-message-price");
+                verify_message.innerHTML = "Successfully changed price to: " + json.price;
+                verify_message.removeAttribute('hidden');
+            },
+            error: function(xhr, errmsg, err) {
+                alert(json.json);
+                var verify_message = document.getElementById("verify-message-price");
+                verify_message.innerHTML = "Error: Could not change price";
+                verify_message.removeAttribute('hidden');
+            }
+        });
+    };
+</script>
+{% endblock javascript %}
 {% endblock %}

@@ -10,12 +10,14 @@
 <body>
     <div class="pay-success">
         <h1>Payment Successful</h1>
+        <br><br>
         {% if appointment == None %}
         <h2>Payed £{{amount}} for all appointments</h2>
         {% else %}
         <h2>Payed £{{amount}} for appointment with {{appointment.doctor.name}} on {{appointment.date}} at {{appointment.appointment_time}}</h2>
         {% endif %}
-        <a class="pay-verify-button" href="{% url 'dashboard' %}">Back to dashboard</a>
+        <br><br><br><br>
+        <a class="pay-success-button" href="{% url 'dashboard' %}">Back to dashboard</a>
     </div>
 </body>
 </html>

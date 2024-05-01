@@ -7,6 +7,9 @@ class PatientsConfig(AppConfig):
     name = 'patients'
 
     def ready(self):
+        from .signals import create_price
+        post_migrate.connect(create_price, sender=self)
+        
         from .signals import create_groups
         post_migrate.connect(create_groups, sender=self)
 
