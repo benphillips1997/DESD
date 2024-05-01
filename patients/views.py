@@ -19,6 +19,9 @@ from django.utils import timezone
 from django.utils.timezone import localdate, make_aware
 from time import localtime
 from datetime import datetime, timedelta, date
+import logging
+
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -620,49 +623,54 @@ def book_appointment(request):
     ).first()
 
     if request.method == 'POST':
-        if 'cancel' in request.POST:
-            current_appointment.appointment_status = 'Cancelled'
-            current_appointment.save()
-            messages.success(request, "Your appointment has been cancelled.")
-            return redirect('book_appointment')
-            
         form = BookAppointmentForm(request.POST)
+        if 'cancel' in request.POST:
+            if current_appointment:
+                current_appointment.appointment_status = 'Cancelled'
+                current_appointment.save()
+                messages.success(request, "Your appointment has been cancelled.")
+            else:
+                messages.error(request, "No upcoming appointment to cancel.")
+            return redirect('book_appointment')
+
         if form.is_valid():
             if current_appointment:
                 messages.error(request, "You already have an upcoming appointment. Please cancel it before booking a new one.")
+                logger.debug("Attempt to book a new appointment when an upcoming one exists.")
                 return render(request, 'patients/book_appointment.html', {'form': form, 'current_appointment': current_appointment})
-                
-            desired_time = form.cleaned_data['appointment_time']
-            desired_date = form.cleaned_data['date']
-            doctor = form.cleaned_data['doctor']
-            duration = timedelta(minutes=10)
+            else:
+                logger.debug(f"Form errors: {form.errors}")
+                desired_time = form.cleaned_data['appointment_time']
+                desired_date = form.cleaned_data['date']
+                doctor = form.cleaned_data['doctor']
+                duration = timedelta(minutes=10)
 
-            if Appointment.objects.filter(Q(date=desired_date) & Q(appointment_time=desired_time), doctor=doctor).exists():
-                messages.error(request, "This time slot is already booked. Please choose another.")
-                return render(request, 'patients/book_appointment.html', {'form': form})
+                if Appointment.objects.filter(Q(date=desired_date) & Q(appointment_time=desired_time), doctor=doctor).exists():
+                    messages.error(request, "This time slot is already booked. Please choose another.")
+                else:
+                    start_datetime = datetime.combine(desired_date, desired_time)
+                    end_datetime = start_datetime + duration
+                    end_time = end_datetime.time()
 
-            start_datetime = datetime.combine(desired_date, desired_time)
-            end_datetime = start_datetime + duration
-            end_time = end_datetime.time()
-
-            appointment = Appointment.objects.create(
-                patient=request.user,
-                doctor=doctor,
-                date=desired_date,
-                appointment_time=desired_time,
-                appointment_end_time=end_time,
-                patient_type=form.cleaned_data['patient_type'],
-                appointment_status='Scheduled'
-            )
-
-            messages.success(request, f"Successfully booked appointment at {desired_date} {desired_time} with {doctor.name}")
-            return redirect('dashboard')
+                    Appointment.objects.create(
+                        patient=request.user,
+                        doctor=doctor,
+                        date=desired_date,
+                        appointment_time=desired_time,
+                        appointment_end_time=end_time,
+                        patient_type=form.cleaned_data['patient_type'],
+                        appointment_status='Scheduled'
+                    )
+                    messages.success(request, f"Successfully booked appointment at {desired_date} {desired_time} with {doctor.name}")
+                    return redirect('dashboard')
+        else:
+            messages.error(request, "There was an error with your form. Please check your entries.")
     else:
         form = BookAppointmentForm()
 
     return render(request, 'patients/book_appointment.html', {
         'form': form, 
-        'current_appointment': current_appointment if current_appointment else None
+        'current_appointment': current_appointment
     })
 
 @login_required
