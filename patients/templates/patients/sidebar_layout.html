@@ -28,6 +28,8 @@
             {% if user.role == "patient" %}
                 <li><a href="{% url 'patient_prescriptions' %}" class="{% if request.resolver_match.url_name == 'patient_prescriptions' %}active{% endif %}">Prescriptions</a></li>
                 <li><a href="{% url 'visit_history' %}" class="{% if request.resolver_match.url_name == 'visit_history' %}active{% endif %}">Visit history</a></li>
+                <li><a href="{% url 'patient_invoices' %}" class="{% if request.resolver_match.url_name == 'patient_invoices' %}active{% endif %}">Invoices</a></li>
+                <li><a href="{% url 'payments' %}" class="{% if request.resolver_match.url_name == 'payments' %}active{% endif %}">Payments</a></li>
             {% endif %}
         </ul>
         <ul class="sidebar-bottom">

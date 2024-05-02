@@ -6,63 +6,23 @@ Current Appointment
 {% endblock %}
 
 {% block content %}
-<div class="current_appointment-container">
-    {% if current_appointment %}
-    <div class="current-appointment-info">
-        <h2>Current Appointment Details</h2>
-        <p>Patient Name: {{ current_appointment.patient.name }}</p>
-        <p>Reason: {{ current_appointment.reason }}</p>
-    </div>
-    <div class="box-container">
-        <div class="box prescription-form">
-            <h3>Add a Prescription</h3>
-            {{ form.as_p }}
-        </div>
-
-        <div class="box referral-form">
-            <h3>Referral to Specialist</h3>
-            <input type="checkbox" id="referral_check" name="referral_check" onchange="showReferralDropdown();">
-            <label for="referral_check">Referral Needed?</label>
-            <select id="referral_select" name="referral" style="display:none;">
-                {% for doctor in specialist_doctors %}
-                <option value="{{ doctor.id }}">{{ doctor.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="box notes-form">
-            <h3>Notes</h3>
-            <textarea name="notes" rows="4" cols="50" placeholder="Enter any notes here..."></textarea>
-        </div>
-    </div>
-    <div class="form-actions">
-        <button type="submit" class="complete-appointment-btn">Complete Appointment</button>
-    </div>
-    {% else %}
-    <div class="no-appointment">
-        <h2>No Current Appointments</h2>
-    </div>
-    {% endif %}
-</div>
-
-<script>
-function showReferralDropdown() {
-    var checkbox = document.getElementById('referral_check');
-    var select = document.getElementById('referral_select');
-    if (checkbox.checked) {
-        select.style.display = 'block';
-    } else {
-        select.style.display = 'none';
-    }
-}
-</script>
 {% if current_appointment %}
 <div class="dashboard-summary">
     <div>
         <h3>Patient name: {{ current_appointment.patient.name }}</h3>
         <br>
+        <p>Reason: {{ current_appointment.reason }}</p>
+        <br>
     </div>
 </div>
+{% else %}
+<div class="dashboard-summary">
+    <div>
+        <h3>No current appointment</h3>
+    </div>
+</div>
+{% endif %}
+{% if current_appointment %}
 <div class="dashboard-summary">
     <div class="dashboard-summary-block">
         <h4>Add a prescription</h4>
@@ -74,15 +34,64 @@ function showReferralDropdown() {
         <h4>{{ message }}</h4>
     </div>
     <div class="dashboard-summary-block">
+        <div>
+            <h3>Referral to Specialist</h3>
+            <label for="referral_check">Referral Needed?</label>
+            <input type="checkbox" id="referral_check" name="referral_check" onchange="showReferralDropdown();">       
+            <select id="referral_select" name="referral" style="display:none;">
+                <option>General Practice</option>
+                <option>Family Medicine</option>
+                <option>Paediatrics</option>
+                <option>Geriatric Medicine</option>
+                <option>Obstetrics and Gynaecology</option>
+                <option>Mental Health</option>
+                <option>Emergency Medicine</option>
+                <option>Cardiology</option>
+                <option>Respiratory Medicine</option>
+                <option>Oncology</option>
+                <option>Infectious Diseases</option>
+                <option>Neurology</option>
+                <option>Gastroenterology</option>
+                <option>Endocrinology</option>
+                <option>Dermatology</option>
+            </select>
+        </div>
+        <br><br>
+        <button onclick="addReferral()">Add Referral</button>
+        <h4 id="refferal-text"></h4>
+    </div>
+    <div class="dashboard-summary-block">
         <h4>Add a note</h4>
         <input type="text" name="note" id="note">
         <br><br>
         <button onclick="addNote()">Add note</button>
+        <br>
         <h4 id="note-message" hidden>Note added</h4>
     </div>
 </div>
+{% endif %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+    function addReferral() 
+    {
+        var refText = document.getElementById("refferal-text");
+        refText.innerHTML = "Referral added";
+        refText.removeAttribute("hidden");
+    }
+
+    function showReferralDropdown() 
+    {
+        var checkbox = document.getElementById('referral_check');
+        var select = document.getElementById('referral_select');
+        if (checkbox.checked) {
+            select.style.display = 'block';
+            select.style.margin = '10px';
+            select.style.alignContent = 'center';
+        } else {
+            select.style.display = 'none';
+        }
+    }
+
     function addNote() {
         var note = document.getElementById("note").value;
         document.getElementById("note").value = "";
@@ -105,5 +114,4 @@ function showReferralDropdown() {
         });
     }
 </script>
-{% endif %}
 {% endblock %}

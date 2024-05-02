@@ -318,9 +318,9 @@ def print_appointment_invoice(request, invoice_id):
     duration_minutes = int(duration_timedelta.total_seconds() / 60)
 
     if invoice.appointment.doctor.role == "doctor":
-        rate_per_minute = 5
+        rate_per_minute = AppointmentPrice.objects.get(priceID=1).doctor_price / 10
     elif invoice.appointment.doctor.role == "nurse":
-        rate_per_minute = 3
+        rate_per_minute = AppointmentPrice.objects.get(priceID=1).nurse_price / 10
 
     patient_location = appointment.patient.location
     practitioner_name = appointment.doctor.name
@@ -340,7 +340,7 @@ def print_appointment_invoice(request, invoice_id):
 def print_prescription_invoice(request, invoice_id):
     invoice = get_object_or_404(Invoice, invoiceID=invoice_id)
     appointment = invoice.appointment
-    amount = 9.65
+    amount = invoice.amount
 
     prescription = Prescription.objects.filter(appointment=appointment).first()
 
@@ -400,13 +400,14 @@ def admin_invoices(request):
         duration_timedelta = end_datetime - start_datetime
         duration_minutes = int(duration_timedelta.total_seconds() / 60)
         invoice.duration = duration_minutes
-
         
     return render(request, "patients/admin_invoices.html", {'all_invoices': all_invoices})
 
 
 @login_required
 def visit_history(request):
+    if not request.user.groups.filter(name='Patient').exists():
+        return HttpResponseForbidden("You don't have permission to view this page.")
     appointments = Appointment.objects.filter(
         patient=request.user,
         appointment_status="Completed"
@@ -510,6 +511,8 @@ def is_staff_member(user):
 
 @login_required
 def records(request):
+    if not request.user.groups.filter(name='Admin').exists():
+        return HttpResponseForbidden("You don't have permission to view this page.")
     query = request.GET.get('query')
     patients = None
 

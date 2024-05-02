@@ -87,7 +87,7 @@ class AppointmentPrice(models.Model):
 class Prescription(models.Model):
     prescriptionID = models.AutoField(primary_key=True)
     patient = models.ForeignKey(User, on_delete=models.CASCADE)
-    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
+    appointment = models.ForeignKey(Appointment, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     status = models.CharField(max_length=20, choices=[("Active", "Active"), ("Inactive", "Inactive"), ("Re-issue requested", "Re-issue requested")])
@@ -135,7 +135,7 @@ class Invoice(models.Model):
     invoiceID = models.AutoField(primary_key=True)
     date_issued = models.DateField()
     due_date = models.DateField()
-    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
+    appointment = models.ForeignKey(Appointment, on_delete=models.SET_NULL, null=True, blank=True)
     amount = models.FloatField()
     status = models.CharField(max_length=10, choices=[("Unpaid", "Unpaid"), ("Paid", "Paid")])
 

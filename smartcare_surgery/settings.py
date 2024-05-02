@@ -137,7 +137,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static_collected'
 
 SESSION_COOKIE_AGE = 300
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Login required url definitions
 
