@@ -20,6 +20,7 @@ from django.utils import timezone
 from django.utils.timezone import localdate, make_aware
 from time import localtime
 from datetime import datetime, timedelta, date
+import datetime as dt
 
 User = get_user_model()
 
@@ -207,7 +208,7 @@ def request_reissue(request):
         return HttpResponseForbidden("You cannot access this.")
 
 @login_required
-def current_appointment(request):
+def current_appointment(request):    
     if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
         return HttpResponseForbidden("You don't have permission to view this page.")
     now = datetime.now()
@@ -246,6 +247,22 @@ def current_appointment(request):
     else:
         form = CreatePrescriptionForm(initial={'appointmentID': current_appointment.appointmentID if current_appointment else None})
     return render(request, "patients/current_appointment.html", {"form": form, "current_appointment": current_appointment, "message": message})
+
+@login_required
+def add_note(request):
+    if request.method == "POST":
+        data = request.POST.get("data")
+        data = data.split("|||")
+        appointmentID = data[0]
+        note = data[1]
+
+        appointment = Appointment.objects.get(appointmentID=appointmentID)
+        appointment.notes = note
+        appointment.save()
+
+        return JsonResponse({}, status=200)
+    else:
+        return HttpResponseForbidden("You cannot access this.")
 
 @login_required
 def recent_patients(request):

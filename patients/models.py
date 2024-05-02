@@ -59,6 +59,7 @@ class Appointment(models.Model):
     ]
     patient_type = models.CharField(max_length=7, choices=PATIENT_TYPE_CHOICES, default='NHS')
     appointment_status = models.CharField(max_length=20, choices=[("Scheduled", "Scheduled"), ("Completed", "Completed"), ("Cancelled", "Cancelled")])
+    notes = models.CharField(max_length=255)
 
     def save(self, *args, **kwargs):
         is_new = self._state.adding
