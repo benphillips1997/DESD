@@ -352,42 +352,6 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
     background-color: #19314E;
 }
 
-.add-prescription-button {
-    display: block;
-    justify-content: center;
-    align-items: center;
-    background-color: #FEFEFD;
-    color: #0E1B2B;
-    border: none;
-    padding: 5px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    text-decoration: none;
-    margin-top: 0px;
-}
-
-.re-issue-button {
-    display: block;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    background-color: #FEFEFD;
-    color: #0E1B2B;
-    border: none;
-    padding: 5px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    text-decoration: none;
-    margin-top: 0px;
-}
-
 .settings-main {
     display: flex;
     justify-content: center;
@@ -455,6 +419,9 @@ input[type="password"] {
     cursor: pointer;
 }
 
+.records-main {
+    text-align: center;
+}
 
 .records-body table {
     width: 40%;
@@ -1155,4 +1122,131 @@ textarea {
 .complete-appointment-btn:hover {
     background-color: #19314E;
     color: #FEFEFD;
+}
+
+.add-prescription-button {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 0px;
+}
+
+.add-prescription-button:hover {
+    background-color: #0E1B2B;
+    color: #FEFEFD;
+}
+
+.re-issue-button {
+    display: block;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    margin-top: 0px;
+}
+
+.re-issue-button:hover {
+    background-color: #0E1B2B;
+    color: #FEFEFD;
+}
+
+.verify-button,
+.deletion-verify-button {
+    display: block;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    margin-top: 0px;
+}
+
+.verify-button:hover,
+.deletion-verify-button:hover {
+    background-color: #0E1B2B;
+    color: #FEFEFD;
+}
+
+.reports-button {
+    display: block;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    margin-top: 0px;
+}
+
+.reports-button:hover {
+    background-color: #0E1B2B;
+    color: #FEFEFD;
+}
+
+.reports-select,
+.reports-input[type='date'] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #19314E;
+    color: #FEFEFD;
+    border: 2px solid #0E1B2B;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+
+.reports-select {
+    background-image: url('dropdown-arrow.svg');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px;
+}
+
+.reports-select:focus,
+.reports-input[type='date']:focus {
+    outline: none;
+    border-color: #FFBA1E;
 }

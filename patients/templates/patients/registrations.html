@@ -25,7 +25,7 @@ Registrations
                         <td>{{ user.name }}</td>
                         <td>{{ user.email }}</td>
                         <td>{{ user.role }}</td>
-                        <td><button name="verify-button" onclick="verify_user('{{ user.userID }}')">Verify</button></td>
+                        <td><button class="verify-button" name="verify-button" onclick="verify_user('{{ user.userID }}')">Verify</button></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -51,7 +51,7 @@ Registrations
                         <td>{{ user.name }}</td>
                         <td>{{ user.email }}</td>
                         <td>{{ user.role }}</td>
-                        <td><button name="deletion-verify-button" onclick="verify_deletion('{{ user.userID }}')">Verify</button></td>
+                        <td><button class="deletion-verify-button" name="deletion-verify-button" onclick="verify_deletion('{{ user.userID }}')">Verify</button></td>
                     </tr>
                     {% endfor %}
                 </tbody>

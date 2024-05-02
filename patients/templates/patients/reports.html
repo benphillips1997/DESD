@@ -66,22 +66,19 @@ Reports
         
         var report = window.open();
 
-        // write summary of report
         report.document.write("<div style='text-align: center;'>");
         {% if total_paid != None %}
-        report.document.write("<h2>Total paid: " + {{total_paid}} + "</h2>");
+        report.document.write("<h2>Total paid: £" + {{total_paid}} + "</h2>");
         {% endif %}
         {% if total_unpaid != None %}
-        report.document.write("<h2>Total unpaid: " + {{total_unpaid}} + "</h2>");
+        report.document.write("<h2>Total unpaid: £" + {{total_unpaid}} + "</h2>");
         {% endif %}
         {% if total_nhs != None %}
-        report.document.write("<h2>Total charged to the NHS: " + {{total_nhs}} + "</h2>");
+        report.document.write("<h2>Total charged to the NHS: £" + {{total_nhs}} + "</h2>");
         {% endif %}
 
         report.document.write("</div>");
 
-
-        // write out rows from table
         report.document.write("<div style='text-align: center;'>")
         for (var i = 1; i < rows.length-1; i++){
             report.document.write("<p>");
