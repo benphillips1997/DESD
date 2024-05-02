@@ -13,6 +13,9 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 }
 
 .sidebar{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
     float: left;
     width: 17%;
     height: 100%;
@@ -24,6 +27,8 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 .sidebar ul{
     text-align: center;
     padding: 0px;
+    list-style-type: none;
+    text-align: center;
 }
 
 .sidebar li{
@@ -33,7 +38,7 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 }
 
 .sidebar li a{
-    font-size: 28px;
+    font-size: 19px;
     display: block;
     color: #ffffff;
     text-align: center;
@@ -47,6 +52,11 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 .sidebar li a:hover{
     color: #0E1B2B;
     background-color: #ffffff;
+}
+
+.sidebar li a.active {
+    background-color: #19314E;
+    color: #ffffff;
 }
 
 .main{
@@ -535,6 +545,7 @@ input{
     font-family: 'Poppins', sans-serif;
     margin-top: 10px;
 }
+
 .change-surgery-request {
     padding: 20px;
     background-color: #0E1B2B;
@@ -542,16 +553,16 @@ input{
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 50%;
-    margin: 20px auto;
+    margin: 0px auto;
     text-align: left;
     font-family: 'Poppins', sans-serif;
 }
 
 .change-surgery-request h2 {
     color: white;
-    padding: 10px;
     margin-top: 0;
     border-radius: 10px 10px 0 0;
+    text-align: center;
 }
 
 .change-surgery-request fieldset {
@@ -568,42 +579,51 @@ input{
     margin: 10px 20px;
 }
 
-.change-surgery-request .form-group label,
-.change-surgery-request .form-group input,
-.change-surgery-request .form-group textarea {
-    width: calc(100% - 40px);
+.change-surgery-request .form-group label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .change-surgery-request .form-group input,
 .change-surgery-request .form-group textarea {
+    width: calc(100% - 40px);
+    display: block;
     background-color: #19314E;
     border: 1px solid #0E1B2B;
     color: white;
     padding: 10px;
     border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 .change-surgery-request .form-group textarea {
     resize: none;
 }
 
+
 .change-surgery-request button {
+    display: block;
     width: auto;
-    padding: 10px 30px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    background-color: #0E1B2B;
-    color: white;
+    margin: 20px auto;
+    color: #0E1B2B;
+    background-color: #FEFEFD;
     border: none;
-    border-radius: 5px;
+    padding: 10px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
 }
 
 .change-surgery-request button:hover {
-    background-color: #19314E; 
+    background-color: #19314E;
+    color: #FEFEFD;
+}
+
+.change-surgery-request .alert-container {
+    text-align: center;
+    color: #FFBA1E;
+    background-color: #0E1B2B;
 }
 
 .booking-container {
@@ -656,6 +676,15 @@ input{
 
 .upcoming-appointments-table {
     width: 100%;
+}
+
+textarea {
+    background-color: #19314E;
+    color: #D9D9D9;
+    border: 1px solid #0E1B2B;
+    padding: 10px;
+    border-radius: 4px;
+    resize: none;
 }
 
 .booking-form-button {

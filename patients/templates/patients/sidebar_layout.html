@@ -1,43 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <title>{% block title %}{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock title %}</title>
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'patients/dashboard.css' %}"/>
+    <link rel="stylesheet" href="{% static 'patients/dashboard.css' %}">
 </head>
-
 <body>
-<nav class="sidebar">
-    <ul>
-        <li><img class="sidebar-logo" src="{% static 'patients/smartcare_logo.png' %}" alt="Smartcare logo"></li>
-        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-        {% if user.role == "admin" %}
-        <li><a href="{% url 'registrations' %}">Registrations</a></li>
-        <li><a href="{% url 'records' %}">Records</a></li>
-        <li><a href="{% url 'reports' %}">Reports</a></li>
-        <li><a href="{% url 'admin_invoices' %}">Invoices</a></li>
-        <li><a href="{% url 'operations' %}">Operations</a></li>
-        {% endif %}
-        {% if user.role == "doctor" or user.role == "nurse" %}
-        <li><a href="{% url 'current_appointment' %}">Current appointment</a></li>
-        <li><a href="{% url 'weekly_schedule' %}">Weekly schedule</a></li>
-        <li><a href="{% url 'recent_patients' %}">Recent appointments</a></li>
-        <li><a href="{% url 'doctor_prescriptions' %}">Prescription requests</a></li>
-        <li><a href="{% url 'records' %}">Patient records</a></li>
-        {% endif %}
-        {% if user.role == "patient" %}
-        <li><a href="{% url 'patient_prescriptions' %}">Prescriptions</a></li>
-        <li><a href="{% url 'visit_history' %}">Visit history</a></li>
-        <li><a href="{% url 'patient_invoices' %}">Invoices</a></li>
-        <li><a href="{% url 'payments' %}">Payments</a></li>
-        {% endif %}
-        <li><a href="{% url 'patient_settings' %}">Settings</a></li>
-        <li><a href="{% url 'logout' %}">Logout</a></li>
-    </ul>
-</nav>
-{% block main %}
-{% endblock %}
-</div>
+    <nav class="sidebar">
+        <ul class="sidebar-top">
+            <li><img class="sidebar-logo" src="{% static 'patients/smartcare_logo.png' %}" alt="Smartcare logo"></li>
+            <li><a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+            {% if user.role == "admin" %}
+                <li><a href="{% url 'registrations' %}" class="{% if request.resolver_match.url_name == 'registrations' %}active{% endif %}">Registrations</a></li>
+                <li><a href="{% url 'records' %}" class="{% if request.resolver_match.url_name == 'records' %}active{% endif %}">Records</a></li>
+                <li><a href="{% url 'reports' %}" class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}">Reports</a></li>
+                <li><a href="{% url 'admin_invoices' %}" class="{% if request.resolver_match.url_name == 'admin_invoices' %}active{% endif %}">Invoices</a></li>
+                <li><a href="{% url 'operations' %}" class="{% if request.resolver_match.url_name == 'operations' %}active{% endif %}">Operations</a></li>
+            {% endif %}
+            {% if user.role == "doctor" or user.role == "nurse" %}
+                <li><a href="{% url 'current_appointment' %}" class="{% if request.resolver_match.url_name == 'current_appointment' %}active{% endif %}">Current appointment</a></li>
+                <li><a href="{% url 'weekly_schedule' %}" class="{% if request.resolver_match.url_name == 'weekly_schedule' %}active{% endif %}">Weekly schedule</a></li>
+                <li><a href="{% url 'recent_patients' %}" class="{% if request.resolver_match.url_name == 'recent_patients' %}active{% endif %}">Recent appointments</a></li>
+                <li><a href="{% url 'doctor_prescriptions' %}" class="{% if request.resolver_match.url_name == 'doctor_prescriptions' %}active{% endif %}">Prescription requests</a></li>
+            {% endif %}
+            {% if user.role == "patient" %}
+                <li><a href="{% url 'patient_prescriptions' %}" class="{% if request.resolver_match.url_name == 'patient_prescriptions' %}active{% endif %}">Prescriptions</a></li>
+                <li><a href="{% url 'visit_history' %}" class="{% if request.resolver_match.url_name == 'visit_history' %}active{% endif %}">Visit history</a></li>
+            {% endif %}
+        </ul>
+        <ul class="sidebar-bottom">
+            <li><a href="{% url 'patient_settings' %}" class="{% if request.resolver_match.url_name == 'patient_settings' %}active{% endif %}">Settings</a></li>
+            <li><a href="{% url 'logout' %}" class="{% if request.resolver_match.url_name == 'logout' %}active{% endif %}">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="main">
+        {% block main %}
+        {% endblock main %}
+    </div>
 </body>
 </html>

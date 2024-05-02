@@ -2,7 +2,6 @@ from django.urls import path
 from patients import views
 
 urlpatterns = [
-    # direct to home if these are visited
     path("", views.home, name="home"),
     path("home/", views.home, name="home"),
     path("user_login/", views.home, name="home"),

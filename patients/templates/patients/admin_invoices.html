@@ -9,7 +9,6 @@
                 <tr>
                     <th>Invoice ID</th>
                     <th>Type</th>
-                    <th>Date Issued</th>
                     <th>Due Date</th>
                     <th>Duration</th>
                     <th>Amount</th>
@@ -23,7 +22,6 @@
                 <tr>
                     <td>{{ invoice.invoiceID }}</td>
                     <td>Appointment</td>
-                    <td>{{ invoice.date_issued|date:"d/m/Y" }}</td>
                     <td>{{ invoice.due_date|date:"d/m/Y" }}</td>
                     <td>{{ invoice.duration }} minutes</td>
                     <td>£{{ invoice.amount }}</td>
@@ -35,7 +33,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="9">No invoices found.</td>
+                    <td colspan="8">No invoices found.</td>
                 </tr>
                 {% endfor %}
             </tbody>

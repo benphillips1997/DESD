@@ -642,15 +642,18 @@ def patient_settings(request):
     context = {'u_form': u_form, 'p_form': p_form}
     return render(request, 'patients/patient_settings.html', context)
 
+@login_required
 def change_surgery_request(request):
     if request.method == 'POST':
         form = SurgeryChangeRequestForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Your request for a change of surgery has been submitted successfully.')
             return redirect('dashboard')
     else:
         form = SurgeryChangeRequestForm()
-    return render(request, 'patients/change_surgery_request.html', {'form': form})
+
+    return render(request, 'dashboard.html', {'form': form})
 
 @login_required
 def password_change(request):

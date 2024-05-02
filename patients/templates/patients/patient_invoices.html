@@ -10,7 +10,6 @@ Invoices
             <thead>
                 <tr>
                     <th>Type</th>
-                    <th>Date Issued</th>
                     <th>Due Date</th>
                     <th>Duration</th>
                     <th>Practitioner</th>
@@ -23,7 +22,6 @@ Invoices
                 {% for invoice in user_invoices %}
                 <tr>
                     <td>{{ invoice.type }}</td>
-                    <td>{{ invoice.date_issued|date:"d/m/Y" }}</td>
                     <td>{{ invoice.due_date|date:"d/m/Y" }}</td>
                         {% if invoice.type == 'Appointment' %}
                             <td>{{ invoice.duration }} minutes</td>
@@ -40,7 +38,7 @@ Invoices
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="8">No invoices found.</td>
+                    <td colspan="7">No invoices found.</td>
                 </tr>
                 {% endfor %}
             </tbody>

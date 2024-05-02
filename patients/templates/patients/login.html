@@ -19,7 +19,7 @@
             <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <p style="color: #bb3030; text-align: center;">{{ error }}</p>
+                <p style="color: #FFBA1E; text-align: center;">{{ error }}</p>
                 <div class="form-actions">
                     <button type="submit" class="login-button">
                         <img src="{% static 'patients/forward_arrow.svg' %}" alt="Login">

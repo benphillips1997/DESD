@@ -73,10 +73,11 @@ class InvoiceForm(forms.ModelForm):
 class BookAppointmentForm(forms.ModelForm):
     doctor = forms.ModelChoiceField(queryset=User.objects.filter(Q(role="doctor") | Q(role="nurse")).filter(is_active=True).order_by('name'), empty_label=None)
     patient_type = forms.ChoiceField(choices=[('NHS', 'NHS'), ('Private', 'Private')], label='Patient Type')
+    reason = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}), required=False)
 
     class Meta:
         model = Appointment
-        fields = ['date', 'appointment_time', 'doctor', 'patient_type']
+        fields = ['date', 'appointment_time', 'doctor', 'patient_type', 'reason']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
