@@ -30,8 +30,7 @@ body, html {
 .signup-logo {
     display: flex;
     justify-content: center;
-    padding-top: 20px;
-    margin-top: 500px;
+    margin-top: 600px;
 }
 
 .signup-logo img {
@@ -49,6 +48,7 @@ body, html {
     font-family: 'Poppins', sans-serif;
     text-align: center;
     font-size: 36px;
+    margin-bottom: 0px;
 }
 
 input[type="email"],

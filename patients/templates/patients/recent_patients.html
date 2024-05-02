@@ -23,7 +23,7 @@ Recent patients
                     <td>{{ appointment.date }}</td>
                     <td>{{ appointment.appointment_time }}</td>
                     <td>{{ appointment.appointment_status }}</td>
-                    <td><button onclick="showPrescriptionBlock('{{ appointment.appointmentID }}')">Add a prescription</button></td>
+                    <td><button class="add-prescription-button" onclick="showPrescriptionBlock('{{ appointment.appointmentID }}')">Add a prescription</button></td>
                 </tr>
                 {% endfor %}
             </tbody>

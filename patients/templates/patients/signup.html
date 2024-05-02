@@ -26,9 +26,11 @@
                         <img src="{% static 'patients/forward_arrow.svg' %}" alt="Sign-up">
                     </button>
                 </div>
-                <div class="login-text">
-                    <span style="color: #FEFEFD;">Already have an account?</span> <a href="{% url 'user_login' user_role=role %}">Login</a>
-                </div>
+                {% if role != "admin" %}
+                    <div class="login-text">
+                        <span style="color: #FEFEFD;">No account? Sign up</span> <a href="{% url 'user_signup' user_role=role %}">here</a>
+                    </div>
+                {% endif %}
             </form>
         </div>
         <br><br><br>

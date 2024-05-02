@@ -1,32 +1,59 @@
 {% extends "patients/dashboard_layout.html" %}
+{% load static %}
+
 {% block title %}
-Current appointment
+Current Appointment
 {% endblock %}
+
 {% block content %}
-<div class="dashboard-summary">
+<div class="current_appointment-container">
     {% if current_appointment %}
-    <h2>Current appointment</h2>
+    <div class="current-appointment-info">
+        <h2>Current Appointment Details</h2>
+        <p>Patient Name: {{ current_appointment.patient.name }}</p>
+        <p>Reason: {{ current_appointment.reason }}</p>
+    </div>
+    <div class="box-container">
+        <div class="box prescription-form">
+            <h3>Add a Prescription</h3>
+            {{ form.as_p }}
+        </div>
+
+        <div class="box referral-form">
+            <h3>Referral to Specialist</h3>
+            <input type="checkbox" id="referral_check" name="referral_check" onchange="showReferralDropdown();">
+            <label for="referral_check">Referral Needed?</label>
+            <select id="referral_select" name="referral" style="display:none;">
+                {% for doctor in specialist_doctors %}
+                <option value="{{ doctor.id }}">{{ doctor.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="box notes-form">
+            <h3>Notes</h3>
+            <textarea name="notes" rows="4" cols="50" placeholder="Enter any notes here..."></textarea>
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="submit" class="complete-appointment-btn">Complete Appointment</button>
+    </div>
     {% else %}
-    <h2>No current appointments</h2>
+    <div class="no-appointment">
+        <h2>No Current Appointments</h2>
+    </div>
     {% endif %}
 </div>
-{% if current_appointment %}
-<div class="dashboard-summary">
-    <div>
-        <h3>Patient name: {{ current_appointment.patient.name }}</h3>
-        <br>
-    </div>
-</div>
-<div class="dashboard-summary">
-    <div class="dashboard-summary-block">
-        <h4>Add a prescription</h4>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Add prescription</button>
-        </form>
-        <h4>{{ message }}</h4>
-    </div>
-</div>
-{% endif %}
+
+<script>
+function showReferralDropdown() {
+    var checkbox = document.getElementById('referral_check');
+    var select = document.getElementById('referral_select');
+    if (checkbox.checked) {
+        select.style.display = 'block';
+    } else {
+        select.style.display = 'none';
+    }
+}
+</script>
 {% endblock %}

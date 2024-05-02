@@ -84,7 +84,7 @@ class BookAppointmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BookAppointmentForm, self).__init__(*args, **kwargs)
-        time_slots = self.generate_time_slots(9, 17, 10)
+        time_slots = self.generate_time_slots(7, 17, 10)
         self.fields['appointment_time'] = forms.ChoiceField(choices=time_slots, label='Appointment Time')
 
     @staticmethod

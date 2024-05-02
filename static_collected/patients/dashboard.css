@@ -13,6 +13,9 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 }
 
 .sidebar{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
     float: left;
     width: 17%;
     height: 100%;
@@ -24,6 +27,8 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 .sidebar ul{
     text-align: center;
     padding: 0px;
+    list-style-type: none;
+    text-align: center;
 }
 
 .sidebar li{
@@ -33,7 +38,7 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 }
 
 .sidebar li a{
-    font-size: 28px;
+    font-size: 19px;
     display: block;
     color: #ffffff;
     text-align: center;
@@ -47,6 +52,11 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 .sidebar li a:hover{
     color: #0E1B2B;
     background-color: #ffffff;
+}
+
+.sidebar li a.active {
+    background-color: #19314E;
+    color: #ffffff;
 }
 
 .main{
@@ -161,8 +171,6 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 }
 
 .upcoming-appointments-body th, .upcoming-appointments td{
-    /* border-left: 2px solid #0E1B2B; */
-    /* border-right: 2px solid #0E1B2B; */
     padding: 10px;
     padding-left: 40px;
     padding-right: 40px;
@@ -537,6 +545,7 @@ input{
     font-family: 'Poppins', sans-serif;
     margin-top: 10px;
 }
+
 .change-surgery-request {
     padding: 20px;
     background-color: #0E1B2B;
@@ -544,16 +553,16 @@ input{
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 50%;
-    margin: 20px auto;
+    margin: 0px auto;
     text-align: left;
     font-family: 'Poppins', sans-serif;
 }
 
 .change-surgery-request h2 {
     color: white;
-    padding: 10px;
     margin-top: 0;
     border-radius: 10px 10px 0 0;
+    text-align: center;
 }
 
 .change-surgery-request fieldset {
@@ -570,42 +579,51 @@ input{
     margin: 10px 20px;
 }
 
-.change-surgery-request .form-group label,
-.change-surgery-request .form-group input,
-.change-surgery-request .form-group textarea {
-    width: calc(100% - 40px);
+.change-surgery-request .form-group label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .change-surgery-request .form-group input,
 .change-surgery-request .form-group textarea {
+    width: calc(100% - 40px);
+    display: block;
     background-color: #19314E;
     border: 1px solid #0E1B2B;
     color: white;
     padding: 10px;
     border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 .change-surgery-request .form-group textarea {
     resize: none;
 }
 
+
 .change-surgery-request button {
+    display: block;
     width: auto;
-    padding: 10px 30px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    background-color: #0E1B2B;
-    color: white;
+    margin: 20px auto;
+    color: #0E1B2B;
+    background-color: #FEFEFD;
     border: none;
-    border-radius: 5px;
+    padding: 10px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
 }
 
 .change-surgery-request button:hover {
-    background-color: #19314E; 
+    background-color: #19314E;
+    color: #FEFEFD;
+}
+
+.change-surgery-request .alert-container {
+    text-align: center;
+    color: #FFBA1E;
+    background-color: #0E1B2B;
 }
 
 .booking-container {
@@ -631,36 +649,47 @@ input{
     margin-bottom: 20px;
 }
 
-.booking-form {
+.booking-body form {
     width: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
-.booking-form-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+.book-appointment-table {
+    width: 100%;
 }
 
-.booking-form-label,
-.booking-form-field {
-    flex: 1;
-    color: white;
-    font-size: 16px;
-    padding: 10px;
-    background-color: #0E1B2B;
-    border: none;
-    border-radius: 8px;
+.book-appointment-table th, 
+.book-appointment-table td {
+    text-align: left;
 }
 
-.booking-form-field {
+.book-appointment-table .booking-form-button {
+    display: block;
+    margin: 20px auto;
+    width: auto;
+}
+
+.upcoming-appointments-table th, 
+.upcoming-appointments-table td {
+    width: 20%;
+    text-align: left;
+}
+
+.upcoming-appointments-table {
+    width: 100%;
+}
+
+textarea {
     background-color: #19314E;
     color: #D9D9D9;
+    border: 1px solid #0E1B2B;
+    padding: 10px;
+    border-radius: 4px;
+    resize: none;
 }
 
-.booking-form-button, .cancel-appointment-button {
-    display: inline-flex;
+.booking-form-button {
+    display: block;
+    margin: 0 auto;
     justify-content: center;
     align-items: center;
     background-color: #FEFEFD;
@@ -676,18 +705,68 @@ input{
     margin-top: 20px;
 }
 
-.booking-form-button:hover, .cancel-appointment-button:hover {
+.cancel-appointment-button {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 0px;
+}
+
+.booking-form-button:hover, 
+.cancel-appointment-button:hover {
     background-color: #19314E;
     color: #FEFEFD;
 }
 
 .alert {
+    font-family: 'Poppins', sans-serif;
     padding: 10px;
     color: #FFBA1E;
     background-color: #0E1B2B;
     border-radius: 5px;
     margin: 10px 0;
     text-align: center;
+}
+
+.booking-box form select,
+.booking-box form input[type='date'] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #19314E;
+    color: #FEFEFD;
+    border: 2px solid #0E1B2B;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+
+.booking-box form select {
+    background-image: url('dropdown-arrow.svg');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px;
+}
+
+.booking-box form select:focus,
+.booking-box form input[type='date']:focus {
+    outline: none;
+    border-color: #FFBA1E;
 }
 
 .payments-main{
@@ -723,7 +802,6 @@ input{
 }
 
 .payments-button {
-    /* display: inline-flex; */
     justify-content: center;
     align-items: center;
     background-color: #0E1B2B;
@@ -745,7 +823,6 @@ input{
 }
 
 .payments-button-large {
-    /* display: inline-flex; */
     justify-content: center;
     align-items: center;
     background-color: #0E1B2B;
@@ -890,27 +967,29 @@ input{
 
 
 .tab {
+    border: 1px solid #0E1B2B;
     overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+    background-color: #19314E;
 }
 
 .tab button {
     background-color: inherit;
     float: left;
-    border: none;
+    border: 0px solid #0E1B2B;
     outline: none;
     cursor: pointer;
     padding: 14px 16px;
     transition: 0.3s;
+    color: #FEFEFD;
+    align-items: center;
 }
 
 .tab button:hover {
-    background-color: #ddd;
+    background-color: #050f1b;
 }
 
 .tab button.active {
-    background-color: #ccc;
+    background-color: #050f1b;
 }
 
 .tabcontent {
@@ -918,6 +997,19 @@ input{
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
+    text-align: center;
+}
+
+.tablinks {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 33.3%;
 }
 
 .operations-heading {
@@ -953,6 +1045,11 @@ input{
 }
 
 .operations-heading label{
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.dashboard-summary-block label{
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
 }

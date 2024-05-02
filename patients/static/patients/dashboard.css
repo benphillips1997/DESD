@@ -237,8 +237,6 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 }
 
 .prescriptions-body th, .prescriptions-body td{
-    /* border-left: 2px solid #0E1B2B; */
-    /* border-right: 2px solid #0E1B2B; */
     padding: 10px;
     padding-left: 40px;
     padding-right: 40px;
@@ -250,6 +248,23 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .prescriptions-body tbody{
     background-color: #19314E;
+}
+
+.re-issue-button {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 0px;
 }
 
 .invoices-main{
@@ -335,6 +350,42 @@ h1, h2, h3, h4, h5, h6, p, th, td, a{
 
 .visit-history-body tbody{
     background-color: #19314E;
+}
+
+.add-prescription-button {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 0px;
+}
+
+.re-issue-button {
+    display: block;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+    border: none;
+    padding: 5px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    margin-top: 0px;
 }
 
 .settings-main {
@@ -1052,4 +1103,56 @@ textarea {
 .dashboard-summary-block label{
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
+}
+
+.current-appointment-container {
+    width: 83%; /* Takes up the remaining space minus the sidebar */
+    margin-left: 17%; /* Moves the container to the right, next to the sidebar */
+    padding: 20px;
+    align-items: center;
+    height: auto; /* Adjusts height based on content */
+}
+
+.current-appointment-info {
+    text-align: center;
+    color: #FEFEFD;
+    margin-bottom: 10px;
+}
+
+.box-container {
+    justify-content: space-between; /* Ensures there is space between each box */
+    width: 100%;
+}
+
+.box {
+    background-color: #0E1B2B;
+    padding: 10px; /* Reduced padding to save space */
+    flex: 1; /* Allows boxes to grow and shrink as needed */
+    margin: 5px; /* Reduced margin to maximize space utilization */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    min-width: 0; /* Prevents flex items from growing beyond the container width */
+    max-width: calc(33% - 22px); /* Ensures no box takes more than a third of the container width */
+}
+
+.form-actions {
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.complete-appointment-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #FEFEFD;
+    color: #0E1B2B;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.complete-appointment-btn:hover {
+    background-color: #19314E;
+    color: #FEFEFD;
 }

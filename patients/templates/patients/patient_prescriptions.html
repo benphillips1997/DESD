@@ -22,7 +22,7 @@ Prescriptions
                     <td>{{ prescription.description }}</td>
                     <td id="{{ prescription.prescriptionID }}-status">{{ prescription.status }}</td>
                     {% if prescription.status == "Inactive" %}
-                    <td id="{{ prescription.prescriptionID }}-button"><button name="re-issue-button" onclick="request_reissue('{{ prescription.prescriptionID }}')">Request re-issue</button></td>
+                    <td id="{{ prescription.prescriptionID }}-button"><button name="re-issue-button" class="re-issue-button" onclick="request_reissue('{{ prescription.prescriptionID }}')">Request re-issue</button></td>
                     {% else %}
                     <td></td>
                     {% endif %}

@@ -208,51 +208,62 @@ def request_reissue(request):
 
 @login_required
 def current_appointment(request):
-    if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
+    if not request.user.groups.filter(name__in=['Doctor', 'Nurse']).exists():
         return HttpResponseForbidden("You don't have permission to view this page.")
+    
     now = datetime.now()
     start_time = now - timedelta(minutes=now.minute % 10, seconds=now.second, microseconds=now.microsecond)
-    current_appointment = Appointment.objects.filter(doctor=request.user.userID).filter(date=date.today()).filter(appointment_time=(start_time.time())).first()
-    message = ""
+    current_appointment = Appointment.objects.filter(
+        doctor=request.user,
+        date=datetime.today(),
+        appointment_time__lte=start_time,
+        appointment_end_time__gte=start_time
+    ).first()
+
     if request.method == "POST":
         form = CreatePrescriptionForm(request.POST)
+        referral_id = request.POST.get('referral', None)
+        notes = request.POST.get('notes', '')
+
         if form.is_valid():
-            appointmentID = form.cleaned_data["appointmentID"]
-            title = form.cleaned_data["title"]
-            description = form.cleaned_data["description"] 
+            if current_appointment:
+                prescription_data = form.cleaned_data
+                Prescription.objects.create(
+                    patient=current_appointment.patient,
+                    appointment=current_appointment,
+                    title=prescription_data['title'],
+                    description=prescription_data['description'],
+                    status="Active"
+                )
 
-            appointment = Appointment.objects.get(appointmentID=appointmentID)
-            patient = appointment.patient
+                if referral_id:
+                    current_appointment.referral_id = referral_id
+                
+                current_appointment.notes = notes
 
-            new_prescription = Prescription.objects.create(
-                patient=patient,
-                appointment=appointment,
-                title=title,
-                description=description,
-                status="Active"
-            )
-            new_prescription.save()
+                current_appointment.appointment_status = 'Completed'
+                current_appointment.save()
 
-            Invoice.objects.create(
-                appointment=appointment,
-                type='Prescription',
-                amount=9.65,
-                date_issued=timezone.now(),
-                due_date=timezone.now() + timedelta(days=30),
-                status='Unpaid'
-            )
+                messages.success(request, "Appointment and related actions completed successfully.")
+                return redirect('dashboard')
+            else:
+                messages.error(request, "No current appointment matches the criteria.")
+        else:
+            messages.error(request, "Form data is invalid.")
 
-            message = "Prescription added and invoice created."
     else:
         form = CreatePrescriptionForm(initial={'appointmentID': current_appointment.appointmentID if current_appointment else None})
-    return render(request, "patients/current_appointment.html", {"form": form, "current_appointment": current_appointment, "message": message})
+
+    return render(request, "patients/current_appointment.html", {
+        "form": form,
+        "current_appointment": current_appointment,
+    })
 
 @login_required
 def recent_patients(request):
     if not (request.user.groups.filter(name='Doctor').exists() or request.user.groups.filter(name='Nurse').exists()):
         return HttpResponseForbidden("You don't have permission to view this page.")
     check_appointment_status()
-    # retrive all appointments in a previous period
     all_appointments = Appointment.objects.filter(doctor=request.user.userID)
     today = date.today()
     time_before = today - timedelta(weeks=4)

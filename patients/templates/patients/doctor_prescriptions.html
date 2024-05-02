@@ -26,11 +26,11 @@ Prescriptions
                     <td>{{ prescription.description }}</td>
                     <td>{{ prescription.status }}</td>
                     {% if prescription.status == "Re-issue requested" %}
-                    <td><button name="accept-re-issue-button" onclick="accept_reissue('{{ prescription.prescriptionID }}')">Accept re-issue</button></td>
+                    <td><button class="re-issue-button" name="accept-re-issue-button" onclick="accept_reissue('{{ prescription.prescriptionID }}')">Accept re-issue</button></td>
                     {% elif prescription.status == "Inactive" %}
-                    <td><button name="accept-re-issue-button" onclick="accept_reissue('{{ prescription.prescriptionID }}')">Re-issue</button></td>
+                    <td><button class="re-issue-button" name="accept-re-issue-button" onclick="accept_reissue('{{ prescription.prescriptionID }}')">Re-issue</button></td>
                     {% else %}
-                    <td><button name="accept-re-issue-button" onclick="un_issue('{{ prescription.prescriptionID }}')">Un-issue</button></td>
+                    <td><button class="re-issue-button" name="accept-re-issue-button" onclick="un_issue('{{ prescription.prescriptionID }}')">Un-issue</button></td>
                     {% endif %}
                 </tr>
                 {% endfor %}

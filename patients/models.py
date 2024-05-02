@@ -48,8 +48,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Appointment(models.Model):
     appointmentID = models.AutoField(primary_key=True)
-    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name="patient")
-    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="doctor")
+    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name="patient_appointments")
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="doctor_appointments")
     date = models.DateField()
     appointment_time = models.TimeField()
     appointment_end_time = models.TimeField()
@@ -59,6 +59,8 @@ class Appointment(models.Model):
     ]
     patient_type = models.CharField(max_length=7, choices=PATIENT_TYPE_CHOICES, default='NHS')
     appointment_status = models.CharField(max_length=20, choices=[("Scheduled", "Scheduled"), ("Completed", "Completed"), ("Cancelled", "Cancelled")])
+    notes = models.TextField(null=True, blank=True)
+    referral = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="referrals")
 
     def save(self, *args, **kwargs):
         is_new = self._state.adding
