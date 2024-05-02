@@ -5,6 +5,7 @@ import random
 import string
 from django.utils import timezone
 import datetime
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -56,106 +57,109 @@ def create_users(sender, **kwargs):
     # create doctor
     # this one is active
     try:
-        doctor = User.objects.get(userID="doctor1")
+        doctor = User.objects.get(userID="DrFirst01")
     except User.DoesNotExist:
-        doctor = User.objects.create_user(userID="doctor1", email="doctor@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=True, location="Bristol")
+        doctor = User.objects.create_user(userID="DrFirst01", email="dr_first@smartcare.com", password="pw1", role="doctor", name=f"Dr First", is_active=True, location="Bristol")
         doctor.save()
         # schedule1 = WorkingSchedule.objects.create(user=doctor, schedule={"Monday": True, "Tuesday": False, "Wednesday": False, "Thursday": False, "Friday": True, "Saturday": False, "Sunday": False})
         # schedule1.save()
 
-    # this one needs verifying
-    try:
-        doctor2 = User.objects.get(userID="doctor2")
-    except User.DoesNotExist:
-        doctor2 = User.objects.create_user(userID="doctor2", email="doctor2@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=False, location="Bristol")
-        doctor2.save()
-
-    #active
-    try:
-        doctor3 = User.objects.get(userID="doctor3")
-    except User.DoesNotExist:
-        doctor3 = User.objects.create_user(userID="doctor3", email="doctor3@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=True, location="Bristol")
-        doctor3.save()
-        # schedule2 = WorkingSchedule.objects.create(doctor3, {"Monday": False, "Tuesday": True, "Wednesday": True, "Thursday": True, "Friday": False, "Saturday": True, "Sunday": True})
-        # schedule2.save()
-
-    #active
-    try:
-        doctor4 = User.objects.get(userID="doctor4")
-    except User.DoesNotExist:
-        doctor4 = User.objects.create_user(userID="doctor4", email="doctor4@smartcare.com", password="pw1", role="doctor", name=f"Doc Tor", is_active=True, location="Bristol")
-        doctor4.save()
-        # schedule3 = WorkingSchedule.objects.create(doctor4, {"Monday": False, "Tuesday": True, "Wednesday": True, "Thursday": True, "Friday": False, "Saturday": True, "Sunday": True})
-        # schedule3.save()
-
     # create nurse
     # this one is active
     try:
-        nurse = User.objects.get(userID="nurse1")
+        nurse = User.objects.get(userID="MsBest01")
     except User.DoesNotExist:
-        nurse = User.objects.create_user(userID="nurse1", email="nurse@smartcare.com", password="pw1", role="nurse", name=f"Nur Se", is_active=True, location="Bristol")
+        nurse = User.objects.create_user(userID="MsBest01", email="ms_best@smartcare.com", password="pw1", role="nurse", name=f"Ms Best", is_active=True, location="Bristol")
         nurse.save()
         # schedule4 = WorkingSchedule.objects.create(nurse, {"Monday": True, "Tuesday": False, "Wednesday": False, "Thursday": False, "Friday": True, "Saturday": False, "Sunday": False})
         # schedule4.save()
 
-    # this one needs verifying
+    # 10 realistic clients
     try:
-        nurse2 = User.objects.get(userID="nurse2")
+        rob_smith = User.objects.get(userID="RobSmith01")
     except User.DoesNotExist:
-        nurse2 = User.objects.create_user(userID="nurse2", email="nurse2@smartcare.com", password="pw1", role="nurse", name=f"Nur Se", is_active=False, location="Bristol")
-        nurse2.save()
+        rob_smith = User.objects.create_user(userID="RobSmith01", email="rob_smith@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"Rob Smith", is_active=True, location="Bristol")
+        rob_smith.save()
 
     try:
-        many = User.objects.get(userID="dontdelete")
+        liz_brown = User.objects.get(userID="LizBrown01")
     except User.DoesNotExist:
-        many = User.objects.create_user(userID="dontdelete", email="dontdelete@smartcare.com", password="pw1", role="patient", name=f"dont delete", is_active=True, location="Bristol")
-        many.save()
-        # Function to create random data for users
-        num_users=10
-        default_password='pw1'
-        for i in range(num_users):
-            username = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
-            email = f"{username}@example.com"
-            first_name = ''.join(random.choices(string.ascii_lowercase, k=5)).capitalize()
-            surname = ''.join(random.choices(string.ascii_lowercase, k=5)).capitalize()
-            dob = timezone.now().date().replace(year=timezone.now().year - random.randint(18, 100))
-            phone_no = ''.join(random.choices(string.digits, k=10))
-            nhs_no = ''.join(random.choices(string.digits, k=10))
-            password = default_password
-            role = random.choice(['nurse', 'patient', 'admin', 'doctor'])  # Choose a random role
-            location = 'Test Location'
+        liz_brown = User.objects.create_user(userID="LizBrown01", email="liz_brown@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"Liz Brown", is_active=True, location="Bristol")
+        liz_brown.save()
 
-            # Create the user
-            user = User.objects.create_user(
-                userID=username,
-                email=email,
-                password=password,
-                name=first_name + " " + surname,
-                role=role,  # Add the role field
-                location=location  # Add the location field
-            )
+    try:
+        mr_hesitant = User.objects.get(userID="MrHesitant01")
+    except User.DoesNotExist:
+        mr_hesitant = User.objects.create_user(userID="MrHesitant01", email="mr_hesitant@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"Mr Hesitant", is_active=True, location="Bristol")
+        mr_hesitant.save()
 
-            user.save()
+    try:
+        james_bond = User.objects.get(userID="JamesBond01")
+    except User.DoesNotExist:
+        james_bond = User.objects.create_user(userID="JamesBond01", email="james_bond@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"James Bond", is_active=True, location="Bristol")
+        james_bond.save()
+
+    try:
+        jane_marie = User.objects.get(userID="JaneMarie01")
+    except User.DoesNotExist:
+        jane_marie = User.objects.create_user(userID="JaneMarie01", email="jane_marie@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"Jane Marie", is_active=True, location="Bristol")
+        jane_marie.save()    
+
+    try:
+        amy_sanders = User.objects.get(userID="AmySanders01")
+    except User.DoesNotExist:
+        amy_sanders = User.objects.create_user(userID="AmySanders01", email="amy_sanders@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"Amy Sanders", is_active=True, location="Bristol")
+        amy_sanders.save()
+
+    try:
+        andrew_clark = User.objects.get(userID="AndrewClark01")
+    except User.DoesNotExist:
+        andrew_clark = User.objects.create_user(userID="AndrewClark01", email="andrew_clark@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"Andrew Clark", is_active=True, location="Bristol")
+        andrew_clark.save()
+
+    try:
+        dewayne_kajetan = User.objects.get(userID="DewayneKajetan01")
+    except User.DoesNotExist:
+        dewayne_kajetan = User.objects.create_user(userID="DewayneKajetan01", email="dewayne_kajetan@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"Dewayne Kajetan", is_active=True, location="Bristol")
+        dewayne_kajetan.save()
+
+    try:
+        alana_rosette = User.objects.get(userID="AlanaRosette01")
+    except User.DoesNotExist:
+        alana_rosette = User.objects.create_user(userID="AlanaRosette01", email="alana_rosette@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"Alana Rosette", is_active=True, location="Bristol")
+        alana_rosette.save()
+
+    try:
+        shaun_bean = User.objects.get(userID="ShaunBean01")
+    except User.DoesNotExist:
+        shaun_bean = User.objects.create_user(userID="ShaunBean01", email="shaun_bean@hotmail.com", date_of_birth=(datetime.date.today() - datetime.timedelta(weeks=(random.randint(20, 70)*52))), phone_number="0" + str(random.randint(1000000000, 9999999999)), nhs_number=str(random.randint(1000000000, 9999999999)), password="pw1", role="patient", name=f"Shaun Bean", is_active=True, location="Bristol")
+        shaun_bean.save()
 
 
 def create_appointments(sender, **kwargs):
-    try:
-        many = User.objects.get(userID="dontdelete2")
-    except User.DoesNotExist:
-        many = User.objects.create_user(userID="dontdelete2", email="dontdelete2@smartcare.com", password="pw1", role="patient", name=f"dont delete2", is_active=True, location="Bristol")
-        many.save()
-        for i in range(-10, 30):
-            patient = random.choice(User.objects.filter(role="patient"))
-            doctor = random.choice([User.objects.get(userID="doctor1"), User.objects.get(userID="nurse1")])
-            time = datetime.time(hour=random.randint(9, 16))
-            end_time = (datetime.datetime.combine(datetime.date(1,1,1),time) + datetime.timedelta(minutes=10)).time()
-            appointment = Appointment.objects.create(
-                patient=patient, 
-                doctor=doctor, 
-                date=(datetime.date.today() - datetime.timedelta(days=i)),
-                appointment_time=time,
-                appointment_end_time=end_time,
-                patient_type=random.choice(["NHS", "Private"]),
-                appointment_status="Scheduled"
-            )
-            appointment.save()
+    for i in range(-7, 14):
+        for j in range(9, 17):
+            if i <= 0:
+                r = range(0, 50, 10)
+            elif i <= 7:
+                r = range(0, 50, 20)
+            else:
+                r = range(0, 10, 30)
+            for k in r:
+                try:
+                    appointment = Appointment.objects.get(date=(datetime.date.today() + datetime.timedelta(days=i)), appointment_time=(datetime.time(hour=j, minute=k)))
+                except:
+                    patient = random.choice(User.objects.filter(role="patient"))
+                    doctor = random.choice(User.objects.filter(Q(role="doctor") | Q(role="nurse")))
+                    time = datetime.time(hour=j, minute=k)
+                    end_time = (datetime.datetime.combine(datetime.date(1,1,1),time) + datetime.timedelta(minutes=10)).time()
+                    appointment = Appointment.objects.create(
+                        patient=patient, 
+                        doctor=doctor, 
+                        date=(datetime.date.today() + datetime.timedelta(days=i)),
+                        appointment_time=time,
+                        appointment_end_time=end_time,
+                        patient_type=random.choice(["NHS", "Private"]),
+                        appointment_status="Scheduled"
+                    ) 
+                    appointment.save()

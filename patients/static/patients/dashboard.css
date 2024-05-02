@@ -967,27 +967,29 @@ textarea {
 
 
 .tab {
+    border: 1px solid #0E1B2B;
     overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+    background-color: #19314E;
 }
 
 .tab button {
     background-color: inherit;
     float: left;
-    border: none;
+    border: 0px solid #0E1B2B;
     outline: none;
     cursor: pointer;
     padding: 14px 16px;
     transition: 0.3s;
+    color: #FEFEFD;
+    align-items: center;
 }
 
 .tab button:hover {
-    background-color: #ddd;
+    background-color: #050f1b;
 }
 
 .tab button.active {
-    background-color: #ccc;
+    background-color: #050f1b;
 }
 
 .tabcontent {
@@ -995,6 +997,19 @@ textarea {
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
+    text-align: center;
+}
+
+.tablinks {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 33.3%;
 }
 
 .operations-heading {
@@ -1030,6 +1045,11 @@ textarea {
 }
 
 .operations-heading label{
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.dashboard-summary-block label{
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
 }

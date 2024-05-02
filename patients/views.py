@@ -553,7 +553,7 @@ def operations(request):
     practitioners = User.objects.filter(Q(role='doctor') | Q(role='nurse'))
     prac_list = []
     for practitioner in practitioners:
-        appointments = Appointment.objects.filter(doctor=practitioner)
+        appointments = Appointment.objects.filter(doctor=practitioner, appointment_status="Scheduled")
         prac_appointments = []
         for appointment in appointments:
             prac_appointments.append(appointment)
@@ -719,7 +719,7 @@ def book_appointment(request):
                 messages.error(request, "You already have an appointment around this time with another doctor. Please choose a different time or date.")
                 return render(request, 'patients/book_appointment.html', {'form': form, 'current_appointments': current_appointments, 'message': "You already have an appointment around this time with another doctor. Please choose a different time or date."})
 
-            Appointment.objects.create(
+            appointment = Appointment.objects.create(
                 patient=request.user,
                 doctor=doctor,
                 date=desired_date,
@@ -728,6 +728,7 @@ def book_appointment(request):
                 patient_type=form.cleaned_data['patient_type'],
                 appointment_status='Scheduled'
             )
+            appointment.save()
 
             messages.success(request, f"Successfully booked appointment at {desired_date} {desired_time} with {doctor.name}")
             return redirect('book_appointment')
