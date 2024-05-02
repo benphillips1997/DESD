@@ -716,7 +716,7 @@ def book_appointment(request):
                 messages.error(request, "You already have an appointment around this time with another doctor. Please choose a different time or date.")
                 return render(request, 'patients/book_appointment.html', {'form': form, 'current_appointments': current_appointments, 'message': "You already have an appointment around this time with another doctor. Please choose a different time or date."})
 
-            Appointment.objects.create(
+            appointment = Appointment.objects.create(
                 patient=request.user,
                 doctor=doctor,
                 date=desired_date,
