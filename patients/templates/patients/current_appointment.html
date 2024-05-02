@@ -56,4 +56,54 @@ function showReferralDropdown() {
     }
 }
 </script>
+{% if current_appointment %}
+<div class="dashboard-summary">
+    <div>
+        <h3>Patient name: {{ current_appointment.patient.name }}</h3>
+        <br>
+    </div>
+</div>
+<div class="dashboard-summary">
+    <div class="dashboard-summary-block">
+        <h4>Add a prescription</h4>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add prescription</button>
+        </form>
+        <h4>{{ message }}</h4>
+    </div>
+    <div class="dashboard-summary-block">
+        <h4>Add a note</h4>
+        <input type="text" name="note" id="note">
+        <br><br>
+        <button onclick="addNote()">Add note</button>
+        <h4 id="note-message" hidden>Note added</h4>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function addNote() {
+        var note = document.getElementById("note").value;
+        document.getElementById("note").value = "";
+        
+        $.ajax({
+            url: "{% url 'add_note' %}",
+            type: "POST",
+            data: { data: "{{ current_appointment.appointmentID }}" + "|||" + note, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+            
+            success: function(json) {
+                var verify_message = document.getElementById("note-message");
+                verify_message.innerHTML = "Note added";
+                verify_message.removeAttribute('hidden');
+            },
+            error: function(xhr, errmsg, err) {
+                var verify_message = document.getElementById("note-message");
+                verify_message.innerHTML = "Error: Could not add note";
+                verify_message.removeAttribute('hidden');
+            }
+        });
+    }
+</script>
+{% endif %}
 {% endblock %}

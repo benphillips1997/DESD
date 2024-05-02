@@ -20,6 +20,7 @@ from django.utils import timezone
 from django.utils.timezone import localdate, make_aware
 from time import localtime
 from datetime import datetime, timedelta, date
+import datetime as dt
 
 User = get_user_model()
 
@@ -258,6 +259,22 @@ def current_appointment(request):
         "form": form,
         "current_appointment": current_appointment,
     })
+
+@login_required
+def add_note(request):
+    if request.method == "POST":
+        data = request.POST.get("data")
+        data = data.split("|||")
+        appointmentID = data[0]
+        note = data[1]
+
+        appointment = Appointment.objects.get(appointmentID=appointmentID)
+        appointment.notes = note
+        appointment.save()
+
+        return JsonResponse({}, status=200)
+    else:
+        return HttpResponseForbidden("You cannot access this.")
 
 @login_required
 def recent_patients(request):
